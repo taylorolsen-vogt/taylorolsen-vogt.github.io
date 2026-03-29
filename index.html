@@ -85,80 +85,7 @@ a:focus-visible {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
 /* ─── ONBOARDING ─── */
-#onboard {
-  position:fixed; inset:0; z-index:70;
-  display:flex; align-items:center; justify-content:center;
-  flex-direction:column; gap:24px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity 0.8s;
-}
 
-#onboard.show { opacity:1; pointer-events:all; }
-
-.onboard-dot-demo {
-  position:relative;
-  width:120px; height:120px;
-  display:flex; align-items:center; justify-content:center;
-}
-
-.demo-ring {
-  position:absolute;
-  border-radius:50%;
-  border:1px solid rgba(200,160,69,0.2);
-  animation:expand 2.4s ease-out infinite;
-}
-
-.demo-ring:nth-child(1) { width:20px; height:20px; animation-delay:0s; }
-.demo-ring:nth-child(2) { width:40px; height:40px; animation-delay:0.4s; }
-.demo-ring:nth-child(3) { width:70px; height:70px; animation-delay:0.8s; }
-
-@keyframes expand {
-  0%   { opacity:0.6; transform:scale(0.8); }
-  100% { opacity:0;   transform:scale(1.4); }
-}
-
-.onboard-label {
-  font-size:12px;
-  letter-spacing:0.22em;
-  color:var(--muted);
-  text-align:center;
-  font-weight:300;
-  line-height:2;
-}
-
-.onboard-legend {
-  display:flex; gap:32px; margin-top:8px;
-}
-
-.legend-item {
-  display:flex; align-items:center; gap:10px;
-  font-size:10px; letter-spacing:0.16em;
-  color:var(--muted); font-weight:300;
-  text-transform:uppercase;
-}
-
-.legend-dot {
-  width:7px; height:7px; border-radius:50%;
-  flex-shrink:0;
-}
-
-.legend-dot.complete  { background:rgba(200,160,69,0.9); box-shadow:0 0 6px rgba(200,160,69,0.6); }
-.legend-dot.building  { background:rgba(200,160,69,0.45); box-shadow:0 0 8px rgba(200,160,69,0.3); }
-.legend-dot.becoming  { background:rgba(200,160,69,0.15); box-shadow:0 0 10px rgba(200,160,69,0.1); }
-
-.onboard-enter {
-  font-size:10px; letter-spacing:0.24em; text-transform:uppercase;
-  color:var(--gold); border:1px solid rgba(200,160,69,0.3);
-  padding:12px 28px; cursor:pointer; margin-top:16px;
-  transition:all 0.25s; font-weight:300;
-}
-
-.onboard-enter:hover {
-  background:rgba(200,160,69,0.07);
-  border-color:rgba(200,160,69,0.7);
-  letter-spacing:0.3em;
-}
 
 /* ─── HUD ─── */
 #hud { position:fixed; inset:0; z-index:10; pointer-events:none; }
@@ -545,25 +472,6 @@ a:focus-visible {
   </div>
 </div>
 
-<!-- ONBOARDING -->
-<div id="onboard">
-  <div class="onboard-dot-demo">
-    <div class="demo-ring"></div>
-    <div class="demo-ring"></div>
-    <div class="demo-ring"></div>
-  </div>
-  <div class="onboard-label">
-    Each light is a piece of work.<br>
-    Brightness tells you where it lives in time.
-  </div>
-  <div class="onboard-legend">
-    <div class="legend-item"><div class="legend-dot complete"></div>Complete</div>
-    <div class="legend-item"><div class="legend-dot building"></div>Building</div>
-    <div class="legend-item"><div class="legend-dot becoming"></div>Becoming</div>
-  </div>
-  <button class="onboard-enter" id="onboard-enter" type="button">Enter the work</button>
-</div>
-
 <!-- HUD -->
 <div id="hud">
   <div id="sig">
@@ -807,30 +715,30 @@ function runIntro() {
   const birth = document.getElementById('gideon-birth');
 
   // Line 1 appears
-  setTimeout(()=>{ l1.classList.add('show'); }, 700);
+  setTimeout(()=>{ l1.classList.add('show'); }, 250);
 
   // In the pause — Gideon forms as a sparkle between the lines
   setTimeout(()=>{
     birth.style.opacity = '1';
     birth.style.transform = 'scale(1)';
-  }, 1900);
+  }, 850);
 
   // Sparkle pulses slightly — it's alive
   setTimeout(()=>{
     birth.style.boxShadow = '0 0 32px 12px rgba(200,160,69,0.55), 0 0 80px 28px rgba(200,160,69,0.2)';
     birth.style.width = '16px';
     birth.style.height = '16px';
-  }, 2500);
+  }, 1200);
 
   // Line 2 appears — Gideon speaks again
-  setTimeout(()=>{ l2.classList.add('show'); }, 3000);
+  setTimeout(()=>{ l2.classList.add('show'); }, 1500);
 
   // Gideon drifts upward and out — beginning to move
   setTimeout(()=>{
     birth.style.transition = 'opacity 1.4s ease, transform 1.6s cubic-bezier(0.22,1,0.36,1)';
     birth.style.opacity = '0.3';
     birth.style.transform = 'translateY(-60px) scale(0.7)';
-  }, 4400);
+  }, 1850);
 
   // Fade the whole intro
   setTimeout(()=>{
@@ -841,25 +749,23 @@ function runIntro() {
     gideon.y = H * 0.5;
     setTimeout(()=>{
       intro.style.display = 'none';
-      document.getElementById('onboard').classList.add('show');
-    }, 1200);
-  }, 5400);
+      startExplore();
+    }, 650);
+  }, 2200);
 }
 
 function startExplore() {
-  document.getElementById('onboard').classList.remove('show');
-  setTimeout(()=>{
-    running = true;
-    document.getElementById('sig').style.opacity = '1';
-    document.getElementById('hint').style.opacity = '1';
-    document.getElementById('status-bar').style.opacity = '1';
-    document.getElementById('about-btn').classList.add('show');
-    const b = PROJECTS.filter(p=>p.state==='building').length;
-    document.getElementById('s-building').textContent = `${b} building`;
-    // Init Gideon position
-    gideon.x = W * 0.5; gideon.y = H * 0.5;
-    frame();
-  }, 400);
+  if (running) return;
+  running = true;
+  document.getElementById('sig').style.opacity = '1';
+  document.getElementById('hint').style.opacity = '1';
+  document.getElementById('status-bar').style.opacity = '1';
+  document.getElementById('about-btn').classList.add('show');
+  const b = PROJECTS.filter(p=>p.state==='building').length;
+  document.getElementById('s-building').textContent = `${b} building`;
+  // Init Gideon position
+  gideon.x = W * 0.5; gideon.y = H * 0.5;
+  frame();
 }
 
 function escapeHtml(text) {
@@ -924,7 +830,6 @@ function renderMedia(media) {
 }
 
 function bindUiEvents() {
-  document.getElementById('onboard-enter').addEventListener('click', startExplore);
   document.getElementById('about-btn').addEventListener('click', openAbout);
   document.getElementById('panel-close').addEventListener('click', closePanel);
   document.getElementById('about-close').addEventListener('click', closeAbout);
@@ -1143,18 +1048,47 @@ function drawBg() {
   ctx.fillRect(0,0,W,H);
 }
 
-const CONNECTIONS = [[0,1],[0,2],[2,3],[2,4],[3,4],[1,6],[1,7],[1,9],[5,7]];
-
 function drawConnections() {
-  CONNECTIONS.forEach(([a,b])=>{
-    const ax=screenPos[a].x, ay=screenPos[a].y;
-    const bx=screenPos[b].x, by=screenPos[b].y;
-    const g = ctx.createLinearGradient(ax,ay,bx,by);
-    g.addColorStop(0,'rgba(200,160,69,0.07)');
-    g.addColorStop(0.5,'rgba(200,160,69,0.035)');
-    g.addColorStop(1,'rgba(200,160,69,0.07)');
-    ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by);
-    ctx.strokeStyle = g; ctx.lineWidth = 0.4; ctx.stroke();
+  const maxDist = Math.min(W, H) * 0.37;
+  const nearestCount = 3;
+  const links = new Set();
+
+  PROJECTS.forEach((_, i) => {
+    const neighbors = [];
+    PROJECTS.forEach((__, j) => {
+      if (i === j) return;
+      const d = Math.hypot(screenPos[i].x - screenPos[j].x, screenPos[i].y - screenPos[j].y);
+      if (d <= maxDist) neighbors.push({ j, d });
+    });
+    neighbors.sort((a, b) => a.d - b.d);
+    neighbors.slice(0, nearestCount).forEach(n => {
+      const a = Math.min(i, n.j);
+      const b = Math.max(i, n.j);
+      links.add(`${a}-${b}`);
+    });
+  });
+
+  links.forEach(link => {
+    const [a, b] = link.split('-').map(Number);
+    const ax = screenPos[a].x;
+    const ay = screenPos[a].y;
+    const bx = screenPos[b].x;
+    const by = screenPos[b].y;
+    const d = Math.hypot(ax - bx, ay - by);
+    const proximity = 1 - Math.min(d / maxDist, 1);
+    const pulse = 0.6 + 0.4 * Math.sin(t * 0.7 + (a + b) * 0.9);
+    const alpha = (0.03 + proximity * 0.08) * pulse;
+
+    const g = ctx.createLinearGradient(ax, ay, bx, by);
+    g.addColorStop(0, `rgba(200,160,69,${alpha})`);
+    g.addColorStop(0.5, `rgba(200,160,69,${alpha * 0.45})`);
+    g.addColorStop(1, `rgba(200,160,69,${alpha})`);
+    ctx.beginPath();
+    ctx.moveTo(ax, ay);
+    ctx.lineTo(bx, by);
+    ctx.strokeStyle = g;
+    ctx.lineWidth = 0.35 + proximity * 0.45;
+    ctx.stroke();
   });
 }
 
