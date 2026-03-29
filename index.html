@@ -10,8 +10,8 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:      #09100e;
-  --bg2:     #0d1a16;
+  --bg:      #060b09;
+  --bg2:     #0a1411;
   --parch:   #f0e8d0;
   --parch2:  #d4c9a8;
   --muted:   rgba(240,232,208,0.38);
@@ -27,6 +27,20 @@
 html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--parch); font-family:var(--mono); }
 
 canvas { position:fixed; inset:0; z-index:0; }
+
+button {
+  border:none;
+  background:none;
+  color:inherit;
+  font:inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+a:focus-visible {
+  outline:1px solid rgba(232,200,120,0.8);
+  outline-offset:2px;
+}
 
 /* ─── GIDEON INTRO ─── */
 #gideon-intro {
@@ -105,7 +119,7 @@ canvas { position:fixed; inset:0; z-index:0; }
 }
 
 .onboard-label {
-  font-size:11px;
+  font-size:12px;
   letter-spacing:0.22em;
   color:var(--muted);
   text-align:center;
@@ -119,7 +133,7 @@ canvas { position:fixed; inset:0; z-index:0; }
 
 .legend-item {
   display:flex; align-items:center; gap:10px;
-  font-size:9px; letter-spacing:0.16em;
+  font-size:10px; letter-spacing:0.16em;
   color:var(--muted); font-weight:300;
   text-transform:uppercase;
 }
@@ -134,7 +148,7 @@ canvas { position:fixed; inset:0; z-index:0; }
 .legend-dot.becoming  { background:rgba(200,160,69,0.15); box-shadow:0 0 10px rgba(200,160,69,0.1); }
 
 .onboard-enter {
-  font-size:9px; letter-spacing:0.24em; text-transform:uppercase;
+  font-size:10px; letter-spacing:0.24em; text-transform:uppercase;
   color:var(--gold); border:1px solid rgba(200,160,69,0.3);
   padding:12px 28px; cursor:pointer; margin-top:16px;
   transition:all 0.25s; font-weight:300;
@@ -500,11 +514,20 @@ canvas { position:fixed; inset:0; z-index:0; }
 
 #about-btn:hover { color:var(--gold); }
 #about-btn.show { opacity:1; pointer-events:all; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<canvas id="c"></canvas>
+<canvas id="c" aria-label="Interactive portfolio constellation"></canvas>
 
 <!-- GIDEON INTRO -->
 <div id="gideon-intro">
@@ -538,7 +561,7 @@ canvas { position:fixed; inset:0; z-index:0; }
     <div class="legend-item"><div class="legend-dot building"></div>Building</div>
     <div class="legend-item"><div class="legend-dot becoming"></div>Becoming</div>
   </div>
-  <div class="onboard-enter" onclick="startExplore()">Enter the work</div>
+  <button class="onboard-enter" id="onboard-enter" type="button">Enter the work</button>
 </div>
 
 <!-- HUD -->
@@ -558,7 +581,7 @@ canvas { position:fixed; inset:0; z-index:0; }
   </div>
 </div>
 
-<div id="about-btn" onclick="openAbout()">About</div>
+<button id="about-btn" type="button">About</button>
 
 <!-- LABEL -->
 <div id="label">
@@ -571,7 +594,7 @@ canvas { position:fixed; inset:0; z-index:0; }
   <div id="panel-backdrop"></div>
   <div id="panel-scroll">
     <div id="panel-inner">
-      <div id="panel-close" onclick="closePanel()">Back to the work</div>
+      <button id="panel-close" type="button">Back to the work</button>
       <div id="panel-state"></div>
       <div id="panel-cat"></div>
       <div id="panel-title"></div>
@@ -588,7 +611,7 @@ canvas { position:fixed; inset:0; z-index:0; }
   <div id="about-backdrop"></div>
   <div id="about-scroll">
     <div id="about-inner">
-      <div id="about-close" onclick="closeAbout()">Back to the work</div>
+      <button id="about-close" type="button">Back to the work</button>
       <div class="about-eyebrow">About</div>
       <div class="about-name">Taylor Olsen-Vogt</div>
       <div class="about-titles">
@@ -618,12 +641,12 @@ canvas { position:fixed; inset:0; z-index:0; }
 <div id="gideon-chat">
   <div id="gideon-chat-header">
     Gideon
-    <span id="gideon-chat-close" onclick="closeGideon()">×</span>
+    <button id="gideon-chat-close" type="button" aria-label="Close Gideon chat">×</button>
   </div>
   <div id="gideon-messages"></div>
   <div id="gideon-input-row">
-    <input id="gideon-input" placeholder="Ask Gideon..." onkeydown="handleInput(event)">
-    <button id="gideon-send" onclick="sendMessage()">Send</button>
+    <input id="gideon-input" placeholder="Ask Gideon...">
+    <button id="gideon-send" type="button">Send</button>
   </div>
 </div>
 
@@ -763,6 +786,7 @@ let selectedIdx = -1;
 let panelOpen = false;
 let aboutOpen = false;
 let gideonOpen = false;
+let lastClockSecond = -1;
 
 const screenPos = PROJECTS.map(()=>({x:0,y:0}));
 
@@ -836,6 +860,84 @@ function startExplore() {
     gideon.x = W * 0.5; gideon.y = H * 0.5;
     frame();
   }, 400);
+}
+
+function escapeHtml(text) {
+  return String(text)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+function isSafeExternalUrl(url) {
+  if (!url || url === '#') return true;
+  try {
+    const parsed = new URL(url, window.location.href);
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
+function renderStack(stack) {
+  const sc = document.getElementById('panel-stack');
+  sc.innerHTML = '';
+  stack.forEach(item => {
+    const chip = document.createElement('span');
+    chip.className = 'chip';
+    chip.textContent = item;
+    sc.appendChild(chip);
+  });
+}
+
+function renderLinks(links) {
+  const lc = document.getElementById('panel-links');
+  lc.innerHTML = '';
+  links.forEach(link => {
+    if (!isSafeExternalUrl(link.url)) return;
+    const a = document.createElement('a');
+    a.className = 'p-link';
+    a.href = link.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.textContent = `${link.label} →`;
+    lc.appendChild(a);
+  });
+}
+
+function renderMedia(media) {
+  const mc = document.getElementById('panel-media');
+  mc.innerHTML = '';
+  if (!media) {
+    mc.classList.remove('has-media');
+    return;
+  }
+  mc.classList.add('has-media');
+  if (typeof media === 'string') {
+    // Keep compatibility for existing string media snippets while sanitizing text-only content.
+    mc.innerHTML = media;
+  } else {
+    mc.textContent = escapeHtml(String(media));
+  }
+}
+
+function bindUiEvents() {
+  document.getElementById('onboard-enter').addEventListener('click', startExplore);
+  document.getElementById('about-btn').addEventListener('click', openAbout);
+  document.getElementById('panel-close').addEventListener('click', closePanel);
+  document.getElementById('about-close').addEventListener('click', closeAbout);
+  document.getElementById('gideon-chat-close').addEventListener('click', closeGideon);
+  document.getElementById('gideon-send').addEventListener('click', sendMessage);
+  document.getElementById('gideon-input').addEventListener('keydown', handleInput);
+
+  window.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    if (gideonOpen) closeGideon();
+    else if (panelOpen) closePanel();
+    else if (aboutOpen) closeAbout();
+  });
 }
 
 // ─── MOUSE ───
@@ -919,18 +1021,9 @@ function openProject(idx) {
   document.getElementById('panel-cat').textContent = p.cat;
   document.getElementById('panel-title').textContent = p.name;
   document.getElementById('panel-body').textContent = p.body;
-  const sc = document.getElementById('panel-stack');
-  sc.innerHTML = p.stack.map(s=>`<span class="chip">${s}</span>`).join('');
-  const lc = document.getElementById('panel-links');
-  lc.innerHTML = p.links.map(l=>`<a class="p-link" href="${l.url}" target="_blank">${l.label} →</a>`).join('');
-  const mc = document.getElementById('panel-media');
-  mc.innerHTML = '';
-  if (p.media) {
-    mc.classList.add('has-media');
-    mc.innerHTML = p.media;
-  } else {
-    mc.classList.remove('has-media');
-  }
+  renderStack(p.stack);
+  renderLinks(p.links);
+  renderMedia(p.media);
   document.getElementById('panel').classList.add('open');
   document.getElementById('panel-scroll').scrollTop = 0;
   document.getElementById('label').classList.remove('show');
@@ -963,10 +1056,11 @@ function toggleGideon() {
   const chat = document.getElementById('gideon-chat');
   if (gideonOpen) {
     // Position chat near gideon sparkle
-    chat.style.left = Math.min(gideon.x - 140, W - 300) + 'px';
-    chat.style.bottom = (H - gideon.y + 20) + 'px';
+    const clampedLeft = Math.max(12, Math.min(gideon.x - 140, W - 292));
+    const clampedTop = Math.max(12, Math.min(gideon.y + 20, H - 252));
+    chat.style.left = clampedLeft + 'px';
+    chat.style.top = clampedTop + 'px';
     chat.style.bottom = '';
-    chat.style.top = Math.min(gideon.y + 20, H - 320) + 'px';
     chat.classList.add('open');
     if (document.getElementById('gideon-messages').children.length === 0) {
       addGideonMessage("Hello. I'm Gideon. Ask me about Taylor's work.");
@@ -1042,9 +1136,9 @@ function handleInput(e) { if (e.key === 'Enter') sendMessage(); }
 // ─── DRAW ───
 function drawBg() {
   const g = ctx.createRadialGradient(W*0.42, H*0.48, 0, W*0.42, H*0.48, Math.max(W,H)*0.8);
-  g.addColorStop(0, '#111a16');
-  g.addColorStop(0.45, '#0d1612');
-  g.addColorStop(1, '#07100e');
+  g.addColorStop(0, '#0d1512');
+  g.addColorStop(0.45, '#0a120f');
+  g.addColorStop(1, '#050c0a');
   ctx.fillStyle = g;
   ctx.fillRect(0,0,W,H);
 }
@@ -1231,10 +1325,15 @@ function frame() {
 
   // Clock
   const now = new Date();
-  document.getElementById('s-time').textContent = now.toLocaleTimeString('en-US',{hour12:false});
+  const second = now.getSeconds();
+  if (second !== lastClockSecond) {
+    lastClockSecond = second;
+    document.getElementById('s-time').textContent = now.toLocaleTimeString('en-US',{hour12:false});
+  }
 }
 
 // ─── INIT ───
+bindUiEvents();
 runIntro();
 </script>
 </body>
