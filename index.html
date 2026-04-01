@@ -161,8 +161,7 @@ a:focus-visible {
 #panel.open { opacity:1; pointer-events:all; }
 
 #panel-backdrop {
-  position:absolute; bottom:0; left:0; right:0;
-  height:78%;
+  position:absolute; inset:0;
   background:linear-gradient(to top,
     rgba(9,16,14,0.99) 0%,
     rgba(9,16,14,0.97) 40%,
@@ -172,19 +171,20 @@ a:focus-visible {
 }
 
 #panel-scroll {
-  position:absolute;
-  bottom:0; left:0; right:0;
-  max-height:72vh;
+  position:absolute; inset:0;
   overflow-y:auto;
   scrollbar-width:thin;
   scrollbar-color:rgba(200,160,69,0.2) transparent;
-  padding:64px clamp(24px,6vw,80px) clamp(32px,5vh,56px);
+  padding:clamp(72px,12vh,120px) clamp(24px,6vw,80px) clamp(40px,8vh,96px);
 }
 
 #panel-scroll::-webkit-scrollbar { width:3px; }
 #panel-scroll::-webkit-scrollbar-thumb { background:rgba(200,160,69,0.2); border-radius:2px; }
 
-#panel-inner { max-width:680px; }
+#panel-inner {
+  max-width:680px;
+  margin:0 auto;
+}
 
 #panel-close {
   font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
@@ -836,6 +836,8 @@ function bindUiEvents() {
   document.getElementById('gideon-chat-close').addEventListener('click', closeGideon);
   document.getElementById('gideon-send').addEventListener('click', sendMessage);
   document.getElementById('gideon-input').addEventListener('keydown', handleInput);
+  document.getElementById('panel').addEventListener('click', handlePanelBackdropClick);
+  document.getElementById('about-panel').addEventListener('click', handleAboutBackdropClick);
 
   window.addEventListener('keydown', e => {
     if (e.key !== 'Escape') return;
@@ -944,6 +946,11 @@ function closePanel() {
   gideon.targetIdx = -1;
 }
 
+function handlePanelBackdropClick(e) {
+  if (!panelOpen) return;
+  if (e.target.id === 'panel' || e.target.id === 'panel-backdrop') closePanel();
+}
+
 function openAbout() {
   aboutOpen = true;
   document.getElementById('about-panel').classList.add('open');
@@ -954,6 +961,11 @@ function closeAbout() {
   aboutOpen = false;
   document.getElementById('about-panel').classList.remove('open');
   document.getElementById('hint').style.opacity = '1';
+}
+
+function handleAboutBackdropClick(e) {
+  if (!aboutOpen) return;
+  if (e.target.id === 'about-panel' || e.target.id === 'about-backdrop') closeAbout();
 }
 
 function toggleGideon() {
@@ -1104,29 +1116,10 @@ function drawLight(x,y,r,brightness,state,hovered,selected) {
   const fr = r * pulse;
   const alpha = brightness * pulse * (hovered ? 1.35 : 1.0);
 
-  // Outer atmosphere
-  const outerR = fr * (state==='complete' ? 5 : state==='building' ? 7.5 : 11);
-  const go = ctx.createRadialGradient(x,y,0,x,y,outerR);
-  const oa = Math.min(alpha*0.16, 0.2);
-  go.addColorStop(0, `rgba(200,160,69,${oa})`);
-  go.addColorStop(0.5,`rgba(180,120,40,${oa*0.3})`);
-  go.addColorStop(1,'transparent');
-  ctx.fillStyle = go;
-  ctx.beginPath(); ctx.arc(x,y,outerR,0,Math.PI*2); ctx.fill();
-
-  // Inner glow
-  const gi = ctx.createRadialGradient(x,y,0,x,y,fr*3);
-  const ia = Math.min(alpha*0.62, 0.88);
-  gi.addColorStop(0,`rgba(245,220,150,${ia})`);
-  gi.addColorStop(0.35,`rgba(210,170,80,${ia*0.55})`);
-  gi.addColorStop(1,'transparent');
-  ctx.fillStyle = gi;
-  ctx.beginPath(); ctx.arc(x,y,fr*3,0,Math.PI*2); ctx.fill();
-
   // Core
   const gc = ctx.createRadialGradient(x,y,0,x,y,fr);
   gc.addColorStop(0,`rgba(255,248,210,${Math.min(alpha,1)})`);
-  gc.addColorStop(0.7,`rgba(220,175,90,${alpha*0.6})`);
+  gc.addColorStop(0.7,`rgba(220,175,90,${alpha*0.42})`);
   gc.addColorStop(1,'transparent');
   ctx.fillStyle = gc;
   ctx.beginPath(); ctx.arc(x,y,fr,0,Math.PI*2); ctx.fill();
