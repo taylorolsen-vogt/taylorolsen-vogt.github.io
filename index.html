@@ -442,6 +442,40 @@ a:focus-visible {
 #about-btn:hover { color:var(--gold); }
 #about-btn.show { opacity:1; pointer-events:all; }
 
+/* ─── SEARCH ─── */
+#search-wrap {
+  position:fixed; top:32px; left:50%;
+  transform:translateX(-50%);
+  z-index:15;
+  display:flex; align-items:center; gap:8px;
+  opacity:0; transition:opacity 0.8s;
+  pointer-events:none;
+}
+#search-wrap.show { opacity:1; pointer-events:all; }
+
+#search-input {
+  background:transparent;
+  border:none;
+  border-bottom:1px solid rgba(200,160,69,0.18);
+  outline:none;
+  font-family:var(--mono); font-size:10px;
+  letter-spacing:0.14em; color:var(--parch);
+  width:180px; padding:4px 0; font-weight:300;
+  transition:border-color 0.2s, width 0.3s;
+}
+#search-input:focus { border-color:rgba(200,160,69,0.6); width:240px; }
+#search-input::placeholder { color:var(--dim); }
+#search-input::-webkit-search-cancel-button { display:none; }
+
+#search-clear {
+  font-size:14px; color:var(--muted);
+  opacity:0; transition:opacity 0.2s, color 0.2s;
+  pointer-events:none; cursor:pointer; line-height:1;
+  background:none; border:none; font-family:inherit;
+}
+#search-clear.visible { opacity:1; pointer-events:all; }
+#search-clear:hover { color:var(--gold); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
@@ -490,6 +524,12 @@ a:focus-visible {
 </div>
 
 <button id="about-btn" type="button">About</button>
+
+<!-- SEARCH -->
+<div id="search-wrap">
+  <input id="search-input" type="search" placeholder="Search projects, topics, stack…" autocomplete="off" spellcheck="false">
+  <button id="search-clear" type="button" aria-label="Clear search">×</button>
+</div>
 
 <!-- LABEL -->
 <div id="label">
@@ -698,6 +738,9 @@ let lastClockSecond = -1;
 
 const screenPos = PROJECTS.map(()=>({x:0,y:0}));
 
+let searchQuery = '';
+let matchSet = null;
+
 // Gideon sparkle
 const gideon = {
   x:0, y:0, tx:0, ty:0,
@@ -763,6 +806,7 @@ function startExplore() {
   document.getElementById('about-btn').classList.add('show');
   const b = PROJECTS.filter(p=>p.state==='building').length;
   document.getElementById('s-building').textContent = `${b} building`;
+  document.getElementById('search-wrap').classList.add('show');
   // Init Gideon position
   gideon.x = W * 0.5; gideon.y = H * 0.5;
   frame();
@@ -829,6 +873,16 @@ function renderMedia(media) {
   }
 }
 
+function doSearch(q) {
+  searchQuery = q.trim().toLowerCase();
+  if (!searchQuery) { matchSet = null; return; }
+  matchSet = new Set();
+  PROJECTS.forEach((p, i) => {
+    const haystack = [p.name, p.cat, p.body, ...p.stack].join(' ').toLowerCase();
+    if (haystack.includes(searchQuery)) matchSet.add(i);
+  });
+}
+
 function bindUiEvents() {
   document.getElementById('about-btn').addEventListener('click', openAbout);
   document.getElementById('panel-close').addEventListener('click', closePanel);
@@ -844,6 +898,21 @@ function bindUiEvents() {
     if (gideonOpen) closeGideon();
     else if (panelOpen) closePanel();
     else if (aboutOpen) closeAbout();
+    else if (searchQuery) {
+      document.getElementById('search-input').value = '';
+      doSearch('');
+      document.getElementById('search-clear').classList.remove('visible');
+    }
+  });
+
+  document.getElementById('search-input').addEventListener('input', e => {
+    doSearch(e.target.value);
+    document.getElementById('search-clear').classList.toggle('visible', e.target.value.length > 0);
+  });
+  document.getElementById('search-clear').addEventListener('click', () => {
+    document.getElementById('search-input').value = '';
+    doSearch('');
+    document.getElementById('search-clear').classList.remove('visible');
   });
 }
 
@@ -1104,13 +1173,13 @@ function drawConnections() {
   });
 }
 
-function drawNode(x, y, name, cat, state, brightness, hovered, selected) {
+function drawNode(x, y, name, cat, state, brightness, hovered, selected, dimmed) {
   const pulse = state === 'building'
     ? 0.82 + Math.sin(t * 1.9 + x * 0.01) * 0.18
     : state === 'becoming'
     ? 0.55 + Math.sin(t * 0.9 + y * 0.01) * 0.3
     : 1.0;
-  const alpha = brightness * pulse * (hovered ? 1.25 : 1.0);
+  const alpha = brightness * pulse * (hovered ? 1.25 : 1.0) * (dimmed ? 0.1 : 1.0);
   const shortCat = cat.split('·')[0].trim();
 
   ctx.save();
@@ -1269,7 +1338,8 @@ function frame() {
   drawConnections();
 
   PROJECTS.forEach((p,i) => {
-    drawNode(screenPos[i].x, screenPos[i].y, p.name, p.cat, p.state, p.brightness, hoveredIdx===i, selectedIdx===i);
+    const dimmed = matchSet !== null && !matchSet.has(i);
+    drawNode(screenPos[i].x, screenPos[i].y, p.name, p.cat, p.state, p.brightness, hoveredIdx===i, selectedIdx===i, dimmed);
   });
 
   updateGideon();
