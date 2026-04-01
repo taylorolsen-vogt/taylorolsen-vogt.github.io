@@ -450,65 +450,11 @@ a:focus-visible {
     scroll-behavior: auto !important;
   }
 }
-
-/* ─── NODE CARDS ─── */
-#nodes-layer {
-  position:fixed; inset:0; z-index:5; pointer-events:none;
-}
-
-.node-card {
-  position:absolute;
-  transform:translate(-50%,-50%);
-  background:rgba(6,11,9,0.68);
-  border:1px solid rgba(200,160,69,0.16);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-  padding:10px 14px;
-  cursor:pointer;
-  pointer-events:all;
-  min-width:120px;
-  max-width:210px;
-  user-select:none;
-  opacity:0;
-  transition:opacity 0.6s, border-color 0.25s, background 0.25s;
-}
-
-.node-card:hover {
-  border-color:rgba(200,160,69,0.5);
-  background:rgba(6,11,9,0.9);
-}
-
-.node-card.visible { opacity:1; }
-
-.node-card-state {
-  font-size:7.5px; letter-spacing:0.22em; text-transform:uppercase;
-  font-weight:300; margin-bottom:5px; font-family:var(--mono);
-  display:flex; align-items:center; gap:5px;
-}
-
-.node-card-state::before { content:'●'; font-size:6px; }
-
-.node-card-name {
-  font-family:var(--serif);
-  font-size:clamp(12px,1.2vw,15px);
-  font-style:italic; font-weight:300;
-  color:var(--parch);
-  line-height:1.15; margin-bottom:3px;
-  white-space:nowrap;
-}
-
-.node-card-cat {
-  font-size:7px; letter-spacing:0.1em;
-  color:var(--muted); font-weight:300;
-  text-transform:uppercase; line-height:1.5;
-  font-family:var(--mono);
-}
 </style>
 </head>
 <body>
 
 <canvas id="c" aria-label="Interactive portfolio constellation"></canvas>
-<div id="nodes-layer"></div>
 
 <!-- GIDEON INTRO -->
 <div id="gideon-intro">
@@ -730,22 +676,26 @@ const PROJECTS = [
 const STATE_COLORS = { complete:'#c8a045', building:'rgba(200,160,69,0.52)', becoming:'rgba(240,232,208,0.22)' };
 const STATE_LABELS = { complete:'Complete', building:'Building', becoming:'Becoming' };
 
-const CARD_MIN_R = 6; // nodes with r >= this become cards; smaller stay as canvas dots
-
-// Explicit semantic edges (always drawn regardless of proximity)
-const RELATIONS = [
-  [0,1],  // Redstone ↔ LIDI
-  [0,2],  // Redstone ↔ Mach 1
-  [0,3],  // Redstone ↔ Mach 2
-  [0,4],  // Redstone ↔ Gideon
-  [0,10], // Redstone ↔ EWAG
-  [1,6],  // LIDI ↔ ResiLife
-  [1,7],  // LIDI ↔ FORGE
-  [1,9],  // LIDI ↔ Commercial Production
-  [2,4],  // Mach 1 ↔ Gideon (first body)
-  [3,4],  // Mach 2 ↔ Gideon (next body)
-  [3,8],  // Mach 2 ↔ Power Beaming (wireless power research)
-  [4,7],  // Gideon ↔ FORGE (AI copilot inside FORGE)
+// ─── RELATIONSHIP EDGES ───
+// Indices: 0=Redstone,1=LIDI,2=Mach1,3=Mach2,4=Gideon,
+//          5=Archive,6=ResiLife,7=FORGE,8=PowerBeaming,9=Commercial,10=EWAG
+const EDGES = [
+  [0, 1],  // Redstone ↔ LIDI
+  [0, 2],  // Redstone ↔ Mach 1
+  [0, 3],  // Redstone ↔ Mach 2
+  [0, 4],  // Redstone ↔ Gideon
+  [0, 7],  // Redstone ↔ FORGE
+  [0, 8],  // Redstone ↔ Power Beaming
+  [0, 10], // Redstone ↔ EWAG
+  [1, 5],  // LIDI ↔ The Archive
+  [1, 6],  // LIDI ↔ ResiLife
+  [1, 7],  // LIDI ↔ FORGE
+  [1, 9],  // LIDI ↔ Commercial Production
+  [2, 3],  // Mach 1 ↔ Mach 2
+  [2, 4],  // Mach 1 ↔ Gideon
+  [3, 4],  // Mach 2 ↔ Gideon
+  [4, 8],  // Gideon ↔ Power Beaming
+  [6, 9],  // ResiLife ↔ Commercial Production
 ];
 
 // ─── CANVAS ───
@@ -769,7 +719,6 @@ let gideonOpen = false;
 let lastClockSecond = -1;
 
 const screenPos = PROJECTS.map(()=>({x:0,y:0}));
-const cardEls = [];
 
 // Gideon sparkle
 const gideon = {
@@ -838,47 +787,7 @@ function startExplore() {
   document.getElementById('s-building').textContent = `${b} building`;
   // Init Gideon position
   gideon.x = W * 0.5; gideon.y = H * 0.5;
-  createCards();
   frame();
-}
-
-function createCards() {
-  const layer = document.getElementById('nodes-layer');
-  PROJECTS.forEach((p, i) => {
-    if (p.r < CARD_MIN_R) { cardEls.push(null); return; }
-    const card = document.createElement('div');
-    card.className = 'node-card';
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', '0');
-    card.setAttribute('aria-label', 'Open ' + p.name);
-
-    const stateEl = document.createElement('div');
-    stateEl.className = 'node-card-state';
-    stateEl.style.color = STATE_COLORS[p.state];
-    stateEl.textContent = STATE_LABELS[p.state];
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'node-card-name';
-    nameEl.textContent = p.name;
-
-    const catEl = document.createElement('div');
-    catEl.className = 'node-card-cat';
-    catEl.textContent = p.cat;
-
-    card.appendChild(stateEl);
-    card.appendChild(nameEl);
-    card.appendChild(catEl);
-
-    card.addEventListener('click', () => { if (!panelOpen && !aboutOpen) openProject(i); });
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (!panelOpen && !aboutOpen) openProject(i); } });
-    card.addEventListener('mouseenter', () => { gideon.targetIdx = i; });
-    card.addEventListener('mouseleave', () => { if (gideon.targetIdx === i && selectedIdx === -1) gideon.targetIdx = -1; });
-
-    layer.appendChild(card);
-    cardEls.push(card);
-  });
-  // Fade cards in
-  requestAnimationFrame(() => cardEls.forEach(c => { if (c) c.classList.add('visible'); }));
 }
 
 function escapeHtml(text) {
@@ -997,10 +906,9 @@ canvas.addEventListener('touchend', e => {
 // ─── HIT TEST ───
 function getHit(mx, my) {
   let best = -1, bestD = Infinity;
-  PROJECTS.forEach((p,i) => {
-    if (p.r >= CARD_MIN_R) return; // card nodes handle their own clicks
+  PROJECTS.forEach((p, i) => {
     const d = Math.hypot(mx - screenPos[i].x, my - screenPos[i].y);
-    if (d < p.r * 3.2 && d < bestD) { bestD = d; best = i; }
+    if (d < 52 && d < bestD) { bestD = d; best = i; }
   });
   return best;
 }
@@ -1028,7 +936,7 @@ function checkHover() {
   if (hoveredIdx >= 0) {
     const lbl = document.getElementById('label');
     lbl.style.left = screenPos[hoveredIdx].x + 'px';
-    lbl.style.top = (screenPos[hoveredIdx].y - PROJECTS[hoveredIdx].r * 2.4) + 'px';
+    lbl.style.top = (screenPos[hoveredIdx].y - 52) + 'px';
   }
 }
 
@@ -1175,34 +1083,13 @@ function drawBg() {
 }
 
 function drawConnections() {
-  const maxDist = Math.min(W, H) * 0.37;
-  const nearestCount = 3;
-  const links = new Set();
   const breath = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(t * 0.95));
 
-  PROJECTS.forEach((_, i) => {
-    const neighbors = [];
-    PROJECTS.forEach((__, j) => {
-      if (i === j) return;
-      const d = Math.hypot(screenPos[i].x - screenPos[j].x, screenPos[i].y - screenPos[j].y);
-      if (d <= maxDist) neighbors.push({ j, d });
-    });
-    neighbors.sort((a, b) => a.d - b.d);
-    neighbors.slice(0, nearestCount).forEach(n => {
-      const a = Math.min(i, n.j);
-      const b = Math.max(i, n.j);
-      links.add(`${a}-${b}`);
-    });
-  });
-
-  links.forEach(link => {
-    const [a, b] = link.split('-').map(Number);
-    const ax = screenPos[a].x;
-    const ay = screenPos[a].y;
-    const bx = screenPos[b].x;
-    const by = screenPos[b].y;
+  EDGES.forEach(([a, b]) => {
+    const ax = screenPos[a].x, ay = screenPos[a].y;
+    const bx = screenPos[b].x, by = screenPos[b].y;
     const d = Math.hypot(ax - bx, ay - by);
-    const proximity = 1 - Math.min(d / maxDist, 1);
+    const proximity = 1 - Math.min(d / (Math.max(W, H) * 0.8), 1);
     const localPulse = 0.65 + 0.35 * Math.sin(t * 0.75 + (a + b) * 0.9);
     const pulse = breath * localPulse;
     const alpha = (0.08 + proximity * 0.28) * pulse;
@@ -1218,53 +1105,59 @@ function drawConnections() {
     ctx.lineWidth = (0.6 + proximity * 0.8) * (0.85 + 0.25 * breath);
     ctx.stroke();
   });
-
-  // Semantic relation lines — always visible, draw on top of proximity links
-  const relBreath = 0.8 + 0.2 * Math.sin(t * 0.6);
-  RELATIONS.forEach(([a, b]) => {
-    const ax = screenPos[a].x, ay = screenPos[a].y;
-    const bx = screenPos[b].x, by = screenPos[b].y;
-    const rg = ctx.createLinearGradient(ax, ay, bx, by);
-    const ra = 0.22 * relBreath;
-    rg.addColorStop(0, `rgba(200,160,69,${ra})`);
-    rg.addColorStop(0.5, `rgba(200,160,69,${ra * 0.45})`);
-    rg.addColorStop(1, `rgba(200,160,69,${ra})`);
-    ctx.beginPath();
-    ctx.moveTo(ax, ay);
-    ctx.lineTo(bx, by);
-    ctx.strokeStyle = rg;
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
-  });
 }
 
-function drawLight(x,y,r,brightness,state,hovered,selected) {
-  if (r >= CARD_MIN_R) return; // card nodes render as HTML
-  const pulse = state==='building'
-    ? 0.82 + Math.sin(t*1.9+x*0.01)*0.18
-    : state==='becoming'
-    ? 0.55 + Math.sin(t*0.9+y*0.01)*0.3
+function drawNode(x, y, name, cat, state, brightness, hovered, selected) {
+  const pulse = state === 'building'
+    ? 0.82 + Math.sin(t * 1.9 + x * 0.01) * 0.18
+    : state === 'becoming'
+    ? 0.55 + Math.sin(t * 0.9 + y * 0.01) * 0.3
     : 1.0;
+  const alpha = brightness * pulse * (hovered ? 1.25 : 1.0);
+  const shortCat = cat.split('·')[0].trim();
 
-  const fr = r * pulse;
-  const alpha = brightness * pulse * (hovered ? 1.35 : 1.0);
+  ctx.save();
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
 
-  // Core
-  const gc = ctx.createRadialGradient(x,y,0,x,y,fr);
-  gc.addColorStop(0,`rgba(255,248,210,${Math.min(alpha,1)})`);
-  gc.addColorStop(0.7,`rgba(220,175,90,${alpha*0.42})`);
-  gc.addColorStop(1,'transparent');
-  ctx.fillStyle = gc;
-  ctx.beginPath(); ctx.arc(x,y,fr,0,Math.PI*2); ctx.fill();
-
-  if (hovered) {
-    ctx.beginPath(); ctx.arc(x,y,fr*4,0,Math.PI*2);
-    ctx.strokeStyle='rgba(200,160,69,0.15)'; ctx.lineWidth=0.5; ctx.stroke();
+  // Hover/selected background glow
+  if (hovered || selected) {
+    const gr = ctx.createRadialGradient(x, y, 0, x, y, 52);
+    gr.addColorStop(0, `rgba(200,160,69,${0.09 * alpha})`);
+    gr.addColorStop(1, 'transparent');
+    ctx.fillStyle = gr;
+    ctx.beginPath(); ctx.arc(x, y, 52, 0, Math.PI * 2); ctx.fill();
   }
+
+  // Tiny state dot at node center (this is the connection anchor)
+  const dotAlpha = state === 'complete' ? alpha * 0.9
+    : state === 'building' ? alpha * 0.6
+    : alpha * 0.35;
+  ctx.beginPath();
+  ctx.arc(x, y, 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(200,160,69,${dotAlpha})`;
+  ctx.fill();
+
+  // Project name
+  ctx.font = `italic 300 ${hovered ? 14 : 13}px 'Cormorant Garamond', Georgia, serif`;
+  ctx.fillStyle = `rgba(240,232,208,${Math.min(alpha * 0.92, 0.95)})`;
+  ctx.fillText(name, x, y - 15);
+
+  // Short category label
+  ctx.font = `300 8px 'DM Mono', monospace`;
+  ctx.fillStyle = `rgba(200,160,69,${alpha * 0.65})`;
+  ctx.fillText(shortCat.toUpperCase(), x, y + 14);
+
+  // Selected ring
   if (selected) {
-    ctx.beginPath(); ctx.arc(x,y,fr*2.5,0,Math.PI*2);
-    ctx.strokeStyle='rgba(200,160,69,0.45)'; ctx.lineWidth=0.8; ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, 28, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(200,160,69,${0.38 * alpha})`;
+    ctx.lineWidth = 0.7;
+    ctx.stroke();
   }
+
+  ctx.restore();
 }
 
 // Gideon sparkle
@@ -1376,17 +1269,10 @@ function frame() {
     screenPos[i].y = by + dy + parallax.y*depth;
   });
 
-  // Sync card positions with their moving screenPos
-  cardEls.forEach((card, i) => {
-    if (!card) return;
-    card.style.left = screenPos[i].x + 'px';
-    card.style.top  = screenPos[i].y + 'px';
-  });
-
   drawConnections();
 
   PROJECTS.forEach((p,i) => {
-    drawLight(screenPos[i].x, screenPos[i].y, p.r, p.brightness, p.state, hoveredIdx===i, selectedIdx===i);
+    drawNode(screenPos[i].x, screenPos[i].y, p.name, p.cat, p.state, p.brightness, hoveredIdx===i, selectedIdx===i);
   });
 
   updateGideon();
