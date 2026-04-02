@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serious | Taylor Olsen-Vogt</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white: #ffffff;
+  --ink: #0e0e0e;
+  --mid: #888888;
+  --light: #c9c9c9;
+  --rule: #e8e8e8;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.15rem;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+}
+
+.nav-name {
+  font-family: 'Cormorant', serif;
+  font-weight: 300;
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2.1rem;
+  list-style: none;
+}
+
+.nav-center a {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.nav-center a:hover,
+.nav-center a.active {
+  color: var(--ink);
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  border: 1px solid var(--rule);
+}
+
+.mode-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  color: var(--mid);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.mode-btn:last-child { border-right: none; }
+
+.mode-btn.active {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.mode-btn:hover:not(.active) { color: var(--ink); }
+
+.masthead {
+  margin-top: 46px;
+  padding: 2.15rem 1.15rem 1.15rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+}
+
+.masthead-name {
+  font-family: 'Cormorant', serif;
+  font-weight: 300;
+  font-size: clamp(2.6rem, 6.1vw, 6.2rem);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.masthead-name em { font-style: italic; color: var(--mid); }
+
+.contact-under-name {
+  margin-top: 0.55rem;
+}
+
+.contact-under-name a {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--light);
+  text-decoration: none;
+  margin-top: 3px;
+}
+
+.contact-under-name a:hover { color: var(--mid); }
+
+.masthead-meta {
+  text-align: right;
+  padding-bottom: 0.3rem;
+}
+
+.masthead-desc {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--mid);
+  line-height: 1.62;
+  max-width: 290px;
+  margin-left: auto;
+  margin-bottom: 0.62rem;
+}
+
+.masthead-pills {
+  display: flex;
+  gap: 0.3rem;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.mpill {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--light);
+  border: 1px solid var(--rule);
+  padding: 4px 9px;
+}
+
+.filterbar {
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.filterbar::-webkit-scrollbar { display: none; }
+
+.filt {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+
+.filt.active {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.filt:hover:not(.active) { color: var(--ink); }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-flow: dense;
+  gap: 1px;
+  background: var(--rule);
+}
+
+.tile {
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: #f4f4f1;
+  transition: transform 0.45s ease;
+}
+
+.tile:hover .tile-bg { transform: scale(1.03); }
+
+.tile-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, rgba(0, 0, 0, 0.62) 100%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.tile:hover .tile-overlay,
+.tile.has-img .tile-overlay { opacity: 1; }
+
+.tile-label {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0.9rem 1rem;
+}
+
+.tile-kicker {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 0.25rem;
+  transition: color 0.15s;
+}
+
+.tile-name {
+  font-family: 'Cormorant', serif;
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2vw, 1.8rem);
+  line-height: 1;
+  color: var(--ink);
+  transition: color 0.15s;
+}
+
+.tile-name em { font-style: italic; color: var(--mid); }
+
+.tile.has-img .tile-kicker { color: rgba(255, 255, 255, 0.6); }
+.tile.has-img .tile-name { color: var(--white); }
+.tile.has-img .tile-name em { color: rgba(255, 255, 255, 0.7); }
+
+.tile:hover {
+  background: var(--ink);
+}
+
+.tile:hover .tile-kicker,
+.tile:hover .tile-name,
+.tile:hover .tile-name em {
+  color: var(--white);
+}
+
+.t1x1 { grid-column: span 1; min-height: 190px; }
+.t2x1 { grid-column: span 2; min-height: 190px; }
+
+.tile-mach1 {
+  grid-column: 3 / span 2;
+  grid-row: 1 / span 3;
+  min-height: 0;
+  aspect-ratio: 3 / 4;
+}
+
+.tile-mach1 .tile-bg {
+  background-image: url('assets/mach-1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #efefec;
+}
+
+.tile-mach2 {
+  grid-column: 3 / span 2;
+  grid-row: 4;
+}
+
+.tile-archive {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+}
+
+.tile-lidi { grid-column: 2; grid-row: 1; }
+.tile-gideon { grid-column: 2; grid-row: 2; }
+.tile-forge { grid-column: 1; grid-row: 3; }
+.tile-resilife { grid-column: 2; grid-row: 3; }
+.tile-commercial { grid-column: 1 / span 2; grid-row: 4; }
+.tile-quote { grid-column: 1; grid-row: 5; }
+.tile-drone { grid-column: 1; grid-row: 6; }
+.tile-pb { grid-column: 1; grid-row: 7; }
+.tile-blackbook { grid-column: 2; grid-row: 5 / span 3; }
+
+
+.tile-gideon {
+  background: var(--ink);
+}
+
+.tile-gideon .tile-kicker { color: rgba(255, 255, 255, 0.45); }
+.tile-gideon .tile-name { color: var(--white); }
+.tile-gideon .tile-overlay,
+.tile-gideon .tile-bg { display: none; }
+
+.tile-mach2 .tile-kicker,
+.tile-mach2 .tile-name,
+.tile-pb .tile-kicker,
+.tile-pb .tile-name {
+  color: #b5b5b5;
+}
+
+.tile-video {
+  background: var(--ink);
+}
+
+.tile-video .tile-kicker { color: rgba(255, 255, 255, 0.42); }
+.tile-video .tile-name { color: var(--white); }
+.tile-video .tile-name em { color: rgba(255, 255, 255, 0.58); }
+.tile-video .tile-overlay,
+.tile-video .tile-bg { display: none; }
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -72%);
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tile-video:hover .play-icon {
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.play-icon svg { margin-left: 2px; }
+
+.gideon-dot {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.4;
+  animation: blink 2.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+.ss-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 14, 14, 0.4);
+  backdrop-filter: blur(3px);
+  z-index: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.4rem;
+}
+
+.ss-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.ss-modal {
+  background: var(--white);
+  width: 100%;
+  max-width: 460px;
+  padding: 2rem 1.7rem;
+  position: relative;
+  border: 1px solid var(--rule);
+}
+
+.ss-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.7rem;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--mid);
+  cursor: pointer;
+}
+
+.ss-label {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 1rem;
+}
+
+.ss-title {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(2.1rem, 4.8vw, 3.1rem);
+  font-weight: 300;
+  color: var(--ink);
+  margin-bottom: 1.2rem;
+}
+
+.ss-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid var(--rule);
+  padding: 10px 0;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 17px;
+  font-weight: 300;
+  outline: none;
+  color: var(--ink);
+  margin-bottom: 1rem;
+  background: transparent;
+}
+
+.ss-input::placeholder { color: var(--light); }
+
+.ss-submit {
+  width: 100%;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 13px;
+  cursor: pointer;
+}
+
+.ss-confirm {
+  display: none;
+  margin-top: 0.8rem;
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--mid);
+  line-height: 1.7;
+}
+
+.ss-confirm.show { display: block; }
+
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 14, 14, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 610;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.4rem;
+}
+
+.video-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.video-modal {
+  width: min(980px, 100%);
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.video-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  background: none;
+  border: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 80vh;
+  display: block;
+  background: #000;
+}
+
+.video-fallback {
+  color: #d8d8d8;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 42px 16px;
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .tile-mach1 {
+    grid-column: span 4;
+    grid-row: auto;
+    min-height: 410px;
+    aspect-ratio: auto;
+  }
+  .t2x1,
+  .t1x1,
+  .tile-mach2,
+  .tile-archive,
+  .tile-lidi,
+  .tile-gideon,
+  .tile-forge,
+  .tile-resilife,
+  .tile-commercial,
+  .tile-quote,
+  .tile-drone,
+  .tile-pb,
+  .tile-blackbook {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+}
+
+@media (max-width: 620px) {
+  .nav-center { display: none; }
+  .mode-btn { padding: 8px 9px; letter-spacing: 0.14em; }
+  .masthead { flex-direction: column; align-items: flex-start; gap: 1.4rem; }
+  .masthead-meta { text-align: left; }
+  .masthead-desc { margin-left: 0; }
+  .masthead-pills { justify-content: flex-start; }
+  .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-name">Taylor Olsen-Vogt</a>
+  <ul class="nav-center">
+    <li><a href="serious.html" class="active">Work</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="mode-btn active" href="serious.html">Serious</a>
+    <a class="mode-btn" href="unserious.html">Unserious</a>
+    <button class="mode-btn" id="ssBtn" type="button">Super Serious</button>
+  </div>
+</nav>
+
+<header class="masthead">
+  <div>
+    <h1 class="masthead-name">Taylor<br><em>Olsen-Vogt</em></h1>
+    <div class="contact-under-name">
+      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+      <a href="tel:+15619710963">561 971 0963</a>
+    </div>
+  </div>
+  <div class="masthead-meta">
+    <p class="masthead-desc">Principal engineer and co-founder. Robotics, software, hardware, marketing, and AI systems.</p>
+    <div class="masthead-pills">
+      <span class="mpill">Robotics</span>
+      <span class="mpill">Software</span>
+      <span class="mpill">Hardware</span>
+      <span class="mpill">Marketing</span>
+      <span class="mpill">AI</span>
+    </div>
+  </div>
+</header>
+
+<div class="filterbar">
+  <button class="filt active" data-f="all">All</button>
+  <button class="filt" data-f="venture">Ventures</button>
+  <button class="filt" data-f="software">Software</button>
+  <button class="filt" data-f="marketing">Marketing</button>
+  <button class="filt" data-f="hardware">Hardware</button>
+  <button class="filt" data-f="ai">AI</button>
+</div>
+
+<div class="grid" id="grid">
+  <div class="tile tile-mach1 has-img" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-overlay"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware · Robotics</div>
+      <div class="tile-name">Mach 1</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-archive" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">The <em>Archive</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-lidi" data-cat="venture">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Venture</div>
+      <div class="tile-name">LIDI</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-gideon" data-cat="ai">
+    <div class="gideon-dot"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">AI Agent</div>
+      <div class="tile-name">Gideon</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-forge" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">FORGE</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-resilife" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">App</div>
+      <div class="tile-name">ResiLife</div>
+    </div>
+  </div>
+
+  <div class="tile t2x1 tile-commercial tile-video" data-cat="marketing" data-video="assets/resilife-commercial.mp4">
+    <div class="tile-bg" style="background:#0a0a0a"></div>
+    <div class="play-icon" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <polygon points="4,2 12,7 4,12" fill="rgba(255,255,255,0.78)"></polygon>
+      </svg>
+    </div>
+    <div class="tile-label">
+      <div class="tile-kicker">Commercial</div>
+      <div class="tile-name">ResiLife <em>Commercials</em></div>
+    </div>
+  </div>
+
+  <div class="tile t2x1 tile-mach2" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware · In Design</div>
+      <div class="tile-name">Mach 2</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-quote" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">Quote <em>Calculators</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-drone" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware</div>
+      <div class="tile-name">Drone</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-pb" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Research · EE</div>
+      <div class="tile-name">Power <em>Beaming</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-blackbook" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">Black <em>Book</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1" data-cat="venture">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Venture</div>
+      <div class="tile-name">Redstone <em>Laboratories</em></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="ss-overlay" id="ssBg">
+  <div class="ss-modal" role="dialog" aria-modal="true" aria-labelledby="ssTitle">
+    <button class="ss-close" id="ssClose" aria-label="Close">×</button>
+    <div class="ss-label">Super Serious Mode</div>
+    <h2 class="ss-title" id="ssTitle">Enter Fax Number</h2>
+    <input class="ss-input" type="text" placeholder="e.g. +1 (555) 000-0000" id="ssInput">
+    <button class="ss-submit" id="ssSubmit" type="button">Transmit</button>
+    <div class="ss-confirm" id="ssConfirm">Fax queued. Estimated delivery: 3-5 business days.</div>
+  </div>
+</div>
+
+<div class="video-overlay" id="videoOverlay">
+  <div class="video-modal" role="dialog" aria-modal="true" aria-label="ResiLife Commercial">
+    <button class="video-close" id="videoClose" aria-label="Close">×</button>
+    <video class="video-player" id="videoPlayer" controls playsinline>
+      <source src="assets/resilife-commercial.mp4" type="video/mp4">
+    </video>
+    <div class="video-fallback" id="videoFallback">Video unavailable. Add assets/resilife-commercial.mp4 to enable playback.</div>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filt').forEach((b) => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.filt').forEach((x) => x.classList.remove('active'));
+    b.classList.add('active');
+    const f = b.dataset.f;
+    document.querySelectorAll('.tile').forEach((t) => {
+      t.style.display = (f === 'all' || t.dataset.cat === f) ? '' : 'none';
+    });
+  });
+});
+
+
+const ssBg = document.getElementById('ssBg');
+const ssBtn = document.getElementById('ssBtn');
+const ssClose = document.getElementById('ssClose');
+const ssInput = document.getElementById('ssInput');
+const ssSubmit = document.getElementById('ssSubmit');
+const ssConfirm = document.getElementById('ssConfirm');
+
+function openSuperSerious() {
+  ssBg.classList.add('open');
+  ssConfirm.classList.remove('show');
+  requestAnimationFrame(() => ssInput.focus());
+}
+
+function closeSuperSerious() {
+  ssBg.classList.remove('open');
+}
+
+ssBtn.addEventListener('click', openSuperSerious);
+ssClose.addEventListener('click', closeSuperSerious);
+ssBg.addEventListener('click', (e) => {
+  if (e.target === ssBg) closeSuperSerious();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && ssBg.classList.contains('open')) closeSuperSerious();
+  if (e.key === 'Enter' && ssBg.classList.contains('open')) ssSubmit.click();
+});
+
+ssSubmit.addEventListener('click', () => {
+  if (!ssInput.value.trim()) {
+    ssInput.focus();
+    return;
+  }
+  ssConfirm.classList.add('show');
+});
+
+const videoOverlay = document.getElementById('videoOverlay');
+const videoPlayer = document.getElementById('videoPlayer');
+const videoClose = document.getElementById('videoClose');
+const videoFallback = document.getElementById('videoFallback');
+
+function openVideo() {
+  videoOverlay.classList.add('open');
+  videoFallback.style.display = 'none';
+  videoPlayer.style.display = 'block';
+  const playPromise = videoPlayer.play();
+  if (playPromise) {
+    playPromise.catch(() => {
+      videoPlayer.style.display = 'none';
+      videoFallback.style.display = 'block';
+    });
+  }
+}
+
+function closeVideo() {
+  videoOverlay.classList.remove('open');
+  videoPlayer.pause();
+  videoPlayer.currentTime = 0;
+}
+
+document.querySelectorAll('.tile-video').forEach((tile) => {
+  tile.addEventListener('click', openVideo);
+});
+
+videoClose.addEventListener('click', closeVideo);
+videoOverlay.addEventListener('click', (e) => {
+  if (e.target === videoOverlay) closeVideo();
+});
+
+videoPlayer.addEventListener('error', () => {
+  videoPlayer.style.display = 'none';
+  videoFallback.style.display = 'block';
+});
+</script>
+
+</body>
+</html>

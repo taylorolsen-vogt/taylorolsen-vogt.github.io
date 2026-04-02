@@ -1,1362 +1,255 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Taylor Olsen-Vogt</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-:root {
-  --bg:      #060b09;
-  --bg2:     #0a1411;
-  --parch:   #f0e8d0;
-  --parch2:  #d4c9a8;
-  --muted:   rgba(240,232,208,0.38);
-  --dim:     rgba(240,232,208,0.13);
-  --gold:    #c8a045;
-  --gold2:   #e8c878;
-  --ph:      #0d2b24;
-  --ph2:     #1a4a3a;
-  --serif:   'Cormorant Garamond', Georgia, serif;
-  --mono:    'DM Mono', monospace;
-}
-
-html, body { width:100%; height:100%; overflow:hidden; background:var(--bg); color:var(--parch); font-family:var(--mono); }
-
-canvas { position:fixed; inset:0; z-index:0; }
-
-button {
-  border:none;
-  background:none;
-  color:inherit;
-  font:inherit;
-}
-
-button:focus-visible,
-input:focus-visible,
-a:focus-visible {
-  outline:1px solid rgba(232,200,120,0.8);
-  outline-offset:2px;
-}
-
-/* ─── GIDEON INTRO ─── */
-#gideon-intro {
-  position:fixed; inset:0; z-index:80;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--bg);
-  transition: opacity 1.2s ease;
-}
-
-#gideon-text {
-  font-family:var(--serif);
-  font-size:clamp(22px,3.5vw,42px);
-  font-weight:300;
-  font-style:italic;
-  color:var(--parch);
-  text-align:center;
-  line-height:1.6;
-  min-height:2.5em;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:0.3em;
-}
-
-.gideon-line {
-  opacity:0;
-  transform:translateY(8px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-
-.gideon-line.show { opacity:1; transform:translateY(0); }
-
-.gideon-cursor {
-  display:inline-block;
-  width:2px; height:1em;
-  background:var(--gold);
-  margin-left:3px;
-  vertical-align:middle;
-  animation:blink 1s step-end infinite;
-}
-
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-
-/* ─── ONBOARDING ─── */
-
-
-/* ─── HUD ─── */
-#hud { position:fixed; inset:0; z-index:10; pointer-events:none; }
-
-#sig {
-  position:absolute; top:32px; left:36px;
-  opacity:0; transition:opacity 0.8s;
-}
-
-#sig-name {
-  font-family:var(--serif);
-  font-size:14px; font-weight:300;
-  letter-spacing:0.16em; color:var(--parch2); line-height:1;
-}
-
-#sig-role {
-  font-size:9px; letter-spacing:0.16em;
-  color:var(--muted); margin-top:5px; font-weight:300;
-}
-
-#hint {
-  position:absolute; bottom:32px; left:50%;
-  transform:translateX(-50%);
-  font-size:9px; letter-spacing:0.22em; text-transform:uppercase;
-  color:var(--dim); font-weight:300;
-  opacity:0; transition:opacity 0.8s; white-space:nowrap;
-}
-
-#status-bar {
-  position:absolute; bottom:32px; right:36px;
-  text-align:right; opacity:0; transition:opacity 0.8s;
-}
-
-.s-line {
-  font-size:9px; letter-spacing:0.13em;
-  color:var(--dim); font-weight:300; line-height:1.9;
-}
-
-.s-line.live { color:rgba(200,160,69,0.4); }
-
-/* ─── LABEL ─── */
-#label {
-  position:fixed; z-index:15; pointer-events:none;
-  opacity:0; transition:opacity 0.35s;
-  transform:translate(-50%,-50%);
-  text-align:center;
-}
-
-#label.show { opacity:1; }
-
-#label-name {
-  font-family:var(--serif);
-  font-size:clamp(15px,2vw,22px);
-  font-style:italic; font-weight:300;
-  color:var(--parch);
-  text-shadow:0 0 32px rgba(200,160,69,0.5);
-  white-space:nowrap;
-}
-
-#label-state {
-  font-size:8px; letter-spacing:0.2em;
-  margin-top:3px; font-weight:300;
-  text-transform:uppercase;
-}
-
-/* ─── PANEL ─── */
-#panel {
-  position:fixed; inset:0; z-index:30;
-  opacity:0; pointer-events:none;
-  transition:opacity 0.5s;
-}
-
-#panel.open { opacity:1; pointer-events:all; }
-
-#panel-backdrop {
-  position:absolute; inset:0;
-  background:linear-gradient(to top,
-    rgba(9,16,14,0.99) 0%,
-    rgba(9,16,14,0.97) 40%,
-    rgba(9,16,14,0.82) 70%,
-    transparent 100%
-  );
-}
-
-#panel-scroll {
-  position:absolute; inset:0;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:rgba(200,160,69,0.2) transparent;
-  padding:clamp(72px,12vh,120px) clamp(24px,6vw,80px) clamp(40px,8vh,96px);
-}
-
-#panel-scroll::-webkit-scrollbar { width:3px; }
-#panel-scroll::-webkit-scrollbar-thumb { background:rgba(200,160,69,0.2); border-radius:2px; }
-
-#panel-inner {
-  max-width:680px;
-  margin:0 auto;
-}
-
-#panel-close {
-  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--muted); cursor:pointer;
-  display:inline-flex; align-items:center; gap:10px;
-  font-weight:300; margin-bottom:32px;
-  transition:color 0.2s;
-}
-
-#panel-close::before { content:'←'; font-size:14px; color:var(--gold); transition:transform 0.2s; }
-#panel-close:hover { color:var(--parch); }
-#panel-close:hover::before { transform:translateX(-4px); }
-
-#panel-state {
-  font-size:9px; letter-spacing:0.26em;
-  text-transform:uppercase; font-weight:300; margin-bottom:6px;
-}
-
-#panel-cat {
-  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--muted); font-weight:300; margin-bottom:18px;
-}
-
-#panel-title {
-  font-family:var(--serif);
-  font-size:clamp(32px,5vw,68px);
-  font-weight:300; font-style:italic;
-  line-height:0.95; color:var(--parch);
-  margin-bottom:24px;
-}
-
-#panel-body {
-  font-family:var(--serif);
-  font-size:clamp(15px,1.6vw,18px);
-  line-height:1.85; color:rgba(240,232,208,0.72);
-  font-weight:300; margin-bottom:28px;
-}
-
-/* Media slot */
-#panel-media {
-  width:100%; aspect-ratio:16/9;
-  background:rgba(13,43,36,0.5);
-  border:1px solid rgba(200,160,69,0.1);
-  margin-bottom:24px;
-  display:none;
-  align-items:center; justify-content:center;
-  font-size:9px; letter-spacing:0.18em;
-  color:var(--dim); text-transform:uppercase;
-}
-
-#panel-media.has-media { display:flex; }
-
-#panel-media img,
-#panel-media video { width:100%; height:100%; object-fit:cover; }
-
-#panel-stack { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:28px; }
-
-.chip {
-  font-size:9px; letter-spacing:0.14em; text-transform:uppercase;
-  color:var(--gold); border:1px solid rgba(200,160,69,0.22);
-  padding:4px 12px; font-weight:300;
-}
-
-#panel-links { display:flex; flex-wrap:wrap; gap:12px; margin-bottom:8px; }
-
-.p-link {
-  font-size:9px; letter-spacing:0.18em; text-transform:uppercase;
-  color:var(--muted); text-decoration:none;
-  border-bottom:1px solid rgba(240,232,208,0.15);
-  padding-bottom:2px;
-  transition:color 0.2s, border-color 0.2s; font-weight:300;
-}
-
-.p-link:hover { color:var(--gold2); border-color:rgba(200,160,69,0.5); }
-
-/* ─── ABOUT PANEL ─── */
-#about-panel {
-  position:fixed; inset:0; z-index:30;
-  opacity:0; pointer-events:none;
-  transition:opacity 0.5s;
-}
-
-#about-panel.open { opacity:1; pointer-events:all; }
-
-#about-backdrop {
-  position:absolute; inset:0;
-  background:rgba(9,16,14,0.97);
-}
-
-#about-scroll {
-  position:absolute; inset:0;
-  overflow-y:auto;
-  scrollbar-width:thin;
-  scrollbar-color:rgba(200,160,69,0.2) transparent;
-  padding:clamp(48px,8vh,96px) clamp(24px,6vw,80px);
-  display:flex; align-items:flex-start; justify-content:center;
-}
-
-#about-inner {
-  max-width:780px; width:100%;
-}
-
-#about-close {
-  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--muted); cursor:pointer;
-  display:inline-flex; align-items:center; gap:10px;
-  font-weight:300; margin-bottom:48px;
-  transition:color 0.2s;
-}
-
-#about-close::before { content:'←'; font-size:14px; color:var(--gold); transition:transform 0.2s; }
-#about-close:hover { color:var(--parch); }
-#about-close:hover::before { transform:translateX(-4px); }
-
-.about-eyebrow {
-  font-size:9px; letter-spacing:0.26em; text-transform:uppercase;
-  color:var(--gold); font-weight:300; margin-bottom:16px;
-}
-
-.about-name {
-  font-family:var(--serif);
-  font-size:clamp(40px,6vw,80px);
-  font-weight:300; font-style:italic;
-  line-height:0.9; color:var(--parch);
-  margin-bottom:12px;
-}
-
-.about-titles {
-  display:flex; flex-direction:column; gap:4px; margin-bottom:40px;
-}
-
-.about-title {
-  font-size:10px; letter-spacing:0.18em; text-transform:uppercase;
-  color:var(--muted); font-weight:300;
-}
-
-.about-title span { color:var(--gold); }
-
-/* Photo placeholder */
-.about-photo {
-  width:100%; max-width:320px;
-  aspect-ratio:3/4;
-  background:var(--ph);
-  border:1px solid rgba(200,160,69,0.12);
-  margin-bottom:40px;
-  display:flex; align-items:center; justify-content:center;
-  font-size:9px; letter-spacing:0.18em; color:var(--dim);
-  text-transform:uppercase; float:right; margin-left:48px;
-}
-
-.about-bio {
-  font-family:var(--serif);
-  font-size:clamp(16px,1.8vw,20px);
-  line-height:1.85; color:rgba(240,232,208,0.72);
-  font-weight:300; margin-bottom:32px;
-}
-
-.about-bio p + p { margin-top:20px; }
-
-.about-stats {
-  display:grid; grid-template-columns:repeat(4,1fr);
-  gap:1px; background:rgba(200,160,69,0.1);
-  border:1px solid rgba(200,160,69,0.1);
-  margin-top:40px; clear:both;
-}
-
-.stat-cell {
-  background:var(--bg); padding:20px 18px;
-}
-
-.stat-n {
-  font-family:var(--serif);
-  font-size:40px; font-weight:300;
-  color:var(--gold); line-height:1; margin-bottom:4px;
-}
-
-.stat-l {
-  font-size:8px; letter-spacing:0.2em;
-  text-transform:uppercase; color:var(--muted); font-weight:300;
-}
-
-/* ─── GIDEON CHAT ─── */
-#gideon-chat {
-  position:fixed; z-index:40;
-  width:280px;
-  background:rgba(9,16,14,0.97);
-  border:1px solid rgba(200,160,69,0.2);
-  padding:20px;
-  opacity:0; pointer-events:none;
-  transition:opacity 0.4s, transform 0.4s;
-  transform:translateY(8px);
-  bottom:80px;
-}
-
-#gideon-chat.open {
-  opacity:1; pointer-events:all; transform:translateY(0);
-}
-
-#gideon-chat-header {
-  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--gold); margin-bottom:12px; font-weight:300;
-  display:flex; justify-content:space-between; align-items:center;
-}
-
-#gideon-chat-close {
-  cursor:pointer; color:var(--muted); font-size:14px;
-  transition:color 0.2s; line-height:1;
-}
-#gideon-chat-close:hover { color:var(--parch); }
-
-#gideon-messages {
-  min-height:60px; max-height:180px;
-  overflow-y:auto; margin-bottom:12px;
-  font-family:var(--serif);
-  font-size:14px; font-style:italic; font-weight:300;
-  color:var(--parch2); line-height:1.7;
-  scrollbar-width:none;
-}
-
-#gideon-input-row {
-  display:flex; gap:8px; align-items:center;
-  border-top:1px solid rgba(200,160,69,0.12);
-  padding-top:12px;
-}
-
-#gideon-input {
-  flex:1; background:transparent;
-  border:none; outline:none;
-  font-family:var(--mono); font-size:11px;
-  color:var(--parch); letter-spacing:0.06em;
-  font-weight:300;
-}
-
-#gideon-input::placeholder { color:var(--dim); }
-
-#gideon-send {
-  font-size:9px; letter-spacing:0.12em;
-  color:var(--gold); cursor:pointer;
-  font-weight:300; text-transform:uppercase;
-  border:none; background:none;
-  transition:color 0.2s; font-family:var(--mono);
-}
-
-#gideon-send:hover { color:var(--gold2); }
-
-/* ─── ABOUT BUTTON ─── */
-#about-btn {
-  position:fixed; top:32px; right:36px; z-index:15;
-  font-size:9px; letter-spacing:0.2em; text-transform:uppercase;
-  color:var(--muted); cursor:pointer; font-weight:300;
-  opacity:0; transition:opacity 0.8s, color 0.2s;
-  pointer-events:none;
-}
-
-#about-btn:hover { color:var(--gold); }
-#about-btn.show { opacity:1; pointer-events:all; }
-
-/* ─── SEARCH ─── */
-#search-wrap {
-  position:fixed; top:32px; left:50%;
-  transform:translateX(-50%);
-  z-index:15;
-  display:flex; align-items:center; gap:8px;
-  opacity:0; transition:opacity 0.8s;
-  pointer-events:none;
-}
-#search-wrap.show { opacity:1; pointer-events:all; }
-
-#search-input {
-  background:transparent;
-  border:none;
-  border-bottom:1px solid rgba(200,160,69,0.18);
-  outline:none;
-  font-family:var(--mono); font-size:10px;
-  letter-spacing:0.14em; color:var(--parch);
-  width:180px; padding:4px 0; font-weight:300;
-  transition:border-color 0.2s, width 0.3s;
-}
-#search-input:focus { border-color:rgba(200,160,69,0.6); width:240px; }
-#search-input::placeholder { color:var(--dim); }
-#search-input::-webkit-search-cancel-button { display:none; }
-
-#search-clear {
-  font-size:14px; color:var(--muted);
-  opacity:0; transition:opacity 0.2s, color 0.2s;
-  pointer-events:none; cursor:pointer; line-height:1;
-  background:none; border:none; font-family:inherit;
-}
-#search-clear.visible { opacity:1; pointer-events:all; }
-#search-clear:hover { color:var(--gold); }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taylor Olsen-Vogt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --paper: #fbfbf8;
+      --paper-2: #f1f1ed;
+      --ink: #0a0a0c;
+      --ink-soft: rgba(10, 10, 12, 0.62);
+      --ink-dim: rgba(10, 10, 12, 0.34);
+      --line: rgba(10, 10, 12, 0.42);
+      --line-hover: rgba(10, 10, 12, 0.82);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: var(--paper);
+      color: var(--ink);
+    }
+
+    body {
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+      position: relative;
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.98), transparent 40%),
+        radial-gradient(circle at 88% 84%, rgba(0, 0, 0, 0.08), transparent 40%),
+        linear-gradient(154deg, var(--paper) 0%, var(--paper-2) 58%, #ecece7 100%);
+    }
+
+    .grain {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      opacity: 0.16;
+      background-image: radial-gradient(rgba(0, 0, 0, 0.07) 0.45px, transparent 0.45px);
+      background-size: 3px 3px;
+      mix-blend-mode: multiply;
+    }
+
+    #intro-fade {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      background: #000;
+      opacity: 1;
+      pointer-events: none;
+      animation: quickFadeToWhite 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes quickFadeToWhite {
+      0% {
+        background: #000;
+        opacity: 1;
+      }
+      72% {
+        background: #fff;
+        opacity: 1;
+      }
+      100% {
+        background: #fff;
+        opacity: 0;
+      }
+    }
+
+    .stage {
+      position: relative;
+      z-index: 2;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      padding: clamp(28px, 5vw, 56px);
+    }
+
+    .hero {
+      width: min(780px, 100%);
+      display: grid;
+      gap: clamp(36px, 7vh, 68px);
+      animation: riseIn 900ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
+    }
+
+    @keyframes riseIn {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .name-block {
+      text-align: center;
+    }
+
+    .name {
+      font-family: var(--serif);
+      font-size: clamp(52px, 9vw, 88px);
+      line-height: 0.92;
+      letter-spacing: 0.01em;
+      font-weight: 400;
+      color: var(--ink);
+    }
+
+    .name em {
+      font-style: italic;
+      color: rgba(10, 10, 12, 0.48);
+      font-weight: 300;
+    }
+
+    .descriptor {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--ink-soft);
+      font-size: clamp(11px, 1.5vw, 14px);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 400;
+    }
+
+    .dot {
+      color: var(--ink-dim);
+    }
+
+    .pathways {
+      width: min(420px, 100%);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.42);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.06);
+    }
+
+    .path-btn {
+      border: 0;
+      border-right: 1px solid var(--line);
+      background: transparent;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-family: var(--sans);
+      font-size: clamp(9px, 1vw, 11px);
+      font-weight: 500;
+      padding: 14px 10px;
+      text-decoration: none;
+      text-align: center;
+      transition: color 220ms ease, background-color 220ms ease;
+    }
+
+    .path-btn:last-child {
+      border-right: 0;
+    }
+
+    .path-btn:hover,
+    .path-btn:focus-visible {
+      color: #f7f7f4;
+      background: #0a0a0c;
+      outline: none;
+    }
+
+    .subcopy {
+      text-align: center;
+      color: var(--ink-dim);
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      min-height: 1.2em;
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        gap: 40px;
+      }
+
+      .descriptor {
+        gap: 8px;
+        letter-spacing: 0.15em;
+      }
+
+      .pathways {
+        width: min(340px, 100%);
+      }
+
+      .path-btn {
+        padding: 12px 8px;
+        letter-spacing: 0.14em;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+  <div id="intro-fade" aria-hidden="true"></div>
 
-<canvas id="c" aria-label="Interactive portfolio constellation"></canvas>
+  <main class="stage">
+    <section class="hero" aria-label="Landing page">
+      <header class="name-block">
+        <h1 class="name">Taylor <em>Olsen-Vogt</em></h1>
+        <p class="descriptor" id="descriptor-line">
+          <span>Software</span>
+          <span class="dot">•</span>
+          <span>Hardware</span>
+          <span class="dot">•</span>
+          <span>Marketing</span>
+        </p>
+      </header>
 
-<!-- GIDEON INTRO -->
-<div id="gideon-intro">
-  <div id="gideon-text">
-    <span class="gideon-line" id="gl1">Hello, I am Gideon.</span>
-    <div id="gideon-birth" style="
-      width:12px; height:12px; border-radius:50%;
-      background:radial-gradient(circle, rgba(255,248,200,0.95) 0%, rgba(200,160,69,0.6) 50%, transparent 100%);
-      box-shadow: 0 0 24px 8px rgba(200,160,69,0.4), 0 0 60px 20px rgba(200,160,69,0.15);
-      opacity:0; margin:20px auto;
-      transition: opacity 0.8s ease, transform 0.8s ease, width 0.6s ease, height 0.6s ease, box-shadow 0.8s ease;
-      transform: scale(0.2);
-    "></div>
-    <span class="gideon-line" id="gl2">I will be your guide.</span>
-  </div>
-</div>
-
-<!-- HUD -->
-<div id="hud">
-  <div id="sig">
-    <div id="sig-name">Taylor Olsen-Vogt</div>
-    <div id="sig-role">
-      Co-Founder &amp; Principal Engineer — Redstone Laboratories<br>
-      Principal Engineer — LIDI &nbsp;·&nbsp; Boston, MA
-    </div>
-  </div>
-  <div id="hint">Move to explore &nbsp;·&nbsp; Click a light to open</div>
-  <div id="status-bar">
-    <div class="s-line live">● live</div>
-    <div class="s-line" id="s-building"></div>
-    <div class="s-line" id="s-time"></div>
-  </div>
-</div>
-
-<button id="about-btn" type="button">About</button>
-
-<!-- SEARCH -->
-<div id="search-wrap">
-  <input id="search-input" type="search" placeholder="Search projects, topics, stack…" autocomplete="off" spellcheck="false">
-  <button id="search-clear" type="button" aria-label="Clear search">×</button>
-</div>
-
-<!-- LABEL -->
-<div id="label">
-  <div id="label-name"></div>
-  <div id="label-state"></div>
-</div>
-
-<!-- PROJECT PANEL -->
-<div id="panel">
-  <div id="panel-backdrop"></div>
-  <div id="panel-scroll">
-    <div id="panel-inner">
-      <button id="panel-close" type="button">Back to the work</button>
-      <div id="panel-state"></div>
-      <div id="panel-cat"></div>
-      <div id="panel-title"></div>
-      <div id="panel-body"></div>
-      <div id="panel-media"></div>
-      <div id="panel-stack"></div>
-      <div id="panel-links"></div>
-    </div>
-  </div>
-</div>
-
-<!-- ABOUT PANEL -->
-<div id="about-panel">
-  <div id="about-backdrop"></div>
-  <div id="about-scroll">
-    <div id="about-inner">
-      <button id="about-close" type="button">Back to the work</button>
-      <div class="about-eyebrow">About</div>
-      <div class="about-name">Taylor Olsen-Vogt</div>
-      <div class="about-titles">
-        <div class="about-title">Co-Founder &amp; Principal Engineer — <span>Redstone Laboratories LLC</span></div>
-        <div class="about-title">Principal Engineer — <span>LIDI</span></div>
-        <div class="about-title">iOS Developer — <span>ResiLife · Elite Home Fitness Solution</span></div>
-        <div class="about-title">EE Candidate — <span>Florida International University</span></div>
+      <div class="pathways" role="group" aria-label="Choose a mode">
+        <a class="path-btn" id="btn-serious" href="serious.html">Serious</a>
+        <a class="path-btn" id="btn-unserious" href="unserious.html">Unserious</a>
       </div>
-      <div class="about-photo">[ Photo ]</div>
-      <div class="about-bio">
-        <p>I build things that most people keep in separate departments. My work crosses hardware, embedded systems, robotics, mobile software, AI agent architecture, and visual production — not because I couldn't specialize, but because the interesting problems live at the intersections.</p>
-        <p>Co-founder and principal engineer at Redstone Laboratories, an applied engineering lab building custom robotics integration for warehouse and agricultural clients in New England. I also lead software at LIDI, our software arm, and work as iOS developer on ResiLife for Elite Home Fitness Solution.</p>
-        <p>I'm completing an electrical engineering degree at FIU while running production systems. My long-term interest is in AI with genuine physical presence — autonomous agents with real mechanical bodies, operating in the real world. That work is already underway.</p>
-        <p>Everything in this space is mine. Some of it is finished. Most of it is still becoming.</p>
-      </div>
-      <div class="about-stats">
-        <div class="stat-cell"><div class="stat-n">4+</div><div class="stat-l">Disciplines</div></div>
-        <div class="stat-cell"><div class="stat-n">2</div><div class="stat-l">Companies</div></div>
-        <div class="stat-cell"><div class="stat-n">10+</div><div class="stat-l">Projects</div></div>
-        <div class="stat-cell"><div class="stat-n">∞</div><div class="stat-l">Appetite</div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- GIDEON CHAT -->
-<div id="gideon-chat">
-  <div id="gideon-chat-header">
-    Gideon
-    <button id="gideon-chat-close" type="button" aria-label="Close Gideon chat">×</button>
-  </div>
-  <div id="gideon-messages"></div>
-  <div id="gideon-input-row">
-    <input id="gideon-input" placeholder="Ask Gideon...">
-    <button id="gideon-send" type="button">Send</button>
-  </div>
-</div>
-
-<script>
-// ─── DATA ───
-const PROJECTS = [
-  {
-    name:'Redstone Laboratories', cat:'Venture · Co-Founder · Principal Engineer',
-    body:'Applied engineering at the intersection of hardware, software, and AI. Custom robotics integration for warehouse and agricultural clients in New England. The company inside which everything else lives.',
-    stack:['Robotics','AI Systems','Embedded','Client Integration','Boston MA'],
-    links:[{label:'Website',url:'#'},{label:'Contact',url:'#'}],
-    media:null,
-    state:'complete', r:18, brightness:1.0,
-    x:0.20, y:0.45,
-    dp:{sx:0.00012,sy:0.00009,px:0,py:0},
-  },
-  {
-    name:'LIDI', cat:'Venture · Principal Engineer',
-    body:'Software arm of Redstone Laboratories. Client iOS development, commercial video production, applied AI tooling. Where software and creative production meet the same standards as the hardware work.',
-    stack:['iOS Dev','AI Tooling','Commercial Production','Client Work'],
-    links:[{label:'Website',url:'#'}],
-    media:null,
-    state:'complete', r:11, brightness:0.85,
-    x:0.30, y:0.33,
-    dp:{sx:0.00015,sy:0.00011,px:1.1,py:2.0},
-  },
-  {
-    name:'Mach 1', cat:'Robotics · Embedded Systems',
-    body:'First-generation physical robot platform for Redstone Laboratories. Hiwonder mecanum chassis, Jetson Orin Nano onboard. Firmware bugs diagnosed and resolved — motor driver crashes above speed 40, I²C bus lockup under load, encoder averaging inconsistencies affecting odometry. The first real body for Gideon.',
-    stack:['Python','I²C','Jetson Orin Nano','Hiwonder SDK','ROS2','Encoder Firmware'],
-    links:[{label:'GitHub',url:'#'}],
-    media:null,
-    state:'complete', r:9, brightness:0.88,
-    x:0.40, y:0.63,
-    dp:{sx:0.0002,sy:0.00013,px:0.5,py:1.2},
-  },
-  {
-    name:'Mach 2', cat:'Robotics · Design',
-    body:'Second-generation platform. In design and parts selection. Built on everything Mach 1 taught — improved mechanical tolerances, expanded sensor suite, cleaner power architecture. The next body.',
-    stack:['Active Design','Parts Selection'],
-    links:[],
-    media:null,
-    state:'building', r:7, brightness:0.58,
-    x:0.53, y:0.57,
-    dp:{sx:0.00017,sy:0.00014,px:2.1,py:0.8},
-  },
-  {
-    name:'Gideon', cat:'AI Agent · Personal',
-    body:'Autonomous AI agent. Claude-based, running locally on a Jetson AGX Xavier — the mind. Mach 1 is the body. Air-gapped-first via OpenClaw. No cloud dependency by design. The thing everything in this space has been building toward.',
-    stack:['Claude API','Jetson AGX Xavier','OpenClaw','Python','ROS2','Local Inference'],
-    links:[],
-    media:null,
-    state:'building', r:14, brightness:0.72,
-    x:0.63, y:0.37,
-    dp:{sx:0.00010,sy:0.00008,px:3.2,py:1.8},
-  },
-  {
-    name:'The Archive', cat:'Software · WebGL · Personal',
-    body:'Interactive 3D timeline of Earth\'s 4.5 billion year geological history. Three.js, GitHub Pages. The vision is larger — a spatiotemporal platform for any knowledge domain across time and space. Making deep time navigable and visceral rather than abstract.',
-    stack:['Three.js','WebGL','JavaScript','GitHub Pages'],
-    links:[{label:'Live',url:'#'},{label:'GitHub',url:'#'}],
-    media:null,
-    state:'building', r:10, brightness:0.78,
-    x:0.24, y:0.27,
-    dp:{sx:0.00013,sy:0.00016,px:1.5,py:3.1},
-  },
-  {
-    name:'ResiLife', cat:'iOS · Swift · Client',
-    body:'Native Swift iOS app for luxury residential fitness amenities. Full Apple Developer enrollment, code signing, provisioning. Complete light/dark mode color system with terracotta accent. Deployed to client devices including iOS beta and iPad. Also produced AI-generated commercial for the platform.',
-    stack:['Swift','SwiftUI','Xcode','TestFlight','Apple Developer'],
-    links:[{label:'App Store',url:'#'}],
-    media:null,
-    state:'complete', r:8, brightness:0.80,
-    x:0.74, y:0.54,
-    dp:{sx:0.00018,sy:0.00012,px:0.9,py:2.4},
-  },
-  {
-    name:'FORGE', cat:'Software · 3D Tools · LIDI',
-    body:'Browser-based 3D mesh editor with real-time sculpting and AI copilot. Started as a dental retractor modification problem for a neighbor dentist. Became a tool for touching physical objects through a screen — fast iteration without desktop CAD.',
-    stack:['Three.js','WebGL','Claude API','JavaScript'],
-    links:[{label:'Demo',url:'#'},{label:'GitHub',url:'#'}],
-    media:null,
-    state:'building', r:7, brightness:0.68,
-    x:0.46, y:0.24,
-    dp:{sx:0.00014,sy:0.00017,px:2.8,py:0.6},
-  },
-  {
-    name:'Power Beaming', cat:'Research · Electrical Engineering',
-    body:'Research into wireless power transmission via focused electromagnetic radiation — laser, microwave, RF. For autonomous robots that can\'t be tethered. Running alongside EE coursework at FIU. Still becoming what it is.',
-    stack:['RF Engineering','Power Systems','Electromagnetism','FIU EE'],
-    links:[],
-    media:null,
-    state:'becoming', r:5, brightness:0.42,
-    x:0.79, y:0.27,
-    dp:{sx:0.00022,sy:0.00015,px:1.7,py:3.8},
-  },
-  {
-    name:'Commercial Production', cat:'Creative · AI Pipeline · LIDI',
-    body:'End-to-end commercial video via AI-native pipeline. Full creative direction, generation, editorial post-production. Equinox-aesthetic fitness and luxury brand work. The tools are new; the eye for it isn\'t. Clients include Elite Home Fitness Solution and Florida fitness conference production.',
-    stack:['Gemini Image 3','FAL.AI','Veo','Kling','Movavi'],
-    links:[],
-    media:null,
-    state:'complete', r:7, brightness:0.74,
-    x:0.64, y:0.73,
-    dp:{sx:0.00016,sy:0.00010,px:3.5,py:2.2},
-  },
-  {
-    name:'EWAG', cat:'Research · Redstone',
-    body:'Active research under Redstone Laboratories. Still being defined. Details available on request.',
-    stack:[],
-    links:[],
-    media:null,
-    state:'becoming', r:4, brightness:0.32,
-    x:0.35, y:0.75,
-    dp:{sx:0.00019,sy:0.00013,px:4.1,py:1.3},
-  },
-];
-
-const STATE_COLORS = { complete:'#c8a045', building:'rgba(200,160,69,0.52)', becoming:'rgba(240,232,208,0.22)' };
-const STATE_LABELS = { complete:'Complete', building:'Building', becoming:'Becoming' };
-
-// ─── CANVAS ───
-const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d');
-let W, H;
-function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
-resize();
-window.addEventListener('resize', resize);
-
-// ─── STATE ───
-let running = false;
-let t = 0;
-let mouse = { x:0, y:0 };
-let parallax = { x:0, y:0, tx:0, ty:0 };
-let hoveredIdx = -1;
-let selectedIdx = -1;
-let panelOpen = false;
-let aboutOpen = false;
-let gideonOpen = false;
-let lastClockSecond = -1;
-
-const screenPos = PROJECTS.map(()=>({x:0,y:0}));
-
-let searchQuery = '';
-let matchSet = null;
-
-// Gideon sparkle
-const gideon = {
-  x:0, y:0, tx:0, ty:0,
-  targetIdx:-1,
-  wanderT:0,
-  phase:0,
-  sparkles:[],
-  chatOpen:false,
-};
-
-// ─── GIDEON INTRO SEQUENCE ───
-function runIntro() {
-  const l1 = document.getElementById('gl1');
-  const l2 = document.getElementById('gl2');
-  const birth = document.getElementById('gideon-birth');
-
-  // Line 1 appears
-  setTimeout(()=>{ l1.classList.add('show'); }, 250);
-
-  // In the pause — Gideon forms as a sparkle between the lines
-  setTimeout(()=>{
-    birth.style.opacity = '1';
-    birth.style.transform = 'scale(1)';
-  }, 850);
-
-  // Sparkle pulses slightly — it's alive
-  setTimeout(()=>{
-    birth.style.boxShadow = '0 0 32px 12px rgba(200,160,69,0.55), 0 0 80px 28px rgba(200,160,69,0.2)';
-    birth.style.width = '16px';
-    birth.style.height = '16px';
-  }, 1200);
-
-  // Line 2 appears — Gideon speaks again
-  setTimeout(()=>{ l2.classList.add('show'); }, 1500);
-
-  // Gideon drifts upward and out — beginning to move
-  setTimeout(()=>{
-    birth.style.transition = 'opacity 1.4s ease, transform 1.6s cubic-bezier(0.22,1,0.36,1)';
-    birth.style.opacity = '0.3';
-    birth.style.transform = 'translateY(-60px) scale(0.7)';
-  }, 1850);
-
-  // Fade the whole intro
-  setTimeout(()=>{
-    const intro = document.getElementById('gideon-intro');
-    intro.style.opacity = '0';
-    // Position Gideon sparkle at center for when canvas starts
-    gideon.x = W * 0.5;
-    gideon.y = H * 0.5;
-    setTimeout(()=>{
-      intro.style.display = 'none';
-      startExplore();
-    }, 650);
-  }, 2200);
-}
-
-function startExplore() {
-  if (running) return;
-  running = true;
-  document.getElementById('sig').style.opacity = '1';
-  document.getElementById('hint').style.opacity = '1';
-  document.getElementById('status-bar').style.opacity = '1';
-  document.getElementById('about-btn').classList.add('show');
-  const b = PROJECTS.filter(p=>p.state==='building').length;
-  document.getElementById('s-building').textContent = `${b} building`;
-  document.getElementById('search-wrap').classList.add('show');
-  // Init Gideon position
-  gideon.x = W * 0.5; gideon.y = H * 0.5;
-  frame();
-}
-
-function escapeHtml(text) {
-  return String(text)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#39;');
-}
-
-function isSafeExternalUrl(url) {
-  if (!url || url === '#') return true;
-  try {
-    const parsed = new URL(url, window.location.href);
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:';
-  } catch {
-    return false;
-  }
-}
-
-function renderStack(stack) {
-  const sc = document.getElementById('panel-stack');
-  sc.innerHTML = '';
-  stack.forEach(item => {
-    const chip = document.createElement('span');
-    chip.className = 'chip';
-    chip.textContent = item;
-    sc.appendChild(chip);
-  });
-}
-
-function renderLinks(links) {
-  const lc = document.getElementById('panel-links');
-  lc.innerHTML = '';
-  links.forEach(link => {
-    if (!isSafeExternalUrl(link.url)) return;
-    const a = document.createElement('a');
-    a.className = 'p-link';
-    a.href = link.url;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.textContent = `${link.label} →`;
-    lc.appendChild(a);
-  });
-}
-
-function renderMedia(media) {
-  const mc = document.getElementById('panel-media');
-  mc.innerHTML = '';
-  if (!media) {
-    mc.classList.remove('has-media');
-    return;
-  }
-  mc.classList.add('has-media');
-  if (typeof media === 'string') {
-    // Keep compatibility for existing string media snippets while sanitizing text-only content.
-    mc.innerHTML = media;
-  } else {
-    mc.textContent = escapeHtml(String(media));
-  }
-}
-
-function doSearch(q) {
-  searchQuery = q.trim().toLowerCase();
-  if (!searchQuery) { matchSet = null; return; }
-  matchSet = new Set();
-  PROJECTS.forEach((p, i) => {
-    const haystack = [p.name, p.cat, p.body, ...p.stack].join(' ').toLowerCase();
-    if (haystack.includes(searchQuery)) matchSet.add(i);
-  });
-}
-
-function bindUiEvents() {
-  document.getElementById('about-btn').addEventListener('click', openAbout);
-  document.getElementById('panel-close').addEventListener('click', closePanel);
-  document.getElementById('about-close').addEventListener('click', closeAbout);
-  document.getElementById('gideon-chat-close').addEventListener('click', closeGideon);
-  document.getElementById('gideon-send').addEventListener('click', sendMessage);
-  document.getElementById('gideon-input').addEventListener('keydown', handleInput);
-  document.getElementById('panel').addEventListener('click', handlePanelBackdropClick);
-  document.getElementById('about-panel').addEventListener('click', handleAboutBackdropClick);
-
-  window.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    if (gideonOpen) closeGideon();
-    else if (panelOpen) closePanel();
-    else if (aboutOpen) closeAbout();
-    else if (searchQuery) {
-      document.getElementById('search-input').value = '';
-      doSearch('');
-      document.getElementById('search-clear').classList.remove('visible');
-    }
-  });
-
-  document.getElementById('search-input').addEventListener('input', e => {
-    doSearch(e.target.value);
-    document.getElementById('search-clear').classList.toggle('visible', e.target.value.length > 0);
-  });
-  document.getElementById('search-clear').addEventListener('click', () => {
-    document.getElementById('search-input').value = '';
-    doSearch('');
-    document.getElementById('search-clear').classList.remove('visible');
-  });
-}
-
-// ─── MOUSE ───
-window.addEventListener('mousemove', e => {
-  mouse.x = e.clientX; mouse.y = e.clientY;
-  parallax.tx = (e.clientX/W - 0.5) * -55;
-  parallax.ty = (e.clientY/H - 0.5) * -35;
-  if (!panelOpen && !aboutOpen) checkHover();
-});
-
-canvas.addEventListener('click', e => {
-  if (panelOpen || aboutOpen) return;
-  // Check Gideon sparkle click
-  const gdx = Math.hypot(e.clientX - gideon.x, e.clientY - gideon.y);
-  if (gdx < 22) { toggleGideon(); return; }
-  const idx = getHit(e.clientX, e.clientY);
-  if (idx >= 0) openProject(idx);
-});
-
-canvas.addEventListener('touchmove', e => {
-  const t0 = e.touches[0];
-  parallax.tx = (t0.clientX/W - 0.5) * -40;
-  parallax.ty = (t0.clientY/H - 0.5) * -28;
-  mouse.x = t0.clientX; mouse.y = t0.clientY;
-  if (!panelOpen && !aboutOpen) checkHover();
-}, {passive:true});
-
-canvas.addEventListener('touchend', e => {
-  if (panelOpen || aboutOpen) return;
-  const t0 = e.changedTouches[0];
-  const gdx = Math.hypot(t0.clientX - gideon.x, t0.clientY - gideon.y);
-  if (gdx < 28) { toggleGideon(); return; }
-  const idx = getHit(t0.clientX, t0.clientY);
-  if (idx >= 0) openProject(idx);
-});
-
-// ─── HIT TEST ───
-function getHit(mx, my) {
-  let best = -1, bestD = Infinity;
-  PROJECTS.forEach((p, i) => {
-    const d = Math.hypot(mx - screenPos[i].x, my - screenPos[i].y);
-    if (d < 52 && d < bestD) { bestD = d; best = i; }
-  });
-  return best;
-}
-
-function checkHover() {
-  const idx = getHit(mouse.x, mouse.y);
-  if (idx !== hoveredIdx) {
-    hoveredIdx = idx;
-    const lbl = document.getElementById('label');
-    if (idx >= 0) {
-      canvas.style.cursor = 'pointer';
-      document.getElementById('label-name').textContent = PROJECTS[idx].name;
-      const sl = document.getElementById('label-state');
-      sl.textContent = STATE_LABELS[PROJECTS[idx].state];
-      sl.style.color = STATE_COLORS[PROJECTS[idx].state];
-      lbl.classList.add('show');
-      // Gideon drifts toward hovered project
-      gideon.targetIdx = idx;
-    } else {
-      canvas.style.cursor = 'default';
-      lbl.classList.remove('show');
-      gideon.targetIdx = -1;
-    }
-  }
-  if (hoveredIdx >= 0) {
-    const lbl = document.getElementById('label');
-    lbl.style.left = screenPos[hoveredIdx].x + 'px';
-    lbl.style.top = (screenPos[hoveredIdx].y - 52) + 'px';
-  }
-}
-
-// ─── OPEN/CLOSE ───
-function openProject(idx) {
-  selectedIdx = idx;
-  panelOpen = true;
-  const p = PROJECTS[idx];
-  document.getElementById('panel-state').textContent = STATE_LABELS[p.state];
-  document.getElementById('panel-state').style.color = STATE_COLORS[p.state];
-  document.getElementById('panel-cat').textContent = p.cat;
-  document.getElementById('panel-title').textContent = p.name;
-  document.getElementById('panel-body').textContent = p.body;
-  renderStack(p.stack);
-  renderLinks(p.links);
-  renderMedia(p.media);
-  document.getElementById('panel').classList.add('open');
-  document.getElementById('panel-scroll').scrollTop = 0;
-  document.getElementById('label').classList.remove('show');
-  document.getElementById('hint').style.opacity = '0';
-  // Gideon moves near selected
-  gideon.targetIdx = idx;
-}
-
-function closePanel() {
-  panelOpen = false; selectedIdx = -1;
-  document.getElementById('panel').classList.remove('open');
-  document.getElementById('hint').style.opacity = '1';
-  gideon.targetIdx = -1;
-}
-
-function handlePanelBackdropClick(e) {
-  if (!panelOpen) return;
-  if (e.target.id === 'panel' || e.target.id === 'panel-backdrop') closePanel();
-}
-
-function openAbout() {
-  aboutOpen = true;
-  document.getElementById('about-panel').classList.add('open');
-  document.getElementById('hint').style.opacity = '0';
-}
-
-function closeAbout() {
-  aboutOpen = false;
-  document.getElementById('about-panel').classList.remove('open');
-  document.getElementById('hint').style.opacity = '1';
-}
-
-function handleAboutBackdropClick(e) {
-  if (!aboutOpen) return;
-  if (e.target.id === 'about-panel' || e.target.id === 'about-backdrop') closeAbout();
-}
-
-function toggleGideon() {
-  gideonOpen = !gideonOpen;
-  const chat = document.getElementById('gideon-chat');
-  if (gideonOpen) {
-    // Position chat near gideon sparkle
-    const clampedLeft = Math.max(12, Math.min(gideon.x - 140, W - 292));
-    const clampedTop = Math.max(12, Math.min(gideon.y + 20, H - 252));
-    chat.style.left = clampedLeft + 'px';
-    chat.style.top = clampedTop + 'px';
-    chat.style.bottom = '';
-    chat.classList.add('open');
-    if (document.getElementById('gideon-messages').children.length === 0) {
-      addGideonMessage("Hello. I'm Gideon. Ask me about Taylor's work.");
-    }
-  } else {
-    chat.classList.remove('open');
-  }
-}
-
-function closeGideon() {
-  gideonOpen = false;
-  document.getElementById('gideon-chat').classList.remove('open');
-}
-
-function addGideonMessage(text) {
-  const el = document.createElement('div');
-  el.style.marginBottom = '10px';
-  el.textContent = text;
-  document.getElementById('gideon-messages').appendChild(el);
-  document.getElementById('gideon-messages').scrollTop = 999;
-}
-
-function addUserMessage(text) {
-  const el = document.createElement('div');
-  el.style.cssText = 'margin-bottom:10px;color:rgba(200,160,69,0.7);font-style:normal;font-size:12px;font-family:var(--mono);letter-spacing:0.04em;';
-  el.textContent = '> ' + text;
-  document.getElementById('gideon-messages').appendChild(el);
-  document.getElementById('gideon-messages').scrollTop = 999;
-}
-
-const GIDEON_RESPONSES = {
-  default: [
-    "That's something Taylor is still building.",
-    "I'd point you toward the lights. Each one holds an answer.",
-    "Taylor built me to help navigate this space. Ask me about any project.",
-    "I'm still learning too. We're both becoming.",
-  ],
-  redstone:  "Redstone Laboratories is Taylor's applied engineering company. Hardware, software, AI — all under one roof in Boston.",
-  lidi:      "LIDI is the software arm. Client work, iOS development, production. Where the software lives.",
-  mach:      "Mach 1 is my first body. Mach 2 will be better. Taylor is still designing it.",
-  gideon:    "You're talking to me. I run on a Jetson AGX Xavier. Taylor keeps me local — no cloud dependency by design.",
-  archive:   "The Archive is Taylor's attempt to hold time in her hands. 4.5 billion years, navigable.",
-  forge:     "FORGE started as a dental retractor problem. Now it's a browser-based mesh editor with me inside it.",
-  resilife:  "ResiLife is a Swift iOS app Taylor built for luxury residential fitness. Live in the App Store.",
-  power:     "Power beaming research — wireless energy transmission for robots that can't be tethered. Still becoming.",
-};
-
-function getResponse(msg) {
-  const m = msg.toLowerCase();
-  if (m.includes('redstone')) return GIDEON_RESPONSES.redstone;
-  if (m.includes('lidi'))     return GIDEON_RESPONSES.lidi;
-  if (m.includes('mach'))     return GIDEON_RESPONSES.mach;
-  if (m.includes('gideon') || m.includes('you') || m.includes('who are you')) return GIDEON_RESPONSES.gideon;
-  if (m.includes('archive'))  return GIDEON_RESPONSES.archive;
-  if (m.includes('forge'))    return GIDEON_RESPONSES.forge;
-  if (m.includes('resilife') || m.includes('resi')) return GIDEON_RESPONSES.resilife;
-  if (m.includes('power'))    return GIDEON_RESPONSES.power;
-  const arr = GIDEON_RESPONSES.default;
-  return arr[Math.floor(Math.random() * arr.length)];
-}
-
-function sendMessage() {
-  const inp = document.getElementById('gideon-input');
-  const msg = inp.value.trim();
-  if (!msg) return;
-  addUserMessage(msg);
-  inp.value = '';
-  setTimeout(()=> addGideonMessage(getResponse(msg)), 600);
-}
-
-function handleInput(e) { if (e.key === 'Enter') sendMessage(); }
-
-// ─── DRAW ───
-function drawBg() {
-  const g = ctx.createRadialGradient(W*0.42, H*0.48, 0, W*0.42, H*0.48, Math.max(W,H)*0.8);
-  g.addColorStop(0, '#0d1512');
-  g.addColorStop(0.45, '#0a120f');
-  g.addColorStop(1, '#050c0a');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,W,H);
-}
-
-function drawConnections() {
-  const maxDist = Math.min(W, H) * 0.37;
-  const nearestCount = 3;
-  const links = new Set();
-  const breath = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(t * 0.95));
-
-  PROJECTS.forEach((_, i) => {
-    const neighbors = [];
-    PROJECTS.forEach((__, j) => {
-      if (i === j) return;
-      const d = Math.hypot(screenPos[i].x - screenPos[j].x, screenPos[i].y - screenPos[j].y);
-      if (d <= maxDist) neighbors.push({ j, d });
-    });
-    neighbors.sort((a, b) => a.d - b.d);
-    neighbors.slice(0, nearestCount).forEach(n => {
-      const a = Math.min(i, n.j);
-      const b = Math.max(i, n.j);
-      links.add(`${a}-${b}`);
-    });
-  });
-
-  links.forEach(link => {
-    const [a, b] = link.split('-').map(Number);
-    const ax = screenPos[a].x, ay = screenPos[a].y;
-    const bx = screenPos[b].x, by = screenPos[b].y;
-    const d = Math.hypot(ax - bx, ay - by);
-    const proximity = 1 - Math.min(d / maxDist, 1);
-    const localPulse = 0.65 + 0.35 * Math.sin(t * 0.75 + (a + b) * 0.9);
-    const pulse = breath * localPulse;
-    const alpha = (0.08 + proximity * 0.28) * pulse;
-
-    const g = ctx.createLinearGradient(ax, ay, bx, by);
-    g.addColorStop(0, `rgba(200,160,69,${alpha})`);
-    g.addColorStop(0.5, `rgba(200,160,69,${alpha * 0.6})`);
-    g.addColorStop(1, `rgba(200,160,69,${alpha})`);
-    ctx.beginPath();
-    ctx.moveTo(ax, ay);
-    ctx.lineTo(bx, by);
-    ctx.strokeStyle = g;
-    ctx.lineWidth = (0.6 + proximity * 0.8) * (0.85 + 0.25 * breath);
-    ctx.stroke();
-  });
-}
-
-function drawNode(x, y, name, cat, state, brightness, hovered, selected, dimmed) {
-  const pulse = state === 'building'
-    ? 0.82 + Math.sin(t * 1.9 + x * 0.01) * 0.18
-    : state === 'becoming'
-    ? 0.55 + Math.sin(t * 0.9 + y * 0.01) * 0.3
-    : 1.0;
-  const alpha = brightness * pulse * (hovered ? 1.25 : 1.0) * (dimmed ? 0.1 : 1.0);
-  const shortCat = cat.split('·')[0].trim();
-
-  ctx.save();
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-
-  // Hover/selected background glow
-  if (hovered || selected) {
-    const gr = ctx.createRadialGradient(x, y, 0, x, y, 52);
-    gr.addColorStop(0, `rgba(200,160,69,${0.09 * alpha})`);
-    gr.addColorStop(1, 'transparent');
-    ctx.fillStyle = gr;
-    ctx.beginPath(); ctx.arc(x, y, 52, 0, Math.PI * 2); ctx.fill();
-  }
-
-  // Tiny state dot at node center (this is the connection anchor)
-  const dotAlpha = state === 'complete' ? alpha * 0.9
-    : state === 'building' ? alpha * 0.6
-    : alpha * 0.35;
-  ctx.beginPath();
-  ctx.arc(x, y, 2.5, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(200,160,69,${dotAlpha})`;
-  ctx.fill();
-
-  // Project name
-  ctx.font = `italic 300 ${hovered ? 14 : 13}px 'Cormorant Garamond', Georgia, serif`;
-  ctx.fillStyle = `rgba(240,232,208,${Math.min(alpha * 0.92, 0.95)})`;
-  ctx.fillText(name, x, y - 15);
-
-  // Short category label
-  ctx.font = `300 8px 'DM Mono', monospace`;
-  ctx.fillStyle = `rgba(200,160,69,${alpha * 0.65})`;
-  ctx.fillText(shortCat.toUpperCase(), x, y + 14);
-
-  // Selected ring
-  if (selected) {
-    ctx.beginPath();
-    ctx.arc(x, y, 28, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(200,160,69,${0.38 * alpha})`;
-    ctx.lineWidth = 0.7;
-    ctx.stroke();
-  }
-
-  ctx.restore();
-}
-
-// Gideon sparkle
-function updateGideon() {
-  gideon.phase += 0.04;
-  gideon.wanderT += 0.008;
-
-  let destX, destY;
-  if (gideon.targetIdx >= 0) {
-    // Drift near but not on top of the target
-    const sp = screenPos[gideon.targetIdx];
-    const angle = Math.sin(gideon.wanderT) * 0.8;
-    const dist = PROJECTS[gideon.targetIdx].r * 3.5 + 20;
-    destX = sp.x + Math.cos(angle + gideon.wanderT * 0.3) * dist;
-    destY = sp.y + Math.sin(angle + gideon.wanderT * 0.3) * dist;
-  } else {
-    // Wander with intention — slow arcs
-    destX = W * (0.5 + Math.sin(gideon.wanderT * 0.7) * 0.28);
-    destY = H * (0.48 + Math.cos(gideon.wanderT * 0.5) * 0.22);
-  }
-
-  // Smooth follow
-  gideon.x += (destX - gideon.x) * 0.022;
-  gideon.y += (destY - gideon.y) * 0.022;
-
-  // Spawn sparkle trails
-  if (Math.random() < 0.35) {
-    gideon.sparkles.push({
-      x: gideon.x + (Math.random()-0.5)*4,
-      y: gideon.y + (Math.random()-0.5)*4,
-      life: 1.0,
-      size: Math.random()*2 + 0.5,
-      vx: (Math.random()-0.5)*0.5,
-      vy: (Math.random()-0.5)*0.5 - 0.3,
-    });
-  }
-
-  // Update sparkles
-  gideon.sparkles = gideon.sparkles.filter(s => s.life > 0);
-  gideon.sparkles.forEach(s => {
-    s.x += s.vx; s.y += s.vy;
-    s.life -= 0.04;
-  });
-}
-
-function drawGideon() {
-  // Trails
-  gideon.sparkles.forEach(s => {
-    const a = s.life * 0.6;
-    ctx.beginPath(); ctx.arc(s.x, s.y, s.size, 0, Math.PI*2);
-    ctx.fillStyle = `rgba(232,200,120,${a})`;
-    ctx.fill();
-  });
-
-  const px = 1 + Math.sin(gideon.phase * 1.3) * 0.3;
-  const gx = gideon.x, gy = gideon.y;
-
-  // Outer shimmer
-  const go = ctx.createRadialGradient(gx,gy,0,gx,gy,28*px);
-  go.addColorStop(0,'rgba(232,200,120,0.18)');
-  go.addColorStop(0.5,'rgba(200,160,69,0.07)');
-  go.addColorStop(1,'transparent');
-  ctx.fillStyle=go;
-  ctx.beginPath(); ctx.arc(gx,gy,28*px,0,Math.PI*2); ctx.fill();
-
-  // Core glow
-  const gi = ctx.createRadialGradient(gx,gy,0,gx,gy,6*px);
-  gi.addColorStop(0,'rgba(255,248,200,0.95)');
-  gi.addColorStop(0.5,'rgba(232,200,120,0.7)');
-  gi.addColorStop(1,'transparent');
-  ctx.fillStyle=gi;
-  ctx.beginPath(); ctx.arc(gx,gy,6*px,0,Math.PI*2); ctx.fill();
-
-  // Star cross — 4 rays
-  const rayLen = 14 * px;
-  ctx.strokeStyle = 'rgba(255,248,200,0.5)';
-  ctx.lineWidth = 0.7;
-  [0, Math.PI/2, Math.PI, Math.PI*1.5].forEach(angle => {
-    const ex = gx + Math.cos(angle + gideon.phase*0.1) * rayLen;
-    const ey = gy + Math.sin(angle + gideon.phase*0.1) * rayLen;
-    const g2 = ctx.createLinearGradient(gx,gy,ex,ey);
-    g2.addColorStop(0,'rgba(255,248,200,0.5)');
-    g2.addColorStop(1,'transparent');
-    ctx.strokeStyle = g2;
-    ctx.beginPath(); ctx.moveTo(gx,gy); ctx.lineTo(ex,ey); ctx.stroke();
-  });
-}
-
-// ─── FRAME ───
-function frame() {
-  if (!running) return;
-  requestAnimationFrame(frame);
-  t += 0.016;
-
-  // Ease parallax
-  parallax.x += (parallax.tx - parallax.x) * 0.05;
-  parallax.y += (parallax.ty - parallax.y) * 0.05;
-
-  ctx.clearRect(0,0,W,H);
-  drawBg();
-
-  // Compute positions
-  PROJECTS.forEach((p,i) => {
-    const bx = p.x*W, by = p.y*H;
-    const dx = Math.sin(t*p.dp.sx*1000 + p.dp.px)*W*0.017;
-    const dy = Math.cos(t*p.dp.sy*1000 + p.dp.py)*H*0.017;
-    const depth = 0.5 + p.brightness*0.5;
-    screenPos[i].x = bx + dx + parallax.x*depth;
-    screenPos[i].y = by + dy + parallax.y*depth;
-  });
-
-  drawConnections();
-
-  PROJECTS.forEach((p,i) => {
-    const dimmed = matchSet !== null && !matchSet.has(i);
-    drawNode(screenPos[i].x, screenPos[i].y, p.name, p.cat, p.state, p.brightness, hoveredIdx===i, selectedIdx===i, dimmed);
-  });
-
-  updateGideon();
-  drawGideon();
-
-  // Clock
-  const now = new Date();
-  const second = now.getSeconds();
-  if (second !== lastClockSecond) {
-    lastClockSecond = second;
-    document.getElementById('s-time').textContent = now.toLocaleTimeString('en-US',{hour12:false});
-  }
-}
-
-// ─── INIT ───
-bindUiEvents();
-runIntro();
-</script>
+    </section>
+  </main>
 </body>
 </html>
