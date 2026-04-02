@@ -111,7 +111,7 @@ nav {
 
 .masthead {
   margin-top: 46px;
-  padding: 2.15rem 1.15rem 1.15rem;
+  padding: 1.05rem 1.15rem 0.65rem;
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
@@ -121,8 +121,8 @@ nav {
 .masthead-name {
   font-family: 'Cormorant', serif;
   font-weight: 300;
-  font-size: clamp(2.6rem, 6.1vw, 6.2rem);
-  line-height: 0.88;
+  font-size: clamp(1.45rem, 3.2vw, 3.1rem);
+  line-height: 0.92;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
@@ -150,13 +150,13 @@ nav {
 }
 
 .masthead-desc {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 300;
   color: var(--mid);
-  line-height: 1.62;
-  max-width: 290px;
+  line-height: 1.5;
+  max-width: 240px;
   margin-left: auto;
-  margin-bottom: 0.62rem;
+  margin-bottom: 0.4rem;
 }
 
 .masthead-pills {
@@ -216,11 +216,13 @@ nav {
 }
 
 .gideon-cta {
+  font-family: 'DM Sans', sans-serif;
   font-size: 9px;
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  text-decoration: none;
+  background: transparent;
+  cursor: pointer;
   color: var(--mid);
   border: 1px solid var(--rule);
   padding: 7px 10px;
@@ -231,6 +233,98 @@ nav {
   color: var(--white);
   background: var(--ink);
   border-color: var(--ink);
+}
+
+.g-drawer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  max-width: 100%;
+  max-height: 70vh;
+  background: var(--ink);
+  color: var(--white);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateY(102%);
+  transition: transform 0.32s ease;
+  z-index: 650;
+  display: flex;
+  flex-direction: column;
+}
+
+.g-drawer.open {
+  transform: translateY(0);
+}
+
+.g-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.g-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+}
+
+.g-close {
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.g-msgs {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.g-msg {
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.g-msg.user {
+  color: rgba(255, 255, 255, 0.55);
+  text-align: right;
+}
+
+.g-input-row {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.g-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 0.8rem 0.9rem;
+  outline: none;
+}
+
+.g-send {
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 0.9rem;
+  cursor: pointer;
 }
 
 .grid {
@@ -479,103 +573,6 @@ nav {
   50% { opacity: 0.9; }
 }
 
-.ss-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(14, 14, 14, 0.4);
-  backdrop-filter: blur(3px);
-  z-index: 600;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1.4rem;
-}
-
-.ss-overlay.open {
-  opacity: 1;
-  pointer-events: all;
-}
-
-.ss-modal {
-  background: var(--white);
-  width: 100%;
-  max-width: 460px;
-  padding: 2rem 1.7rem;
-  position: relative;
-  border: 1px solid var(--rule);
-}
-
-.ss-close {
-  position: absolute;
-  top: 0.55rem;
-  right: 0.7rem;
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: var(--mid);
-  cursor: pointer;
-}
-
-.ss-label {
-  font-size: 9px;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--mid);
-  margin-bottom: 1rem;
-}
-
-.ss-title {
-  font-family: 'Cormorant', serif;
-  font-size: clamp(2.1rem, 4.8vw, 3.1rem);
-  font-weight: 300;
-  color: var(--ink);
-  margin-bottom: 1.2rem;
-}
-
-.ss-input {
-  width: 100%;
-  border: none;
-  border-bottom: 1px solid var(--rule);
-  padding: 10px 0;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 17px;
-  font-weight: 300;
-  outline: none;
-  color: var(--ink);
-  margin-bottom: 1rem;
-  background: transparent;
-}
-
-.ss-input::placeholder { color: var(--light); }
-
-.ss-submit {
-  width: 100%;
-  background: var(--ink);
-  color: var(--white);
-  border: none;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 10px;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  padding: 13px;
-  cursor: pointer;
-}
-
-.ss-confirm {
-  display: none;
-  margin-top: 0.8rem;
-  font-size: 12px;
-  font-weight: 300;
-  color: var(--mid);
-  line-height: 1.7;
-}
-
-.ss-confirm.show { display: block; }
-
 .video-overlay {
   position: fixed;
   inset: 0;
@@ -682,7 +679,6 @@ nav {
   <div class="nav-right">
     <a class="mode-btn active" href="serious.html">Serious</a>
     <a class="mode-btn" href="unserious.html">Unserious</a>
-    <button class="mode-btn" id="ssBtn" type="button">Super Serious</button>
   </div>
 </nav>
 
@@ -716,7 +712,7 @@ nav {
 </div>
 
 <div class="gideon-cta-wrap">
-  <a class="gideon-cta" href="#gideonTile">Speak to Gideon</a>
+  <button class="gideon-cta" id="openGideon" type="button">Speak to Gideon</button>
 </div>
 
 <div class="grid" id="grid">
@@ -833,17 +829,6 @@ nav {
 
 </div>
 
-<div class="ss-overlay" id="ssBg">
-  <div class="ss-modal" role="dialog" aria-modal="true" aria-labelledby="ssTitle">
-    <button class="ss-close" id="ssClose" aria-label="Close">×</button>
-    <div class="ss-label">Super Serious Mode</div>
-    <h2 class="ss-title" id="ssTitle">Enter Fax Number</h2>
-    <input class="ss-input" type="text" placeholder="e.g. +1 (555) 000-0000" id="ssInput">
-    <button class="ss-submit" id="ssSubmit" type="button">Transmit</button>
-    <div class="ss-confirm" id="ssConfirm">Fax queued. Estimated delivery: 3-5 business days.</div>
-  </div>
-</div>
-
 <div class="video-overlay" id="videoOverlay">
   <div class="video-modal" role="dialog" aria-modal="true" aria-label="ResiLife Commercial">
     <button class="video-close" id="videoClose" aria-label="Close">×</button>
@@ -851,6 +836,20 @@ nav {
       <source src="assets/resilife-commercial.mp4" type="video/mp4">
     </video>
     <div class="video-fallback" id="videoFallback">Video unavailable. Add assets/resilife-commercial.mp4 to enable playback.</div>
+  </div>
+</div>
+
+<div class="g-drawer" id="gDrawer" role="dialog" aria-modal="false" aria-label="Speak to Gideon">
+  <div class="g-head">
+    <div class="g-title">Gideon</div>
+    <button class="g-close" id="gClose" type="button" aria-label="Close">×</button>
+  </div>
+  <div class="g-msgs" id="gMsgs">
+    <div class="g-msg">Hi. I'm Gideon. Ask me about projects, systems, or what to click next.</div>
+  </div>
+  <div class="g-input-row">
+    <input class="g-input" id="gInput" type="text" placeholder="Ask Gideon...">
+    <button class="g-send" id="gSend" type="button">Send</button>
   </div>
 </div>
 
@@ -866,41 +865,51 @@ document.querySelectorAll('.filt').forEach((b) => {
   });
 });
 
+const gDrawer = document.getElementById('gDrawer');
+const gOpenBtn = document.getElementById('openGideon');
+const gTile = document.getElementById('gideonTile');
+const gClose = document.getElementById('gClose');
+const gInput = document.getElementById('gInput');
+const gSend = document.getElementById('gSend');
+const gMsgs = document.getElementById('gMsgs');
 
-const ssBg = document.getElementById('ssBg');
-const ssBtn = document.getElementById('ssBtn');
-const ssClose = document.getElementById('ssClose');
-const ssInput = document.getElementById('ssInput');
-const ssSubmit = document.getElementById('ssSubmit');
-const ssConfirm = document.getElementById('ssConfirm');
-
-function openSuperSerious() {
-  ssBg.classList.add('open');
-  ssConfirm.classList.remove('show');
-  requestAnimationFrame(() => ssInput.focus());
+function openGideon() {
+  gDrawer.classList.add('open');
+  requestAnimationFrame(() => gInput.focus());
 }
 
-function closeSuperSerious() {
-  ssBg.classList.remove('open');
+function closeGideon() {
+  gDrawer.classList.remove('open');
 }
 
-ssBtn.addEventListener('click', openSuperSerious);
-ssClose.addEventListener('click', closeSuperSerious);
-ssBg.addEventListener('click', (e) => {
-  if (e.target === ssBg) closeSuperSerious();
+function addGideonMessage(text, isUser = false) {
+  const m = document.createElement('div');
+  m.className = `g-msg${isUser ? ' user' : ''}`;
+  m.textContent = text;
+  gMsgs.appendChild(m);
+  gMsgs.scrollTop = gMsgs.scrollHeight;
+}
+
+function sendToGideon() {
+  const text = gInput.value.trim();
+  if (!text) return;
+  addGideonMessage(text, true);
+  gInput.value = '';
+  setTimeout(() => {
+    addGideonMessage('Try clicking FORGE, Mach 1, and The Archive for the best demos.');
+  }, 240);
+}
+
+gOpenBtn.addEventListener('click', openGideon);
+gTile.addEventListener('click', openGideon);
+gClose.addEventListener('click', closeGideon);
+gSend.addEventListener('click', sendToGideon);
+gInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendToGideon();
 });
 
 document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && ssBg.classList.contains('open')) closeSuperSerious();
-  if (e.key === 'Enter' && ssBg.classList.contains('open')) ssSubmit.click();
-});
-
-ssSubmit.addEventListener('click', () => {
-  if (!ssInput.value.trim()) {
-    ssInput.focus();
-    return;
-  }
-  ssConfirm.classList.add('show');
+  if (e.key === 'Escape' && gDrawer.classList.contains('open')) closeGideon();
 });
 
 const videoOverlay = document.getElementById('videoOverlay');
