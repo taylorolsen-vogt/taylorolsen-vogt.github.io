@@ -6,86 +6,429 @@
   <title>Unserious | Taylor Olsen-Vogt</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;1,300&family=DM+Sans:wght@300;400&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --paper: #fbfbf8;
-      --ink: #0a0a0c;
-      --soft: rgba(10, 10, 12, 0.58);
-      --line: rgba(10, 10, 12, 0.2);
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans: 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --ink: #0e0e0e;
+      --white: #ffffff;
+      --rule: #e8e8e8;
     }
 
-    body {
-      min-height: 100vh;
-      font-family: var(--sans);
-      color: var(--ink);
-      background:
-        radial-gradient(circle at 82% 18%, rgba(0, 0, 0, 0.06), transparent 34%),
-        radial-gradient(circle at 16% 86%, rgba(255, 255, 255, 0.95), transparent 46%),
-        var(--paper);
-      display: grid;
-      place-items: center;
-      padding: 24px;
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
     }
 
-    .panel {
-      width: min(760px, 100%);
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.72);
-      padding: clamp(28px, 5vw, 52px);
-      text-align: center;
+    /* Canvas fills viewport, sits behind everything */
+    #c {
+      position: fixed;
+      inset: 0;
+      display: block;
     }
 
-    h1 {
-      font-family: var(--serif);
-      font-size: clamp(50px, 8vw, 88px);
-      line-height: 0.88;
+    /* ─── Nav (matches serious.html) ─────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.15rem;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .nav-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
       font-weight: 400;
-      margin-bottom: 12px;
-    }
-
-    p {
-      color: var(--soft);
-      font-size: clamp(16px, 2vw, 22px);
-      line-height: 1.45;
-      max-width: 30ch;
-      margin: 0 auto 30px;
-    }
-
-    .switch {
-      display: inline-flex;
-      border: 1px solid var(--line);
-    }
-
-    .switch a {
-      text-decoration: none;
-      color: var(--soft);
-      text-transform: uppercase;
       letter-spacing: 0.2em;
-      font-size: 10px;
-      padding: 12px 20px;
-    }
-
-    .switch a + a { border-left: 1px solid var(--line); }
-
-    .switch .on {
+      text-transform: uppercase;
+      color: var(--white);
       background: var(--ink);
-      color: #f6f6f3;
+      border: 1px solid var(--ink);
+      padding: 8px 10px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
+
+    .nav-name:hover { background: #2b2b2b; border-color: #2b2b2b; }
+
+    .nav-name:focus-visible,
+    .g-close:focus-visible,
+    .g-send:focus-visible,
+    .g-prompt:focus-visible {
+      outline: 2px solid var(--ink);
+      outline-offset: 2px;
+    }
+
+    .nav-center {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 2.1rem;
+      list-style: none;
+    }
+
+    .nav-center a {
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(14, 14, 14, 0.45);
+      text-decoration: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: color 0.15s;
+    }
+    .nav-center a:hover { color: var(--ink); }
+    .nav-center a.active { color: var(--ink); }
+
+    .nav-right {
+      display: flex;
+    }
+
+    .mode-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(14, 14, 14, 0.45);
+      text-decoration: none;
+      padding: 6px 10px;
+      border: 1px solid transparent;
+      transition: color 0.15s;
+    }
+    .mode-btn + .mode-btn { border-left: 1px solid var(--rule); }
+    .mode-btn.active { color: var(--ink); border-color: var(--rule); }
+
+    /* ─── Gideon drawer (identical to serious.html) ──────────────────── */
+    .g-drawer {
+      position: fixed;
+      right: 0; bottom: 0;
+      width: 360px;
+      max-width: 100%;
+      max-height: 70vh;
+      background: var(--ink);
+      color: var(--white);
+      border-left: 1px solid rgba(255,255,255,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      transform: translateY(102%);
+      transition: transform 0.32s ease;
+      z-index: 650;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.36);
+    }
+    .g-drawer.open { transform: translateY(0); }
+
+    .g-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .g-title { font-family: 'Cormorant', serif; font-size: 1.35rem; font-weight: 300; }
+    .g-close { border: none; background: none; color: rgba(255,255,255,0.7); font-size: 22px; cursor: pointer; }
+
+    .g-msgs {
+      padding: 0.9rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .g-msg { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.82); }
+    .g-msg.user { color: rgba(255,255,255,0.55); text-align: right; }
+
+    .g-prompt-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.2rem; }
+    .g-prompt {
+      border: 1px solid rgba(255,255,255,0.2);
+      background: transparent;
+      color: rgba(255,255,255,0.78);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .g-prompt:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.34); color: var(--white); }
+
+    .g-typing { display: inline-flex; gap: 4px; align-items: center; min-height: 12px; }
+    .g-typing span {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      animation: gtyping 1.2s ease-in-out infinite;
+    }
+    .g-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .g-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes gtyping {
+      0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+      40% { opacity: 0.95; transform: scale(1.35); }
+    }
+
+    .g-input-row { display: flex; border-top: 1px solid rgba(255,255,255,0.1); }
+    .g-input {
+      flex: 1; border: none; background: transparent;
+      color: var(--white); font-family: 'DM Sans', sans-serif;
+      font-size: 12px; padding: 0.8rem 0.9rem; outline: none;
+    }
+    .g-send {
+      border: none; border-left: 1px solid rgba(255,255,255,0.1);
+      background: transparent; color: rgba(255,255,255,0.75);
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0 0.9rem; cursor: pointer;
+    }
+    .g-send:hover { background: rgba(255,255,255,0.12); color: var(--white); }
   </style>
 </head>
 <body>
-  <main class="panel">
-    <h1>Unserious<br>Mode</h1>
-    <p>This path is ready for your playful side. We can build this next with motion, experiments, and personality-heavy work.</p>
-    <div class="switch" role="group" aria-label="Mode switch">
-      <a href="serious.html">Serious</a>
-      <a href="unserious.html" class="on">Unserious</a>
+
+  <canvas id="c"></canvas>
+
+  <nav>
+    <button class="nav-name" id="openGideon" type="button">Speak to Gideon</button>
+    <ul class="nav-center">
+      <li><a href="serious.html" class="active">Work</a></li>
+      <li><a href="#">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a class="mode-btn" href="serious.html">Serious</a>
+      <a class="mode-btn active" href="unserious.html">Unserious</a>
     </div>
-  </main>
+  </nav>
+
+  <div class="g-drawer" id="gDrawer" role="dialog" aria-modal="false" aria-label="Speak to Gideon">
+    <div class="g-head">
+      <div class="g-title">Gideon</div>
+      <button class="g-close" id="gClose" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="g-msgs" id="gMsgs">
+      <div class="g-msg">Hi. I'm Gideon. Ask me about projects, systems, or what to click next.</div>
+      <div class="g-prompt-row" id="gPrompts">
+        <button class="g-prompt" type="button" data-q="What should I click first?">Start Here</button>
+        <button class="g-prompt" type="button" data-q="Tell me about Mach 1 and Mach 2.">Robotics</button>
+        <button class="g-prompt" type="button" data-q="Show me software highlights.">Software</button>
+      </div>
+    </div>
+    <div class="g-input-row">
+      <input class="g-input" id="gInput" type="text" placeholder="Ask Gideon...">
+      <button class="g-send" id="gSend" type="button">Send</button>
+    </div>
+  </div>
+
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js" } }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+
+    // ── Renderer ────────────────────────────────────────────────────────
+    const canvas  = document.getElementById('c');
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+    renderer.outputColorSpace  = THREE.SRGBColorSpace;
+    renderer.toneMapping       = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.95;
+
+    // ── Scene ───────────────────────────────────────────────────────────
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf6f6f4);
+
+    // ── Camera — slightly elevated, angled toward the paper ─────────────
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 60);
+    camera.position.set(-0.3, 2.5, 2.9);
+    camera.lookAt(0, 0, 0);
+
+    // ── Floor ───────────────────────────────────────────────────────────
+    const floor = new THREE.Mesh(
+      new THREE.PlaneGeometry(18, 18),
+      new THREE.MeshStandardMaterial({ color: 0xf6f6f4, roughness: 0.96, metalness: 0 })
+    );
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // ── Paper geometry constants ─────────────────────────────────────────
+    const PAPER_W = 1.4, PAPER_H = 1.98; // A4-ish portrait
+    const SEG_W = 38, SEG_H = 54;
+    const HW = PAPER_W / 2, HH = PAPER_H / 2;
+
+    const paperGeo = new THREE.PlaneGeometry(PAPER_W, PAPER_H, SEG_W, SEG_H);
+    const posAttr  = paperGeo.attributes.position;
+
+    // Store original flat XY so animation can reference from origin each frame
+    const origXY = new Float32Array(posAttr.count * 2);
+    for (let i = 0; i < posAttr.count; i++) {
+      origXY[i * 2]     = posAttr.getX(i);
+      origXY[i * 2 + 1] = posAttr.getY(i);
+    }
+
+    // ── Crumple function ─────────────────────────────────────────────────
+    // nx, ny normalised to [-1, 1]; t = elapsed seconds (for breathing)
+    function crumpleZ(nx, ny, t) {
+      let z = 0;
+
+      // Primary folds — low-frequency, high amplitude
+      z += Math.sin(nx * Math.PI * 1.7 + 1.05)             * 0.085;
+      z += Math.sin(ny * Math.PI * 2.2 - 0.88)             * 0.078;
+
+      // Secondary creases
+      z += Math.sin((nx * 1.45 + ny * 0.72) * Math.PI * 3.0 + 0.42) * 0.054;
+      z += Math.sin((ny * 1.15 - nx * 0.82) * Math.PI * 4.0 - 0.63) * 0.040;
+
+      // Diagonal character fold (distinctive of real crumpling)
+      z += Math.sin((nx * 0.58 - ny * 1.38) * Math.PI * 2.7 + 2.05) * 0.046;
+      z += Math.sin((nx * 1.18 + ny * 0.52) * Math.PI * 5.4 - 1.25) * 0.024;
+
+      // Fine surface texture
+      z += Math.cos(nx * Math.PI * 7.9 + ny * Math.PI * 3.5 + 0.28) * 0.017;
+      z += Math.sin(ny * Math.PI * 9.2 - nx * Math.PI * 2.8 + 1.72) * 0.013;
+
+      // Taper toward edges — crumple is slightly calmer at the border
+      const edgeFade = (0.72 + 0.28 * Math.cos(nx * Math.PI * 0.5))
+                     * (0.72 + 0.28 * Math.cos(ny * Math.PI * 0.5));
+      z *= edgeFade;
+
+      // Barely-perceptible breathing animation
+      const breathe = Math.sin(t * 0.85 + nx * 3.1 + ny * 2.2) * 0.0055
+                    + Math.cos(t * 1.25 - nx * 1.9 + ny * 1.65) * 0.004;
+      return z + breathe * edgeFade;
+    }
+
+    // Initial shape
+    for (let i = 0; i < posAttr.count; i++) {
+      posAttr.setZ(i, crumpleZ(origXY[i * 2] / HW, origXY[i * 2 + 1] / HH, 0));
+    }
+    posAttr.needsUpdate = true;
+    paperGeo.computeVertexNormals();
+
+    const paper = new THREE.Mesh(
+      paperGeo,
+      new THREE.MeshStandardMaterial({
+        color: 0xfefef8, roughness: 0.84, metalness: 0, side: THREE.DoubleSide
+      })
+    );
+    paper.rotation.x  = -Math.PI / 2;
+    paper.position.y  = 0.001; // just above floor so shadow renders cleanly
+    paper.castShadow    = true;
+    paper.receiveShadow = true;
+    scene.add(paper);
+
+    // ── Lights ──────────────────────────────────────────────────────────
+    scene.add(new THREE.AmbientLight(0xffffff, 0.88));
+
+    // Key light — warm, upper-left, casts shadow
+    const key = new THREE.DirectionalLight(0xfff4e0, 1.55);
+    key.position.set(3.2, 5.5, 2.2);
+    key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048);
+    key.shadow.camera.left   = -3;
+    key.shadow.camera.right  =  3;
+    key.shadow.camera.top    =  3;
+    key.shadow.camera.bottom = -3;
+    key.shadow.camera.near = 0.5;
+    key.shadow.camera.far  = 18;
+    key.shadow.bias = -0.0005;
+    scene.add(key);
+
+    // Subtle cool fill from opposite side
+    const fill = new THREE.DirectionalLight(0xe4eeff, 0.32);
+    fill.position.set(-2.5, 2.8, -1.8);
+    scene.add(fill);
+
+    // ── Render loop ──────────────────────────────────────────────────────
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = performance.now() / 1000;
+
+      for (let i = 0; i < posAttr.count; i++) {
+        posAttr.setZ(i, crumpleZ(origXY[i * 2] / HW, origXY[i * 2 + 1] / HH, t));
+      }
+      posAttr.needsUpdate = true;
+      paperGeo.computeVertexNormals();
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // ── Resize ───────────────────────────────────────────────────────────
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+
+  <script>
+    // ── Gideon drawer ────────────────────────────────────────────────────
+    const gDrawer  = document.getElementById('gDrawer');
+    const gOpenBtn = document.getElementById('openGideon');
+    const gClose   = document.getElementById('gClose');
+    const gInput   = document.getElementById('gInput');
+    const gSend    = document.getElementById('gSend');
+    const gMsgs    = document.getElementById('gMsgs');
+    const gPrompts = document.getElementById('gPrompts');
+
+    function openGideon()  { gDrawer.classList.add('open'); requestAnimationFrame(() => gInput.focus()); }
+    function closeGideon() { gDrawer.classList.remove('open'); }
+
+    function addGideonMessage(text, isUser = false) {
+      const m = document.createElement('div');
+      m.className = `g-msg${isUser ? ' user' : ''}`;
+      m.textContent = text;
+      gMsgs.appendChild(m);
+      gMsgs.scrollTop = gMsgs.scrollHeight;
+    }
+
+    function sendToGideon() {
+      const text = gInput.value.trim();
+      if (!text) return;
+      addGideonMessage(text, true);
+      gInput.value = '';
+      const typing = document.createElement('div');
+      typing.className = 'g-msg';
+      typing.innerHTML = '<div class="g-typing"><span></span><span></span><span></span></div>';
+      gMsgs.appendChild(typing);
+      gMsgs.scrollTop = gMsgs.scrollHeight;
+      setTimeout(() => {
+        typing.remove();
+        addGideonMessage('Try FORGE, Mach 1, and The Archive first. If you want, ask me for a guided route by category.');
+      }, 420);
+    }
+
+    gOpenBtn.addEventListener('click', openGideon);
+    gClose.addEventListener('click', closeGideon);
+    gSend.addEventListener('click', sendToGideon);
+    gInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendToGideon(); });
+
+    if (gPrompts) {
+      gPrompts.querySelectorAll('.g-prompt').forEach((btn) => {
+        btn.addEventListener('click', () => { gInput.value = btn.dataset.q || ''; sendToGideon(); });
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && gDrawer.classList.contains('open')) closeGideon();
+    });
+  </script>
+
 </body>
 </html>
