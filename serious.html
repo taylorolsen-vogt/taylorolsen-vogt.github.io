@@ -208,6 +208,31 @@ nav {
 
 .filt:hover:not(.active) { color: var(--ink); }
 
+.gideon-cta-wrap {
+  border-bottom: 1px solid var(--rule);
+  padding: 8px 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.gideon-cta {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--mid);
+  border: 1px solid var(--rule);
+  padding: 7px 10px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.gideon-cta:hover {
+  color: var(--white);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
@@ -345,7 +370,7 @@ nav {
 
 .tile-lidi { grid-column: 1; grid-row: 2; }
 .tile-gideon { grid-column: 2; grid-row: 2; }
-.tile-forge { grid-column: 1; grid-row: 3; }
+.tile-forge { grid-column: 1 / span 2; grid-row: 4 / span 2; }
 .tile-forge .tile-bg {
   background-image: url('assets/FORGE_example.webp');
   background-size: cover;
@@ -381,10 +406,10 @@ nav {
   color: var(--ink);
 }
 
-.tile-commercial { grid-column: 1 / span 2; grid-row: 4; }
-.tile-quote { grid-column: 1; grid-row: 5; }
-.tile-drone { grid-column: 2; grid-row: 5; }
-.tile-pb { grid-column: 3 / span 2; grid-row: 5; }
+.tile-commercial { grid-column: 3 / span 2; grid-row: 5; }
+.tile-quote { grid-column: 1; grid-row: 3; }
+.tile-drone { grid-column: 5; grid-row: 5; }
+.tile-pb { grid-column: 3 / span 3; grid-row: 6; }
 .tile-blackbook { grid-column: 5; grid-row: 1 / span 2; }
 
 
@@ -689,6 +714,10 @@ nav {
   <button class="filt" data-f="ai">AI</button>
 </div>
 
+<div class="gideon-cta-wrap">
+  <a class="gideon-cta" href="#gideonTile">Speak to Gideon</a>
+</div>
+
 <div class="grid" id="grid">
   <div class="tile tile-mach1 has-img" data-cat="hardware">
     <div class="tile-bg"></div>
@@ -716,7 +745,7 @@ nav {
     </div>
   </div>
 
-  <div class="tile t1x1 tile-gideon" data-cat="ai">
+  <div class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai">
     <div class="gideon-dot"></div>
     <div class="tile-label">
       <div class="tile-kicker">AI Agent</div>
