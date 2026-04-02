@@ -554,6 +554,27 @@ nav {
 .tile-pb { grid-column: 3 / span 3; grid-row: 6; }
 .tile-blackbook { grid-column: 5; grid-row: 1 / span 2; }
 
+/* Filter-specific layouts (All remains untouched) */
+.grid.filter-hardware .tile,
+.grid.filter-software .tile,
+.grid.filter-marketing .tile {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.grid.filter-hardware .tile-mach1 { grid-column: 1 / span 3 !important; grid-row: 1 / span 3 !important; }
+.grid.filter-hardware .tile-mach2 { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
+.grid.filter-hardware .tile-pb { grid-column: 4 / span 2 !important; grid-row: 2 !important; }
+.grid.filter-hardware .tile-drone { grid-column: 4 / span 2 !important; grid-row: 3 !important; }
+
+.grid.filter-software .tile-forge { grid-column: 1 / span 3 !important; grid-row: 1 / span 2 !important; }
+.grid.filter-software .tile-archive { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
+.grid.filter-software .tile-blackbook { grid-column: 4 !important; grid-row: 2 !important; }
+.grid.filter-software .tile-resilife { grid-column: 5 !important; grid-row: 2 !important; }
+.grid.filter-software .tile-quote { grid-column: 1 / span 2 !important; grid-row: 3 !important; }
+
+.grid.filter-marketing .tile-commercial { grid-column: 2 / span 2 !important; grid-row: 1 !important; min-height: 260px; }
+
 
 .tile-gideon {
   background: var(--ink);
@@ -900,11 +921,20 @@ nav {
 </div>
 
 <script>
+const gridEl = document.getElementById('grid');
+const filterLayoutClasses = ['filter-hardware', 'filter-software', 'filter-marketing'];
+
 document.querySelectorAll('.filt').forEach((b) => {
   b.addEventListener('click', () => {
     document.querySelectorAll('.filt').forEach((x) => x.classList.remove('active'));
     b.classList.add('active');
     const f = b.dataset.f;
+
+    gridEl.classList.remove(...filterLayoutClasses);
+    if (f !== 'all') {
+      gridEl.classList.add(`filter-${f}`);
+    }
+
     document.querySelectorAll('.tile').forEach((t) => {
       t.style.display = (f === 'all' || t.dataset.cat === f) ? '' : 'none';
     });
