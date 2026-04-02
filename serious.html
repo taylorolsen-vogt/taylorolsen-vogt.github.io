@@ -50,6 +50,9 @@ nav {
   letter-spacing: 0.05em;
   color: var(--ink);
   text-decoration: none;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .nav-center {
@@ -207,33 +210,6 @@ nav {
 }
 
 .filt:hover:not(.active) { color: var(--ink); }
-
-.gideon-cta-wrap {
-  border-bottom: 1px solid var(--rule);
-  padding: 8px 14px;
-  display: flex;
-  justify-content: flex-end;
-}
-
-.gideon-cta {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 9px;
-  font-weight: 400;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  background: transparent;
-  cursor: pointer;
-  color: var(--mid);
-  border: 1px solid var(--rule);
-  padding: 7px 10px;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
-}
-
-.gideon-cta:hover {
-  color: var(--white);
-  background: var(--ink);
-  border-color: var(--ink);
-}
 
 .g-drawer {
   position: fixed;
@@ -670,7 +646,7 @@ nav {
 <body>
 
 <nav>
-  <a href="index.html" class="nav-name">Taylor Olsen-Vogt</a>
+  <button class="nav-name" id="openGideon" type="button">Speak to Gideon</button>
   <ul class="nav-center">
     <li><a href="serious.html" class="active">Work</a></li>
     <li><a href="#">About</a></li>
@@ -684,7 +660,7 @@ nav {
 
 <header class="masthead">
   <div>
-    <h1 class="masthead-name">Taylor<br><em>Olsen-Vogt</em></h1>
+    <h1 class="masthead-name">Taylor <em>Olsen-Vogt</em></h1>
     <div class="contact-under-name">
       <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
       <a href="tel:+15619710963">561 971 0963</a>
@@ -709,10 +685,6 @@ nav {
   <button class="filt" data-f="marketing">Marketing</button>
   <button class="filt" data-f="hardware">Hardware</button>
   <button class="filt" data-f="ai">AI</button>
-</div>
-
-<div class="gideon-cta-wrap">
-  <button class="gideon-cta" id="openGideon" type="button">Speak to Gideon</button>
 </div>
 
 <div class="grid" id="grid">
