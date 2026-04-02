@@ -129,53 +129,62 @@ nav {
 
 .masthead {
   margin-top: 46px;
-  padding: 1.05rem 1.15rem 0.65rem;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--rule);
+  padding: clamp(2.4rem, 5vw, 4.8rem) 1.15rem 0;
 }
 
 .masthead-name {
   font-family: 'Cormorant', serif;
   font-weight: 300;
-  font-size: clamp(1.45rem, 3.2vw, 3.1rem);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
+  font-size: clamp(3.6rem, 8.5vw, 9.2rem);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
   color: var(--ink);
 }
 
-.masthead-name em { font-style: italic; color: var(--mid); }
+.masthead-name em { font-style: italic; }
 
-.contact-under-name {
-  margin-top: 0.55rem;
+.masthead-strip {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.6rem;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  margin-top: clamp(1.4rem, 3vw, 2.6rem);
+  padding: 0.72rem 0;
 }
 
-.contact-under-name a {
-  display: block;
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  color: var(--light);
-  text-decoration: none;
-  margin-top: 3px;
+.masthead-role {
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink);
 }
 
-.contact-under-name a:hover { color: var(--mid); }
-
-.masthead-meta {
-  text-align: right;
-  padding-bottom: 0.3rem;
-}
-
-.masthead-desc {
-  font-size: 11px;
-  font-weight: 300;
+.masthead-disc {
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
   color: var(--mid);
-  line-height: 1.5;
-  max-width: 240px;
-  margin-left: auto;
-  margin-bottom: 0.4rem;
+  flex: 1;
+  text-align: center;
 }
+
+.masthead-contacts {
+  display: flex;
+  gap: 1.4rem;
+}
+
+.masthead-contacts a {
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.masthead-contacts a:hover { color: var(--ink); }
 
 .filterbar {
   display: flex;
@@ -787,9 +796,8 @@ nav {
 @media (max-width: 620px) {
   .nav-center { display: none; }
   .mode-btn { padding: 8px 9px; letter-spacing: 0.14em; }
-  .masthead { flex-direction: column; align-items: flex-start; gap: 1.4rem; }
-  .masthead-meta { text-align: left; }
-  .masthead-desc { margin-left: 0; }
+  .masthead-disc { display: none; }
+  .masthead-contacts { flex-direction: column; gap: 0.3rem; }
   .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
 }
 </style>
@@ -810,15 +818,14 @@ nav {
 </nav>
 
 <header class="masthead">
-  <div>
-    <h1 class="masthead-name">Taylor <em>Olsen-Vogt</em></h1>
-    <div class="contact-under-name">
+  <h1 class="masthead-name">Taylor <em>Olsen-Vogt</em></h1>
+  <div class="masthead-strip">
+    <span class="masthead-role">Principal Engineer &amp; Co-Founder</span>
+    <span class="masthead-disc">Robotics &middot; Software &middot; Hardware &middot; Marketing &middot; AI</span>
+    <div class="masthead-contacts">
       <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
       <a href="tel:+15619710963">561 971 0963</a>
     </div>
-  </div>
-  <div class="masthead-meta">
-    <p class="masthead-desc">Principal engineer and co-founder. Robotics, software, hardware, marketing, and AI systems.</p>
   </div>
 </header>
 
