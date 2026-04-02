@@ -869,6 +869,31 @@ videoPlayer.addEventListener('error', () => {
   videoPlayer.style.display = 'none';
   videoFallback.style.display = 'block';
 });
+
+const archiveFrame = document.querySelector('.tile-archive iframe');
+
+if (archiveFrame) {
+  archiveFrame.addEventListener('load', () => {
+    try {
+      const doc = archiveFrame.contentDocument || archiveFrame.contentWindow.document;
+      if (!doc) return;
+
+      const style = doc.createElement('style');
+      style.textContent = `
+        #timeline,
+        #timelineControls,
+        #playButton,
+        #toggleButton,
+        #layersPanel {
+          display: none !important;
+        }
+      `;
+      doc.head.appendChild(style);
+    } catch (_) {
+      // If iframe access is restricted, fail silently.
+    }
+  });
+}
 </script>
 
 </body>
