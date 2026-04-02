@@ -309,10 +309,6 @@ nav {
   opacity: 0.25;
 }
 
-.tile-resilife:hover .tile-bg {
-  opacity: 0.25;
-}
-
 .tile:hover .tile-kicker,
 .tile:hover .tile-name,
 .tile:hover .tile-name em {
@@ -357,12 +353,20 @@ nav {
   background-repeat: no-repeat;
   background-position: center;
   background-color: #ece8dc;
+  filter: grayscale(1);
+  opacity: 1;
+  transition: transform 0.45s ease, opacity 0.25s ease, filter 0.25s ease;
 }
 
-.tile-resilife .tile-kicker,
-.tile-resilife .tile-name,
-.tile-resilife .tile-name em {
+.tile-resilife.has-img .tile-kicker,
+.tile-resilife.has-img .tile-name,
+.tile-resilife.has-img .tile-name em {
   color: var(--ink);
+}
+
+.tile-resilife.has-img:hover .tile-bg {
+  opacity: 1;
+  filter: grayscale(0);
 }
 
 .tile-resilife:hover .tile-kicker,
