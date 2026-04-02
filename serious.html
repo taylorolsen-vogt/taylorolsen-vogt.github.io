@@ -239,8 +239,12 @@ nav {
 .tile iframe {
   position: absolute;
   inset: 0;
+  width: 140%;
+  height: 140%;
+  transform: scale(0.72);
+  transform-origin: top left;
   border: none;
-  background: #f4f4f1;
+  background: #000;
 }
 
 .tile-overlay {
@@ -329,6 +333,7 @@ nav {
 .tile-archive {
   grid-column: 1 / span 2;
   grid-row: 1;
+  background: #000;
 }
 
 .tile-lidi { grid-column: 1; grid-row: 2; }
@@ -653,8 +658,9 @@ nav {
     </div>
   </div>
 
-  <div class="tile t1x1 tile-archive" data-cat="software">
+  <div class="tile t1x1 tile-archive has-img" data-cat="software">
      <iframe src="https://taylorolsen-vogt.github.io/The-Archive/" title="The Archive"></iframe>
+    <div class="tile-overlay"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
       <div class="tile-name">The <em>Archive</em></div>
