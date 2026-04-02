@@ -238,142 +238,49 @@
     import * as THREE from 'three';
 
     // ── Renderer ────────────────────────────────────────────────────────
-    const canvas  = document.getElementById('c');
+    const canvas   = document.getElementById('c');
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
-    renderer.outputColorSpace  = THREE.SRGBColorSpace;
-    renderer.toneMapping       = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.95;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
 
-    // ── Scene ───────────────────────────────────────────────────────────
+    // ── Scene + fog to soften the horizon ───────────────────────────────
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf6f6f4);
+    scene.background = new THREE.Color(0xf8f8f6);
+    scene.fog = new THREE.Fog(0xf8f8f6, 28, 60);
 
-    // ── Camera — slightly elevated, angled toward the paper ─────────────
-    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 60);
-    camera.position.set(-0.3, 2.5, 2.9);
-    camera.lookAt(0, 0, 0);
+    // ── Camera — very low, looking across the plane ──────────────────────
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 80);
+    camera.position.set(0, 1.1, 8);
+    camera.lookAt(0, 0, -12);
 
-    // ── Floor ───────────────────────────────────────────────────────────
+    // ── Floor (plain white) ─────────────────────────────────────────────
     const floor = new THREE.Mesh(
-      new THREE.PlaneGeometry(18, 18),
-      new THREE.MeshStandardMaterial({ color: 0xf6f6f4, roughness: 0.96, metalness: 0 })
+      new THREE.PlaneGeometry(80, 80),
+      new THREE.MeshBasicMaterial({ color: 0xf8f8f6 })
     );
     floor.rotation.x = -Math.PI / 2;
-    floor.receiveShadow = true;
     scene.add(floor);
 
-    // ── Paper geometry constants ─────────────────────────────────────────
-    const PAPER_W = 1.4, PAPER_H = 1.98; // A4-ish portrait
-    const SEG_W = 38, SEG_H = 54;
-    const HW = PAPER_W / 2, HH = PAPER_H / 2;
+    // ── Grid — large, subdivided, very faint ─────────────────────────────
+    // Two-level grid: small cells + larger accent divisions
+    const gridSmall = new THREE.GridHelper(80, 120, 0xd4d4d0, 0xd4d4d0);
+    gridSmall.position.y = 0.001;
+    scene.add(gridSmall);
 
-    const paperGeo = new THREE.PlaneGeometry(PAPER_W, PAPER_H, SEG_W, SEG_H);
-    const posAttr  = paperGeo.attributes.position;
+    const gridLarge = new THREE.GridHelper(80, 16, 0xbcbcb8, 0xbcbcb8);
+    gridLarge.position.y = 0.002;
+    scene.add(gridLarge);
 
-    // Store original flat XY so animation can reference from origin each frame
-    const origXY = new Float32Array(posAttr.count * 2);
-    for (let i = 0; i < posAttr.count; i++) {
-      origXY[i * 2]     = posAttr.getX(i);
-      origXY[i * 2 + 1] = posAttr.getY(i);
-    }
-
-    // ── Crumple function ─────────────────────────────────────────────────
-    // nx, ny normalised to [-1, 1]; t = elapsed seconds (for breathing)
-    function crumpleZ(nx, ny, t) {
-      let z = 0;
-
-      // Primary folds — low-frequency, high amplitude
-      z += Math.sin(nx * Math.PI * 1.7 + 1.05)             * 0.085;
-      z += Math.sin(ny * Math.PI * 2.2 - 0.88)             * 0.078;
-
-      // Secondary creases
-      z += Math.sin((nx * 1.45 + ny * 0.72) * Math.PI * 3.0 + 0.42) * 0.054;
-      z += Math.sin((ny * 1.15 - nx * 0.82) * Math.PI * 4.0 - 0.63) * 0.040;
-
-      // Diagonal character fold (distinctive of real crumpling)
-      z += Math.sin((nx * 0.58 - ny * 1.38) * Math.PI * 2.7 + 2.05) * 0.046;
-      z += Math.sin((nx * 1.18 + ny * 0.52) * Math.PI * 5.4 - 1.25) * 0.024;
-
-      // Fine surface texture
-      z += Math.cos(nx * Math.PI * 7.9 + ny * Math.PI * 3.5 + 0.28) * 0.017;
-      z += Math.sin(ny * Math.PI * 9.2 - nx * Math.PI * 2.8 + 1.72) * 0.013;
-
-      // Taper toward edges — crumple is slightly calmer at the border
-      const edgeFade = (0.72 + 0.28 * Math.cos(nx * Math.PI * 0.5))
-                     * (0.72 + 0.28 * Math.cos(ny * Math.PI * 0.5));
-      z *= edgeFade;
-
-      // Barely-perceptible breathing animation
-      const breathe = Math.sin(t * 0.85 + nx * 3.1 + ny * 2.2) * 0.0055
-                    + Math.cos(t * 1.25 - nx * 1.9 + ny * 1.65) * 0.004;
-      return z + breathe * edgeFade;
-    }
-
-    // Initial shape
-    for (let i = 0; i < posAttr.count; i++) {
-      posAttr.setZ(i, crumpleZ(origXY[i * 2] / HW, origXY[i * 2 + 1] / HH, 0));
-    }
-    posAttr.needsUpdate = true;
-    paperGeo.computeVertexNormals();
-
-    const paper = new THREE.Mesh(
-      paperGeo,
-      new THREE.MeshStandardMaterial({
-        color: 0xfefef8, roughness: 0.84, metalness: 0, side: THREE.DoubleSide
-      })
-    );
-    paper.rotation.x  = -Math.PI / 2;
-    paper.position.y  = 0.001; // just above floor so shadow renders cleanly
-    paper.castShadow    = true;
-    paper.receiveShadow = true;
-    scene.add(paper);
-
-    // ── Lights ──────────────────────────────────────────────────────────
-    scene.add(new THREE.AmbientLight(0xffffff, 0.88));
-
-    // Key light — warm, upper-left, casts shadow
-    const key = new THREE.DirectionalLight(0xfff4e0, 1.55);
-    key.position.set(3.2, 5.5, 2.2);
-    key.castShadow = true;
-    key.shadow.mapSize.set(2048, 2048);
-    key.shadow.camera.left   = -3;
-    key.shadow.camera.right  =  3;
-    key.shadow.camera.top    =  3;
-    key.shadow.camera.bottom = -3;
-    key.shadow.camera.near = 0.5;
-    key.shadow.camera.far  = 18;
-    key.shadow.bias = -0.0005;
-    scene.add(key);
-
-    // Subtle cool fill from opposite side
-    const fill = new THREE.DirectionalLight(0xe4eeff, 0.32);
-    fill.position.set(-2.5, 2.8, -1.8);
-    scene.add(fill);
-
-    // ── Render loop ──────────────────────────────────────────────────────
-    function animate() {
-      requestAnimationFrame(animate);
-      const t = performance.now() / 1000;
-
-      for (let i = 0; i < posAttr.count; i++) {
-        posAttr.setZ(i, crumpleZ(origXY[i * 2] / HW, origXY[i * 2 + 1] / HH, t));
-      }
-      posAttr.needsUpdate = true;
-      paperGeo.computeVertexNormals();
-
-      renderer.render(scene, camera);
-    }
-    animate();
+    // ── Render (static — no animation needed) ───────────────────────────
+    renderer.render(scene, camera);
 
     // ── Resize ───────────────────────────────────────────────────────────
     window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.render(scene, camera);
     });
   </script>
 
