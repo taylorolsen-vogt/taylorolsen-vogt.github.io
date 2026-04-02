@@ -61,6 +61,15 @@ nav {
   border-color: #2b2b2b;
 }
 
+.nav-name:focus-visible,
+.mode-btn:focus-visible,
+.g-send:focus-visible,
+.g-close:focus-visible,
+.g-prompt:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+
 .nav-center {
   position: absolute;
   left: 50%;
@@ -233,6 +242,7 @@ nav {
   z-index: 650;
   display: flex;
   flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
 }
 
 .g-drawer.open {
@@ -281,6 +291,55 @@ nav {
   text-align: right;
 }
 
+.g-prompt-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.g-prompt {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.g-prompt:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.34);
+  color: var(--white);
+}
+
+.g-typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 12px;
+}
+
+.g-typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  animation: gtyping 1.2s ease-in-out infinite;
+}
+
+.g-typing span:nth-child(2) { animation-delay: 0.2s; }
+.g-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes gtyping {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+  40% { opacity: 0.95; transform: scale(1.35); }
+}
+
 .g-input-row {
   display: flex;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -307,6 +366,11 @@ nav {
   text-transform: uppercase;
   padding: 0 0.9rem;
   cursor: pointer;
+}
+
+.g-send:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
 }
 
 .grid {
@@ -824,6 +888,11 @@ nav {
   </div>
   <div class="g-msgs" id="gMsgs">
     <div class="g-msg">Hi. I'm Gideon. Ask me about projects, systems, or what to click next.</div>
+    <div class="g-prompt-row" id="gPrompts">
+      <button class="g-prompt" type="button" data-q="What should I click first?">Start Here</button>
+      <button class="g-prompt" type="button" data-q="Tell me about Mach 1 and Mach 2.">Robotics</button>
+      <button class="g-prompt" type="button" data-q="Show me software highlights.">Software</button>
+    </div>
   </div>
   <div class="g-input-row">
     <input class="g-input" id="gInput" type="text" placeholder="Ask Gideon...">
@@ -850,6 +919,7 @@ const gClose = document.getElementById('gClose');
 const gInput = document.getElementById('gInput');
 const gSend = document.getElementById('gSend');
 const gMsgs = document.getElementById('gMsgs');
+const gPrompts = document.getElementById('gPrompts');
 
 function openGideon() {
   gDrawer.classList.add('open');
@@ -873,9 +943,17 @@ function sendToGideon() {
   if (!text) return;
   addGideonMessage(text, true);
   gInput.value = '';
+
+  const typing = document.createElement('div');
+  typing.className = 'g-msg';
+  typing.innerHTML = '<div class="g-typing"><span></span><span></span><span></span></div>';
+  gMsgs.appendChild(typing);
+  gMsgs.scrollTop = gMsgs.scrollHeight;
+
   setTimeout(() => {
-    addGideonMessage('Try clicking FORGE, Mach 1, and The Archive for the best demos.');
-  }, 240);
+    typing.remove();
+    addGideonMessage('Try FORGE, Mach 1, and The Archive first. If you want, ask me for a guided route by category.');
+  }, 420);
 }
 
 gOpenBtn.addEventListener('click', openGideon);
@@ -885,6 +963,15 @@ gSend.addEventListener('click', sendToGideon);
 gInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') sendToGideon();
 });
+
+if (gPrompts) {
+  gPrompts.querySelectorAll('.g-prompt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      gInput.value = btn.dataset.q || '';
+      sendToGideon();
+    });
+  });
+}
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape' && gDrawer.classList.contains('open')) closeGideon();
