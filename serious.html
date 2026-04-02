@@ -346,6 +346,12 @@ nav {
 .tile-lidi { grid-column: 1; grid-row: 2; }
 .tile-gideon { grid-column: 2; grid-row: 2; }
 .tile-forge { grid-column: 1; grid-row: 3; }
+.tile-forge .tile-bg {
+  background-image: url('assets/FORGE_example.webp');
+  background-size: cover;
+  background-position: center;
+  background-color: #0a0a0c;
+}
 .tile-resilife { grid-column: 2; grid-row: 3; }
 .tile-resilife .tile-bg {
   background-image: url('assets/AppIcon_ResiLife.png');
@@ -718,7 +724,7 @@ nav {
     </div>
   </div>
 
-  <div class="tile t1x1 tile-forge" data-cat="software">
+  <div class="tile t1x1 tile-forge has-img" data-cat="software">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
