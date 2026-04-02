@@ -537,6 +537,55 @@ nav {
 .tile-pb { grid-column: 3 / span 3; grid-row: 6; }
 .tile-blackbook { grid-column: 1 / span 2; grid-row: 5; }
 
+.tile-quote {
+  cursor: pointer;
+}
+
+.tile-quote .tile-label {
+  transition: transform 0.28s ease;
+}
+
+.quote-links {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.95rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.quote-link {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  width: fit-content;
+  border-bottom: 1px solid rgba(14, 14, 14, 0.28);
+  padding-bottom: 2px;
+}
+
+.tile-quote.open .tile-label {
+  transform: translateY(-64px);
+}
+
+.tile-quote.open .quote-links {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.tile-quote.open .quote-link:hover {
+  color: var(--mid);
+  border-bottom-color: rgba(136, 136, 136, 0.45);
+}
+
 /* Filter-specific layouts (All remains untouched) */
 .grid.filter-hardware .tile,
 .grid.filter-software .tile,
@@ -863,6 +912,10 @@ nav {
       <div class="tile-kicker">Software</div>
       <div class="tile-name">Quote <em>Calculators</em></div>
     </div>
+    <div class="quote-links" aria-label="Quote calculator links">
+      <a class="quote-link" href="#">Commercial Quote Calculator</a>
+      <a class="quote-link" href="#">Retainer Quote Calculator</a>
+    </div>
   </div>
 
   <div class="tile t1x1 tile-drone" data-cat="hardware">
@@ -952,11 +1005,18 @@ document.querySelectorAll('.filt').forEach((b) => {
 const gDrawer = document.getElementById('gDrawer');
 const gOpenBtn = document.getElementById('openGideon');
 const gTile = document.getElementById('gideonTile');
+const quoteTile = document.querySelector('.tile-quote');
 const gClose = document.getElementById('gClose');
 const gInput = document.getElementById('gInput');
 const gSend = document.getElementById('gSend');
 const gMsgs = document.getElementById('gMsgs');
 const gPrompts = document.getElementById('gPrompts');
+
+if (quoteTile) {
+  quoteTile.addEventListener('click', () => {
+    quoteTile.classList.toggle('open');
+  });
+}
 
 function openGideon() {
   gDrawer.classList.add('open');
