@@ -538,11 +538,7 @@ nav {
 .tile-blackbook { grid-column: 1 / span 2; grid-row: 5; }
 
 .tile-quote {
-  cursor: pointer;
-}
-
-.tile-quote .tile-label {
-  transition: transform 0.28s ease;
+  cursor: default;
 }
 
 .quote-links {
@@ -554,10 +550,8 @@ nav {
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(10px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .quote-link {
@@ -571,19 +565,15 @@ nav {
   padding-bottom: 2px;
 }
 
-.tile-quote.open .tile-label {
-  transform: translateY(-64px);
-}
-
-.tile-quote.open .quote-links {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
-}
-
-.tile-quote.open .quote-link:hover {
+.tile-quote .quote-link:hover {
   color: var(--mid);
   border-bottom-color: rgba(136, 136, 136, 0.45);
+}
+
+.tile-quote:hover .quote-link,
+.tile-quote:hover .quote-link {
+  color: var(--white);
+  border-bottom-color: rgba(255, 255, 255, 0.4);
 }
 
 /* Filter-specific layouts (All remains untouched) */
@@ -1005,18 +995,11 @@ document.querySelectorAll('.filt').forEach((b) => {
 const gDrawer = document.getElementById('gDrawer');
 const gOpenBtn = document.getElementById('openGideon');
 const gTile = document.getElementById('gideonTile');
-const quoteTile = document.querySelector('.tile-quote');
 const gClose = document.getElementById('gClose');
 const gInput = document.getElementById('gInput');
 const gSend = document.getElementById('gSend');
 const gMsgs = document.getElementById('gMsgs');
 const gPrompts = document.getElementById('gPrompts');
-
-if (quoteTile) {
-  quoteTile.addEventListener('click', () => {
-    quoteTile.classList.toggle('open');
-  });
-}
 
 function openGideon() {
   gDrawer.classList.add('open');
