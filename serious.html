@@ -326,7 +326,7 @@ nav {
   grid-column: 3 / span 2;
   grid-row: 1 / span 3;
   min-height: 0;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: auto;
 }
 
 .tile-mach1 .tile-bg {
@@ -358,6 +358,16 @@ nav {
   background-position: center;
   background-color: #ece8dc;
 }
+
+.tile-resilife .tile-kicker,
+.tile-resilife .tile-name,
+.tile-resilife .tile-name em,
+.tile-resilife:hover .tile-kicker,
+.tile-resilife:hover .tile-name,
+.tile-resilife:hover .tile-name em {
+  color: var(--ink);
+}
+
 .tile-commercial { grid-column: 1 / span 2; grid-row: 4; }
 .tile-quote { grid-column: 1; grid-row: 5; }
 .tile-drone { grid-column: 2; grid-row: 5; }
