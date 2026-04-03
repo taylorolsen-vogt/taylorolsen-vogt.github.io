@@ -381,6 +381,8 @@
     controls.maxDistance = 20;
     controls.maxPolarAngle = Math.PI / 2.1;
 
+    const texLoader = new THREE.TextureLoader();
+
     function hash(n) { return ((Math.sin(n) * 43758.5453) % 1 + 1) % 1; }
 
     function noise2(x, y) {
@@ -443,6 +445,13 @@
         metalness: 0.0,
         side: THREE.DoubleSide,
       });
+
+      if (opts.textureUrl) {
+        const tex = texLoader.load(opts.textureUrl);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        mat.map = tex;
+        mat.needsUpdate = true;
+      }
 
       const mesh = new THREE.Mesh(geo, mat);
       mesh.castShadow = true;
@@ -529,9 +538,9 @@
     }
 
     const papers = [
-      makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3 }),
-      makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6 }),
-      makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9 }),
+      makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3, textureUrl: 'assets/mach-1.jpg' }),
+      makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp' }),
+      makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png' }),
       makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85 }),
     ];
 
