@@ -48,18 +48,17 @@ nav {
   font-weight: 400;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--white);
-  background: var(--ink);
-  border: 1px solid var(--ink);
-  padding: 8px 10px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  color: var(--ink);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: default;
+  line-height: 1.5;
 }
 
-.nav-name:hover {
-  background: #2b2b2b;
-  border-color: #2b2b2b;
-}
+.nav-name a { color: var(--mid); text-decoration: none; transition: color 0.15s; }
+.nav-name a:hover { color: var(--ink); }
+.nav-name strong { color: var(--ink); font-weight: 400; margin-right: 0.8rem; }
 
 .nav-name:focus-visible,
 .mode-btn:focus-visible,
@@ -127,66 +126,26 @@ nav {
 
 .mode-btn:hover:not(.active) { color: var(--ink); }
 
-.masthead {
-  margin-top: 46px;
-  padding: clamp(0.8rem, 2vw, 1.6rem) 1.15rem 0;
-}
-
-.masthead-name {
-  font-family: 'Cormorant', serif;
-  font-weight: 300;
-  font-size: clamp(1.6rem, 3.2vw, 3.4rem);
-  line-height: 0.86;
-  letter-spacing: -0.03em;
-  color: var(--ink);
-}
-
-.masthead-name em { font-style: italic; }
-
-.masthead-strip {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.6rem;
-  border-top: 1px solid var(--rule);
-  border-bottom: 1px solid var(--rule);
-  margin-top: clamp(0.5rem, 1.2vw, 0.9rem);
-  padding: 0.72rem 0;
-}
-
-.masthead-role {
+.gideon-btn {
+  font-family: 'DM Sans', sans-serif;
   font-size: 9px;
-  letter-spacing: 0.22em;
+  font-weight: 400;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: var(--ink);
+  padding: 8px 12px;
+  background: var(--ink);
+  color: var(--white);
+  border: none;
+  border-left: 1px solid var(--rule);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
 }
 
-.masthead-disc {
-  font-size: 9px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--mid);
-  flex: 1;
-  text-align: center;
-}
-
-.masthead-contacts {
-  display: flex;
-  gap: 1.4rem;
-}
-
-.masthead-contacts a {
-  font-size: 9px;
-  letter-spacing: 0.12em;
-  color: var(--mid);
-  text-decoration: none;
-  transition: color 0.15s;
-}
-
-.masthead-contacts a:hover { color: var(--ink); }
+.gideon-btn:hover { background: #2b2b2b; }
 
 .filterbar {
+  margin-top: 46px;
   display: flex;
   border-bottom: 1px solid var(--rule);
   overflow-x: auto;
@@ -797,8 +756,7 @@ nav {
 @media (max-width: 620px) {
   .nav-center { display: none; }
   .mode-btn { padding: 8px 9px; letter-spacing: 0.14em; }
-  .masthead-disc { display: none; }
-  .masthead-contacts { flex-direction: column; gap: 0.3rem; }
+  .nav-name a, .nav-name .sep { display: none; }
   .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
 }
 </style>
@@ -806,7 +764,12 @@ nav {
 <body>
 
 <nav>
-  <button class="nav-name" id="openGideon" type="button">Speak to Gideon</button>
+  <div class="nav-name">
+    <strong>Taylor Olsen-Vogt</strong>
+    <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+    <span style="margin: 0 0.4rem; color: var(--light)">·</span>
+    <a href="tel:+15619710963">561 971 0963</a>
+  </div>
   <ul class="nav-center">
     <li><a href="serious.html" class="active">Work</a></li>
     <li><a href="#">About</a></li>
@@ -815,20 +778,9 @@ nav {
   <div class="nav-right">
     <a class="mode-btn active" href="serious.html">Serious</a>
     <a class="mode-btn" href="unserious.html">Unserious</a>
+    <button class="gideon-btn" id="openGideon" type="button">Speak to Gideon</button>
   </div>
 </nav>
-
-<header class="masthead">
-  <h1 class="masthead-name">Taylor <em>Olsen-Vogt</em></h1>
-  <div class="masthead-strip">
-    <span class="masthead-role">Principal Engineer &amp; Co-Founder</span>
-    <span class="masthead-disc">Robotics &middot; Software &middot; Hardware &middot; Marketing &middot; AI</span>
-    <div class="masthead-contacts">
-      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
-      <a href="tel:+15619710963">561 971 0963</a>
-    </div>
-  </div>
-</header>
 
 <div class="filterbar">
   <button class="filt active" data-f="all">All</button>
