@@ -156,16 +156,16 @@ nav {
   font-weight: 400;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 4px 0 0;
-  background: none;
-  color: var(--mid);
-  border: none;
+  padding: 8px 10px;
+  background: var(--ink);
+  color: var(--white);
+  border: 1px solid var(--ink);
   cursor: pointer;
   white-space: nowrap;
-  transition: color 0.15s;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.gideon-btn:hover { color: var(--ink); }
+.gideon-btn:hover { background: #2b2b2b; border-color: #2b2b2b; }
 
 .filterbar {
   margin-top: 46px;
@@ -190,6 +190,8 @@ nav {
   border-right: 1px solid var(--rule);
   cursor: pointer;
   white-space: nowrap;
+  flex: 1;
+  text-align: center;
   transition: background 0.15s, color 0.15s;
 }
 
