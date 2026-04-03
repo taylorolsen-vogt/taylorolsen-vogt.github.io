@@ -299,12 +299,12 @@
     scene.add(fill);
 
     // ── Grid plane + shadow receiver ───────────────────────────────────
-    const gridHelper = new THREE.GridHelper(30, 60, 0x999990, 0xb8b5ae);
+    const gridHelper = new THREE.GridHelper(120, 240, 0x999990, 0xb8b5ae);
     gridHelper.material.opacity = 0.8;
     gridHelper.material.transparent = true;
     scene.add(gridHelper);
 
-    const groundGeo = new THREE.PlaneGeometry(30, 30);
+    const groundGeo = new THREE.CircleGeometry(60, 64);
     const groundMat = new THREE.ShadowMaterial({ opacity: 0.08 });
     const ground = new THREE.Mesh(groundGeo, groundMat);
     ground.rotation.x = -Math.PI / 2;
