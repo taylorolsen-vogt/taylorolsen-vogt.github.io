@@ -542,9 +542,12 @@
         if (grabbed) {
           // lift up smoothly
           mesh.position.y += ((py + liftHeight) - mesh.position.y) * 0.12;
-          // tilt in direction of movement
-          tiltX += (velZ * 2.5 - tiltX) * 0.1;
-          tiltZ += (-velX * 2.5 - tiltZ) * 0.1;
+          // accumulate tilt from velocity — builds up with shaking
+          tiltX += velZ * 0.6;
+          tiltZ += -velX * 0.6;
+          // light damping so it swings but doesn't explode
+          tiltX *= 0.92;
+          tiltZ *= 0.92;
           // wobble rotation
           mesh.rotation.y += velX * 0.04;
         } else {
@@ -557,9 +560,11 @@
           // settle back down
           mesh.position.y += (py + Math.sin(floatT) * 0.005 - mesh.position.y) * 0.08;
 
-          // decay tilt
-          tiltX *= 0.9;
-          tiltZ *= 0.9;
+          // snap tilt to nearest flat side (0 or π)
+          const snapX = Math.abs(tiltX) > Math.PI / 2 ? Math.PI * Math.sign(tiltX) : 0;
+          const snapZ = Math.abs(tiltZ) > Math.PI / 2 ? Math.PI * Math.sign(tiltZ) : 0;
+          tiltX += (snapX - tiltX) * 0.08;
+          tiltZ += (snapZ - tiltZ) * 0.08;
 
           // add spin from remaining velocity
           mesh.rotation.y += velX * 0.02;
