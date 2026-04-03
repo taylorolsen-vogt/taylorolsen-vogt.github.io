@@ -87,7 +87,7 @@
     }
     .nav-center a:hover, .nav-center a.active { color: var(--ink); }
 
-    .nav-right { display: flex; flex-direction: column; align-items: stretch; gap: 2px; }
+    .nav-right { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
 
     .mode-row {
       display: flex;
@@ -109,8 +109,6 @@
       color: var(--ink);
       text-decoration: none;
       white-space: nowrap;
-      flex: 1;
-      text-align: center;
       transition: background 0.15s, color 0.15s;
     }
     .mode-btn:last-child { border-right: none; }
