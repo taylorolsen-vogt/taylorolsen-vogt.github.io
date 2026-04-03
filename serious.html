@@ -43,22 +43,40 @@ nav {
 }
 
 .nav-name {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.nav-name strong {
+  font-family: 'Cormorant', serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.nav-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nav-contact a {
   font-family: 'DM Sans', sans-serif;
   font-size: 9px;
   font-weight: 400;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--ink);
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: default;
-  line-height: 1.5;
+  color: var(--mid);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.15s;
 }
 
-.nav-name a { color: var(--mid); text-decoration: none; transition: color 0.15s; }
-.nav-name a:hover { color: var(--ink); }
-.nav-name strong { color: var(--ink); font-weight: 400; margin-right: 0.8rem; }
+.nav-contact a:hover { color: var(--ink); }
 
 .nav-name:focus-visible,
 .mode-btn:focus-visible,
@@ -761,7 +779,7 @@ nav {
 @media (max-width: 620px) {
   .nav-center { display: none; }
   .mode-btn { padding: 8px 9px; letter-spacing: 0.14em; }
-  .nav-name a, .nav-name .sep { display: none; }
+  .nav-name .nav-contact { display: none; }
   .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
 }
 </style>
@@ -771,9 +789,10 @@ nav {
 <nav>
   <div class="nav-name">
     <strong>Taylor Olsen-Vogt</strong>
-    <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
-    <span style="margin: 0 0.4rem; color: var(--light)">·</span>
-    <a href="tel:+15619710963">561 971 0963</a>
+    <div class="nav-contact">
+      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+      <a href="tel:+15619710963">561 971 0963</a>
+    </div>
   </div>
   <ul class="nav-center">
     <li><a href="serious.html" class="active">Work</a></li>
