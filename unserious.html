@@ -43,6 +43,21 @@
       color: rgba(0, 0, 0, 0.25);
       pointer-events: none;
       white-space: nowrap;
+      transition: opacity 0.6s;
+    }
+    #hint.fade { opacity: 0; }
+
+    #stage {
+      position: fixed;
+      right: 1.2rem;
+      bottom: 2rem;
+      z-index: 120;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(0, 0, 0, 0.18);
+      pointer-events: none;
     }
 
     /* ─── Nav (matches serious.html) ─────────────────────────────────── */
@@ -212,7 +227,8 @@
 <body>
 
   <canvas id="c"></canvas>
-  <div id="hint">Drag the paper · Orbit with right-click or two fingers</div>
+  <div id="hint">Click the paper</div>
+  <div id="stage"></div>
 
   <nav>
     <button class="nav-name" id="openGideon" type="button">Speak to Gideon</button>
@@ -345,11 +361,63 @@
       return v / m;
     }
 
+    // ── Hint + stage UI ─────────────────────────────────────────────────
+    const hintEl  = document.getElementById('hint');
+    const stageEl = document.getElementById('stage');
+
+    function setHint(text) {
+      hintEl.classList.add('fade');
+      setTimeout(() => { hintEl.textContent = text; hintEl.classList.remove('fade'); }, 350);
+    }
+
+    function setStage(n, total) {
+      stageEl.textContent = n < total ? `${n} / ${total}` : '';
+    }
+
+    // ── Stages ──────────────────────────────────────────────────────────
+    // Each stage has:
+    //   crumple  – target crumple amount (1 = balled up, 0 = flat)
+    //   test     – function(dragDistance, dragDir, clickOnly) → passed?
+    //   hint     – shown when stage becomes active
+    //   next     – hint shown after completing this stage (brief flash)
+    const STAGES = [
+      {
+        crumple: 1.0,
+        hint: 'Click the paper',
+        test: (dist, dir, click) => click,
+      },
+      {
+        crumple: 0.78,
+        hint: 'Pull it toward you',
+        test: (dist, dir) => dist > 0.6 && dir.z > 0.4,
+      },
+      {
+        crumple: 0.52,
+        hint: 'Drag it sideways to loosen',
+        test: (dist, dir) => dist > 0.5 && Math.abs(dir.x) > 0.6,
+      },
+      {
+        crumple: 0.28,
+        hint: 'Push down on it',
+        test: (dist, dir, click) => click,
+      },
+      {
+        crumple: 0.08,
+        hint: 'Smooth it out — drag slowly',
+        test: (dist) => dist > 0.3 && dist < 1.2,
+      },
+      {
+        crumple: 0.0,
+        hint: '',
+        test: () => false,
+      },
+    ];
+
     function makePaper(opts = {}) {
       const {
         size = 1.4,
         segments = 56,
-        crumple = 0.16,
+        crumple: crumpleAmt = 0.16,
         seed = 3.7,
         px = 0, py = 0.01, pz = 0,
         rotY = 0,
@@ -359,28 +427,28 @@
       geo.rotateX(-Math.PI / 2);
 
       const pos = geo.attributes.position;
-      const uv = geo.attributes.uv;
+      const uv  = geo.attributes.uv;
+
+      const flatY = new Float32Array(pos.count);
+      const crumpledY = new Float32Array(pos.count);
+
+      for (let i = 0; i < pos.count; i++) flatY[i] = pos.getY(i);
 
       for (let i = 0; i < pos.count; i++) {
         const u = uv.getX(i), v = uv.getY(i);
         const cu = u - 0.5, cv = v - 0.5;
         const dist = Math.sqrt(cu * cu + cv * cv);
         const edge = 0.55 + dist * 0.9;
-
         const coarse = (fbm(u * 2.2 + seed, v * 2.2 + seed, 3) - 0.5);
-        const fine = (fbm(u * 9 + seed * 1.7, v * 9 + seed * 1.7, 4) - 0.5);
-        const disp = (coarse * 0.65 + fine * 0.35) * crumple * edge;
-
-        pos.setY(i, pos.getY(i) + disp);
+        const fine   = (fbm(u * 9 + seed * 1.7, v * 9 + seed * 1.7, 4) - 0.5);
+        const disp   = (coarse * 0.65 + fine * 0.35) * crumpleAmt * edge;
+        crumpledY[i] = flatY[i] + disp;
+        pos.setY(i, crumpledY[i]);
       }
-
       geo.computeVertexNormals();
 
       const mat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.88,
-        metalness: 0.0,
-        side: THREE.DoubleSide,
+        color: 0xffffff, roughness: 0.88, metalness: 0, side: THREE.DoubleSide,
       });
 
       const mesh = new THREE.Mesh(geo, mat);
@@ -390,37 +458,57 @@
       mesh.rotation.y = rotY;
       scene.add(mesh);
 
+      // ── Interaction state ─────────────────────────────────────────────
       const rc = new THREE.Raycaster();
       const mp = new THREE.Vector2();
       const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -py);
       const hit3 = new THREE.Vector3();
       const off3 = new THREE.Vector3();
+      const downWorld = new THREE.Vector3();
 
       let dragging = false;
-      let hovered = false;
-      let floatT = Math.random() * Math.PI * 2;
+      let hovered  = false;
+      let floatT   = Math.random() * Math.PI * 2;
+      let crumpleCurrent = 1;
+      let crumpleTarget  = 1;
+
+      let stage = 0;
+      setHint(STAGES[0].hint);
+      setStage(0, STAGES.length - 1);
 
       function ndc(e) {
-        mp.x = (e.clientX / window.innerWidth) * 2 - 1;
+        mp.x =  (e.clientX / window.innerWidth)  * 2 - 1;
         mp.y = -(e.clientY / window.innerHeight) * 2 + 1;
       }
 
       function hitsMe(e) {
         ndc(e);
         rc.setFromCamera(mp, camera);
-        const hits = rc.intersectObject(mesh);
-        return hits.length ? hits[0] : null;
+        return rc.intersectObject(mesh).length > 0;
+      }
+
+      function advance() {
+        if (stage >= STAGES.length - 1) return;
+        stage++;
+        crumpleTarget = STAGES[stage].crumple;
+        setStage(stage, STAGES.length - 1);
+        if (stage >= STAGES.length - 1) {
+          setHint('');
+        } else {
+          setHint(STAGES[stage].hint);
+        }
       }
 
       function onDown(e) {
-        const h = hitsMe(e);
-        if (!h) return;
+        if (!hitsMe(e)) return;
         e.stopPropagation();
         dragging = true;
         controls.enabled = false;
         dragPlane.constant = -mesh.position.y;
+        rc.setFromCamera(mp, camera);
         rc.ray.intersectPlane(dragPlane, hit3);
         off3.copy(hit3).sub(mesh.position);
+        downWorld.copy(hit3);
         renderer.domElement.style.cursor = 'grabbing';
       }
 
@@ -451,20 +539,56 @@
         dragging = false;
         controls.enabled = true;
         renderer.domElement.style.cursor = hovered ? 'grab' : '';
+
+        // Evaluate the gesture for the current stage
+        if (stage < STAGES.length - 1) {
+          rc.setFromCamera(mp, camera);
+          dragPlane.constant = -mesh.position.y;
+          const upWorld = new THREE.Vector3();
+          rc.ray.intersectPlane(dragPlane, upWorld);
+
+          const delta = new THREE.Vector3().subVectors(upWorld, downWorld);
+          const dist = delta.length();
+          const dir  = dist > 0.001 ? delta.normalize() : new THREE.Vector3();
+          const clickOnly = dist < 0.08;
+
+          const s = STAGES[stage];
+          if (s.test(dist, dir, clickOnly)) {
+            advance();
+          }
+        }
       }
 
       renderer.domElement.addEventListener('pointerdown', onDown, true);
       window.addEventListener('pointermove', onMove, true);
       window.addEventListener('pointerup', onUp, true);
 
+      function updateShape() {
+        for (let i = 0; i < pos.count; i++) {
+          pos.setY(i, flatY[i] + (crumpledY[i] - flatY[i]) * crumpleCurrent);
+        }
+        pos.needsUpdate = true;
+        geo.computeVertexNormals();
+      }
+
       function tick(dt) {
         floatT += dt * 0.5;
+        const blendSpeed = Math.min(1, dt * 4.5);
+        crumpleCurrent += (crumpleTarget - crumpleCurrent) * blendSpeed;
+        updateShape();
         if (!dragging) {
           mesh.position.y = py + Math.sin(floatT) * 0.005;
         }
       }
 
-      return { tick };
+      function reset() {
+        stage = 0;
+        crumpleTarget = 1;
+        setHint(STAGES[0].hint);
+        setStage(0, STAGES.length - 1);
+      }
+
+      return { tick, reset };
     }
 
     const paper = makePaper({
@@ -474,6 +598,12 @@
       seed: 3.7,
       px: 0, py: 0.05, pz: 0,
       rotY: 0.3,
+    });
+
+    // R to re-crumple
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT') return;
+      if (e.key === 'r' || e.key === 'R') paper.reset();
     });
 
     const clock = new THREE.Clock();
