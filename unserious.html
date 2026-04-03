@@ -142,14 +142,19 @@
       font-size: 9px;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: rgba(14, 14, 14, 0.45);
+      color: var(--ink);
       text-decoration: none;
-      padding: 6px 10px;
-      border: 1px solid transparent;
-      transition: color 0.15s;
+      padding: 8px 12px;
+      background: var(--white);
+      border: none;
+      border-right: 1px solid var(--rule);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, color 0.15s;
     }
-    .mode-btn + .mode-btn { border-left: 1px solid var(--rule); }
-    .mode-btn.active { color: var(--ink); border-color: var(--rule); }
+    .mode-btn:last-child { border-right: none; }
+    .mode-btn.active { background: var(--ink); color: var(--white); }
+    .mode-btn:hover:not(.active) { background: var(--rule); }
 
     .gideon-btn {
       font-family: 'DM Sans', sans-serif;
@@ -267,7 +272,7 @@
     </div>
     <ul class="nav-center">
       <li><a href="serious.html">Work</a></li>
-      <li><a href="#">About</a></li>
+      <li><a href="about.html">About</a></li>
       <li><a href="contact.html">Contact</a></li>
     </ul>
     <div class="nav-right">
