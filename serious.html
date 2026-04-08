@@ -14,9 +14,10 @@
   --mid: #888888;
   --light: #c9c9c9;
   --rule: #e8e8e8;
-  --grad-top: #ecd9df;
-  --grad-bottom: #b6b6da;
-  --accent-grad: linear-gradient(180deg, var(--grad-top) 0%, var(--grad-bottom) 100%);
+  --grad-left: #ddd4dc;
+  --grad-mid: #c8c2ce;
+  --grad-right: #adb0cc;
+  --accent-grad: linear-gradient(90deg, var(--grad-left) 0%, var(--grad-mid) 52%, var(--grad-right) 100%);
 }
 
 html { scroll-behavior: smooth; }
@@ -160,11 +161,9 @@ nav {
   letter-spacing: 0.16em;
   text-transform: uppercase;
   padding: 4px 10px;
-  background:
-    linear-gradient(128deg, rgba(236, 217, 223, 0.34) 0%, rgba(182, 182, 218, 0.5) 100%),
-    linear-gradient(var(--ink), var(--ink));
-  color: var(--white);
-  border: 1px solid rgba(144, 144, 176, 0.58);
+  background: var(--accent-grad);
+  color: var(--ink);
+  border: 1px solid rgba(14, 14, 14, 0.24);
   cursor: pointer;
   white-space: nowrap;
   width: 100%;
@@ -173,11 +172,9 @@ nav {
 }
 
 .gideon-btn:hover {
-  background:
-    linear-gradient(128deg, rgba(236, 217, 223, 0.44) 0%, rgba(182, 182, 218, 0.64) 100%),
-    linear-gradient(#050505, #050505);
-  border-color: rgba(182, 182, 218, 0.7);
-  box-shadow: 0 0 0 1px rgba(236, 217, 223, 0.2) inset, 0 0 22px rgba(182, 182, 218, 0.22);
+  background: linear-gradient(90deg, #d8ced8 0%, #c2bcc9 52%, #a7aaca 100%);
+  border-color: rgba(14, 14, 14, 0.34);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset;
 }
 
 .filterbar {
