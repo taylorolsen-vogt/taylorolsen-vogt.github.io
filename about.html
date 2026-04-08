@@ -16,6 +16,9 @@
       --mid: #888888;
       --light: #c9c9c9;
       --rule: #e8e8e8;
+      --grad-top: #ecd9df;
+      --grad-bottom: #b6b6da;
+      --accent-grad: linear-gradient(180deg, var(--grad-top) 0%, var(--grad-bottom) 100%);
     }
 
     body {
@@ -122,16 +125,24 @@
       letter-spacing: 0.16em;
       text-transform: uppercase;
       padding: 4px 10px;
-      background: #0a0044;
+      background:
+        linear-gradient(135deg, rgba(236, 217, 223, 0.16) 0%, rgba(182, 182, 218, 0.24) 100%),
+        var(--ink);
       color: var(--white);
-      border: 1px solid #0a0044;
+      border: 1px solid rgba(14, 14, 14, 0.88);
       cursor: pointer;
       white-space: nowrap;
       width: 100%;
       text-align: center;
-      transition: background 0.15s, color 0.15s, border-color 0.15s;
+      transition: background 0.2s, color 0.15s, border-color 0.2s, box-shadow 0.2s;
     }
-    .gideon-btn:hover { background: #160066; border-color: #160066; }
+    .gideon-btn:hover {
+      background:
+        linear-gradient(135deg, rgba(236, 217, 223, 0.2) 0%, rgba(182, 182, 218, 0.3) 100%),
+        #050505;
+      border-color: rgba(182, 182, 218, 0.45);
+      box-shadow: 0 0 0 1px rgba(182, 182, 218, 0.18) inset;
+    }
 
     /* ─── Gideon drawer ──────────────────────────────────────────── */
     .g-drawer {
@@ -219,7 +230,11 @@
       aspect-ratio: 3 / 5;
       flex-shrink: 0;
       object-fit: cover;
-      border: 2px solid var(--ink);
+      border: 2px solid transparent;
+      background:
+        linear-gradient(var(--white), var(--white)) padding-box,
+        var(--accent-grad) border-box;
+      box-shadow: 0 0 0 1px rgba(14, 14, 14, 0.08), 0 8px 24px rgba(14, 14, 14, 0.12);
       border-radius: 9999px;
     }
 
