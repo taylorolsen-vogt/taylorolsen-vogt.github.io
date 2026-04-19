@@ -821,14 +821,14 @@ nav {
   display: grid;
   align-items: start;
   width: 100%;
-  max-width: 680px;
+  max-width: 1200px;
   margin-left: auto;
   margin-right: auto;
 }
 
 .about-header {
   display: grid;
-  grid-template-columns: minmax(120px, 150px) 320px;
+  grid-template-columns: minmax(120px, 150px) minmax(0, 1fr);
   gap: clamp(14px, 2vw, 24px);
   align-items: start;
   margin-bottom: clamp(10px, 1.8vw, 16px);
@@ -851,7 +851,7 @@ nav {
 
 .about-intro {
   width: 100%;
-  max-width: 360px;
+  max-width: none;
 }
 
 .about-name {
@@ -878,7 +878,7 @@ nav {
   line-height: 1.45;
   color: var(--ink);
   font-weight: 300;
-  max-width: 320px;
+  max-width: none;
 }
 
 .about-bio p + p { margin-top: 0.6rem; }
