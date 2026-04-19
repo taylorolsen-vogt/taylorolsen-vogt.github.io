@@ -115,11 +115,15 @@ nav {
   color: var(--ink);
 }
 
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
 .nav-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  gap: 0.85rem;
 }
 
 .mode-row {
@@ -130,11 +134,11 @@ nav {
 
 .mode-btn {
   font-family: 'DM Sans', sans-serif;
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 5px 10px;
+  padding: 8px 16px;
   background: var(--white);
   border: none;
   border-right: 1px solid var(--rule);
@@ -156,17 +160,16 @@ nav {
 
 .gideon-btn {
   font-family: 'DM Sans', sans-serif;
-  font-size: 7px;
+  font-size: 10px;
   font-weight: 400;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  padding: 8px 16px;
   background: var(--accent-grad);
   color: var(--ink);
   border: 1px solid rgba(14, 14, 14, 0.24);
   cursor: pointer;
   white-space: nowrap;
-  width: 100%;
   text-align: center;
   transition: background 0.2s, color 0.15s, border-color 0.2s, box-shadow 0.2s;
 }
@@ -790,7 +793,7 @@ nav {
 
 @media (max-width: 620px) {
   .nav-center { display: none; }
-  .mode-btn { padding: 5px 8px; letter-spacing: 0.14em; }
+  .mode-btn { padding: 7px 12px; letter-spacing: 0.14em; }
   .nav-name .nav-contact { display: none; }
   .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
   .about-header { flex-direction: column; }
@@ -966,19 +969,14 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 <body>
 
 <nav>
-  <div class="nav-name">
-    <strong>Taylor Olsen-Vogt</strong>
-    <div class="nav-contact">
-      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
-      <a href="tel:+15619710963">561 971 0963</a>
-    </div>
+  <div class="nav-left">
+    <button class="gideon-btn" id="openGideon" type="button">Speak to Gideon</button>
   </div>
   <div class="nav-right">
     <div class="mode-row">
       <a class="mode-btn active" href="serious.html">Serious</a>
       <a class="mode-btn" href="unserious.html">Unserious</a>
     </div>
-    <button class="gideon-btn" id="openGideon" type="button">Speak to Gideon</button>
   </div>
 </nav>
 
