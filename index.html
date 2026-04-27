@@ -1,259 +1,1222 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Taylor Olsen-Vogt</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Manrope:wght@300;400;500&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taylor Olsen-Vogt | Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    :root {
-      --paper: #ffffff;
-      --paper-2: #f5f5f3;
-      --ink: #0a0a0c;
-      --ink-soft: rgba(10, 10, 12, 0.62);
-      --ink-dim: rgba(10, 10, 12, 0.34);
-      --line: rgba(10, 10, 12, 0.42);
-      --line-hover: rgba(10, 10, 12, 0.82);
-      --grad-top: #ecd9df;
-      --grad-bottom: #b6b6da;
-      --accent-grad: linear-gradient(180deg, var(--grad-top) 0%, var(--grad-bottom) 100%);
-      --serif: 'Cormorant Garamond', Georgia, serif;
-      --sans: 'Manrope', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    }
+:root {
+  --white: #ffffff;
+  --ink: #0e0e0e;
+  --mid: #888888;
+  --light: #c9c9c9;
+  --rule: #e8e8e8;
+  --grad-left: #ddd4dc;
+  --grad-mid: #c8c2ce;
+  --grad-right: #adb0cc;
+  --accent-grad: linear-gradient(90deg, var(--grad-left) 0%, var(--grad-mid) 52%, var(--grad-right) 100%);
+}
 
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: var(--paper);
-      color: var(--ink);
-    }
+html { scroll-behavior: smooth; }
 
-    body {
-      font-family: var(--sans);
-      -webkit-font-smoothing: antialiased;
-      text-rendering: optimizeLegibility;
-      position: relative;
-    }
+body {
+  background: var(--white);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+}
 
-    .bg {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background:
-        radial-gradient(30% 46% at 50% 52%, rgba(182, 182, 218, 0.28) 0%, rgba(236, 217, 223, 0.24) 34%, transparent 68%),
-        radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.98), transparent 40%),
-        radial-gradient(circle at 88% 84%, rgba(0, 0, 0, 0.08), transparent 40%),
-        linear-gradient(154deg, var(--paper) 0%, var(--paper-2) 58%, #ecece7 100%);
-    }
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.15rem;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+}
 
-    .grain {
-      position: fixed;
-      inset: 0;
-      z-index: 1;
-      pointer-events: none;
-      opacity: 0.16;
-      background-image: radial-gradient(rgba(0, 0, 0, 0.07) 0.45px, transparent 0.45px);
-      background-size: 3px 3px;
-      mix-blend-mode: multiply;
-    }
+.nav-name {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
 
-    #intro-fade {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      background: #000;
-      opacity: 1;
-      pointer-events: none;
-      animation: quickFadeToWhite 480ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    }
+.nav-name strong {
+  font-family: 'Cormorant', serif;
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--ink);
+  line-height: 1;
+}
 
-    @keyframes quickFadeToWhite {
-      0% {
-        background: #000;
-        opacity: 1;
-      }
-      72% {
-        background: #fff;
-        opacity: 1;
-      }
-      100% {
-        background: #fff;
-        opacity: 0;
-      }
-    }
+.nav-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
 
-    .stage {
-      position: relative;
-      z-index: 2;
-      min-height: 100dvh;
-      display: grid;
-      place-items: center;
-      padding: clamp(28px, 5vw, 56px);
-    }
+.nav-contact a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  line-height: 1.4;
+  transition: color 0.15s;
+}
 
-    .hero {
-      width: min(780px, 100%);
-      display: grid;
-      gap: clamp(36px, 7vh, 68px);
-      animation: riseIn 900ms cubic-bezier(0.22, 1, 0.36, 1) 140ms both;
-    }
+.nav-contact a:hover { color: var(--ink); }
 
-    @keyframes riseIn {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
+.nav-name:focus-visible,
+.mode-btn:focus-visible,
+.g-send:focus-visible,
+.g-close:focus-visible,
+.g-prompt:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
 
-    .name-block {
-      text-align: center;
-    }
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 2.1rem;
+  list-style: none;
+}
 
-    .name {
-      font-family: var(--serif);
-      font-size: clamp(52px, 9vw, 88px);
-      line-height: 0.92;
-      letter-spacing: 0.01em;
-      font-weight: 400;
-      color: var(--ink);
-    }
+.nav-center a {
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  text-decoration: none;
+  transition: color 0.15s;
+}
 
-    .name em {
-      font-style: italic;
-      color: rgba(10, 10, 12, 0.48);
-      font-weight: 300;
-    }
+.nav-center a:hover,
+.nav-center a.active {
+  color: var(--ink);
+}
 
-    .descriptor {
-      margin-top: 18px;
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      color: var(--ink-soft);
-      font-size: clamp(11px, 1.5vw, 14px);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      font-weight: 400;
-    }
+.nav-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
 
-    .dot {
-      color: var(--ink-dim);
-    }
+.mode-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--rule);
+}
 
-    .pathways {
-      width: min(420px, 100%);
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.42);
-      backdrop-filter: blur(2px);
-      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(182, 182, 218, 0.18);
-    }
+.mode-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  background: var(--white);
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
 
-    .path-btn {
-      border: 0;
-      border-right: 1px solid var(--line);
-      background: transparent;
-      color: var(--ink-soft);
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      font-family: var(--sans);
-      font-size: clamp(9px, 1vw, 11px);
-      font-weight: 500;
-      padding: 14px 10px;
-      text-decoration: none;
-      text-align: center;
-      transition: color 220ms ease, background-color 220ms ease;
-    }
+.mode-btn:last-child { border-right: none; }
 
-    .path-btn:last-child {
-      border-right: 0;
-    }
+.mode-btn.active {
+  background: var(--ink);
+  color: var(--white);
+}
 
-    .path-btn:hover,
-    .path-btn:focus-visible {
-      color: #f7f7f4;
-      background: #0a0a0c;
-      outline: none;
-    }
+.mode-btn:hover:not(.active) { background: var(--rule); }
 
-    .subcopy {
-      text-align: center;
-      color: var(--ink-dim);
-      font-size: 11px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      min-height: 1.2em;
-    }
+.gideon-btn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 7px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: var(--accent-grad);
+  color: var(--ink);
+  border: 1px solid rgba(14, 14, 14, 0.24);
+  cursor: pointer;
+  white-space: nowrap;
+  width: 100%;
+  text-align: center;
+  transition: background 0.2s, color 0.15s, border-color 0.2s, box-shadow 0.2s;
+}
 
-    @media (max-width: 640px) {
-      .hero {
-        gap: 40px;
-      }
+.gideon-btn:hover {
+  background: linear-gradient(90deg, #d8ced8 0%, #c2bcc9 52%, #a7aaca 100%);
+  border-color: rgba(14, 14, 14, 0.34);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+}
 
-      .descriptor {
-        gap: 8px;
-        letter-spacing: 0.15em;
-      }
+.filterbar {
+  margin-top: 60px;
+  display: flex;
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
 
-      .pathways {
-        width: min(340px, 100%);
-      }
+.filterbar::-webkit-scrollbar { display: none; }
 
-      .path-btn {
-        padding: 12px 8px;
-        letter-spacing: 0.14em;
-      }
-    }
+.filt {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  padding: 10px 14px;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--rule);
+  cursor: pointer;
+  white-space: nowrap;
+  flex: 1;
+  text-align: center;
+  transition: background 0.15s, color 0.15s;
+}
 
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation-duration: 1ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 1ms !important;
-      }
-    }
-  </style>
+.filt.active {
+  background: var(--ink);
+  color: var(--white);
+}
+
+.filt:hover:not(.active) { color: var(--ink); }
+
+.g-drawer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 360px;
+  max-width: 100%;
+  max-height: 70vh;
+  background: var(--ink);
+  color: var(--white);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateY(102%);
+  transition: transform 0.32s ease;
+  z-index: 650;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
+}
+
+.g-drawer.open {
+  transform: translateY(0);
+}
+
+.g-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.g-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.35rem;
+  font-weight: 300;
+}
+
+.g-close {
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.g-msgs {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.g-msg {
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.g-msg.user {
+  color: rgba(255, 255, 255, 0.55);
+  text-align: right;
+}
+
+.g-prompt-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.2rem;
+}
+
+.g-prompt {
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 6px 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.g-prompt:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.34);
+  color: var(--white);
+}
+
+.g-typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  min-height: 12px;
+}
+
+.g-typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  animation: gtyping 1.2s ease-in-out infinite;
+}
+
+.g-typing span:nth-child(2) { animation-delay: 0.2s; }
+.g-typing span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes gtyping {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+  40% { opacity: 0.95; transform: scale(1.35); }
+}
+
+.g-input-row {
+  display: flex;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.g-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--white);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 0.8rem 0.9rem;
+  outline: none;
+}
+
+.g-send {
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0 0.9rem;
+  cursor: pointer;
+}
+
+.g-send:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-flow: dense;
+  gap: 1px;
+  background: var(--rule);
+}
+
+.tile {
+  background: var(--white);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.tile-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: #f4f4f1;
+  transition: transform 0.45s ease;
+}
+
+.tile:hover .tile-bg { transform: scale(1.03); }
+
+.tile iframe {
+  position: absolute;
+  inset: 0;
+  width: 140%;
+  height: 140%;
+  transform: scale(0.72);
+  transform-origin: top left;
+  border: none;
+  background: #000;
+  opacity: 1;
+  transition: transform 0.45s ease, opacity 0.25s ease;
+}
+
+.tile-archive:hover iframe {
+  transform: scale(0.742);
+  opacity: 0.25;
+}
+
+.tile-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 45%, rgba(0, 0, 0, 0.62) 100%);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.tile:hover .tile-overlay,
+.tile.has-img .tile-overlay { opacity: 1; }
+
+.tile-label {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  padding: 0.9rem 1rem;
+}
+
+.tile-kicker {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 0.25rem;
+  transition: color 0.15s;
+}
+
+.tile-name {
+  font-family: 'Cormorant', serif;
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2vw, 1.8rem);
+  line-height: 1;
+  color: var(--ink);
+  transition: color 0.15s;
+}
+
+.tile-name em { font-style: italic; color: var(--mid); }
+
+.tile.has-img .tile-kicker { color: rgba(255, 255, 255, 0.6); }
+.tile.has-img .tile-name { color: var(--white); }
+.tile.has-img .tile-name em { color: rgba(255, 255, 255, 0.7); }
+
+.tile:hover {
+  background: var(--ink);
+}
+
+.tile:hover .tile-bg {
+  opacity: 0;
+}
+
+.tile.has-img:hover .tile-bg {
+  opacity: 0.25;
+}
+
+.tile:hover .tile-kicker,
+.tile:hover .tile-name,
+.tile:hover .tile-name em {
+  color: var(--white);
+}
+
+.t1x1 { grid-column: span 1; min-height: 190px; }
+.t2x1 { grid-column: span 2; min-height: 190px; }
+
+.tile-mach1 {
+  grid-column: 3 / span 2;
+  grid-row: 1 / span 3;
+  min-height: 0;
+  aspect-ratio: auto;
+}
+
+.tile-mach1 .tile-bg {
+  background-image: url('assets/mach-1.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+  background-color: #efefec;
+}
+
+.tile-mach2 {
+  grid-column: 3 / span 3;
+  grid-row: 4;
+}
+
+.tile-archive {
+  grid-column: 1 / span 2;
+  grid-row: 1;
+  background: #000;
+}
+
+.tile-lidi { grid-column: 5; grid-row: 1; }
+.tile-gideon { grid-column: 2; grid-row: 4; }
+.tile-forge { grid-column: 1 / span 2; grid-row: 2 / span 2; }
+.tile-forge .tile-bg {
+  background-image: url('assets/FORGE_example.webp');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-color: #0a0a0c;
+}
+.tile-resilife { grid-column: 5; grid-row: 2; }
+.tile-resilife .tile-bg {
+  background-image: url('assets/AppIcon_ResiLife.png');
+  background-size: 124%;
+  background-repeat: no-repeat;
+  background-position: 62% 42%;
+  background-color: #ece8dc;
+  filter: grayscale(1);
+  opacity: 1;
+  transition: transform 0.45s ease, opacity 0.25s ease, filter 0.25s ease;
+}
+
+.tile-resilife.has-img .tile-kicker,
+.tile-resilife.has-img .tile-name,
+.tile-resilife.has-img .tile-name em {
+  color: var(--ink);
+}
+
+.tile-resilife.has-img:hover .tile-bg {
+  opacity: 1;
+  filter: grayscale(0);
+}
+
+.tile-resilife:hover .tile-kicker,
+.tile-resilife:hover .tile-name,
+.tile-resilife:hover .tile-name em {
+  color: var(--ink);
+}
+
+.tile-commercial { grid-column: 3 / span 2; grid-row: 5; }
+.tile-quote { grid-column: 5; grid-row: 3; }
+.tile-redstone { grid-column: 1; grid-row: 4; }
+.tile-drone { grid-column: 5; grid-row: 5; }
+.tile-pb { grid-column: 3 / span 3; grid-row: 6; }
+.tile-blackbook { grid-column: 1 / span 2; grid-row: 5; }
+
+.tile-quote {
+  cursor: default;
+}
+
+.tile-quote .tile-label {
+  margin-top: 0;
+  padding: 0.95rem 1rem 0;
+}
+
+.quote-links {
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  bottom: 0.95rem;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.quote-link {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  width: fit-content;
+  border-bottom: 1px solid rgba(14, 14, 14, 0.28);
+  padding-bottom: 2px;
+}
+
+.tile-quote .quote-link:hover {
+  color: var(--mid);
+  border-bottom-color: rgba(136, 136, 136, 0.45);
+}
+
+.tile-quote:hover .quote-link,
+.tile-quote:hover .quote-link {
+  color: var(--white);
+  border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Filter-specific layouts (All remains untouched) */
+.grid.filter-hardware .tile,
+.grid.filter-software .tile,
+.grid.filter-marketing .tile {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+.grid.filter-hardware .tile-mach1 { grid-column: 1 / span 3 !important; grid-row: 1 / span 3 !important; }
+.grid.filter-hardware .tile-mach1 .tile-bg {
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+.grid.filter-hardware .tile-mach2 { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
+.grid.filter-hardware .tile-pb { grid-column: 4 / span 2 !important; grid-row: 2 !important; }
+.grid.filter-hardware .tile-drone { grid-column: 4 / span 2 !important; grid-row: 3 !important; }
+
+.grid.filter-software .tile-forge { grid-column: 1 / span 3 !important; grid-row: 1 / span 2 !important; }
+.grid.filter-software .tile-archive { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
+.grid.filter-software .tile-blackbook { grid-column: 4 !important; grid-row: 2 !important; }
+.grid.filter-software .tile-resilife { grid-column: 5 !important; grid-row: 2 !important; }
+.grid.filter-software .tile-quote { grid-column: 1 / span 2 !important; grid-row: 3 !important; }
+
+.grid.filter-marketing {
+  background: transparent;
+  padding: 14px 0 20px;
+}
+
+.grid.filter-marketing .tile-commercial {
+  grid-column: 2 / span 3 !important;
+  grid-row: 1 !important;
+  min-height: 360px;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rule);
+}
+
+.grid.filter-marketing .tile-commercial .tile-label {
+  padding: 1.15rem 1.2rem;
+}
+
+.grid.filter-marketing .tile-commercial .tile-kicker {
+  color: rgba(255, 255, 255, 0.56);
+}
+
+.grid.filter-marketing .tile-commercial .tile-name {
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+}
+
+
+.tile-gideon {
+  background: var(--ink);
+}
+
+.tile-gideon .tile-kicker { color: rgba(255, 255, 255, 0.45); }
+.tile-gideon .tile-name { color: var(--white); }
+.tile-gideon .tile-overlay,
+.tile-gideon .tile-bg { display: none; }
+
+.tile-mach2 .tile-kicker,
+.tile-mach2 .tile-name,
+.tile-pb .tile-kicker,
+.tile-pb .tile-name {
+  color: #b5b5b5;
+}
+
+.tile-video {
+  background: var(--ink);
+}
+
+.tile-video .tile-kicker { color: rgba(255, 255, 255, 0.42); }
+.tile-video .tile-name { color: var(--white); }
+.tile-video .tile-name em { color: rgba(255, 255, 255, 0.58); }
+.tile-video .tile-overlay,
+.tile-video .tile-bg { display: none; }
+
+.play-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -72%);
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.tile-video:hover .play-icon {
+  border-color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.play-icon svg { margin-left: 2px; }
+
+.gideon-dot {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.4;
+  animation: blink 2.5s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.9; }
+}
+
+.video-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(14, 14, 14, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 610;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.4rem;
+}
+
+.video-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.video-modal {
+  width: min(980px, 100%);
+  background: #000;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+}
+
+.video-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  background: none;
+  border: 0;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.video-player {
+  width: 100%;
+  max-height: 80vh;
+  display: block;
+  background: #000;
+}
+
+.video-fallback {
+  color: #d8d8d8;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 42px 16px;
+  display: none;
+}
+
+.page-sections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--rule);
+}
+
+.page-section {
+  background: var(--white);
+  padding: 2.2rem 1.4rem 2.4rem;
+}
+
+.section-kicker {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--mid);
+  margin-bottom: 0.5rem;
+}
+
+.section-title {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(1.5rem, 2.2vw, 2.1rem);
+  font-weight: 300;
+  line-height: 1.05;
+  margin-bottom: 0.95rem;
+}
+
+.section-copy {
+  max-width: 55ch;
+}
+
+.section-copy p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: #2f2f2f;
+  margin-bottom: 0.85rem;
+}
+
+.section-copy p:last-child {
+  margin-bottom: 0;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-top: 0.2rem;
+}
+
+.contact-links a {
+  width: fit-content;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--ink);
+  border-bottom: 1px solid rgba(14, 14, 14, 0.3);
+  padding-bottom: 2px;
+}
+
+.contact-links a:hover {
+  color: var(--mid);
+  border-bottom-color: rgba(136, 136, 136, 0.4);
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(4, 1fr); }
+  .tile-mach1 {
+    grid-column: span 4;
+    grid-row: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+  }
+  .t2x1,
+  .t1x1,
+  .tile-mach2,
+  .tile-archive,
+  .tile-lidi,
+  .tile-gideon,
+  .tile-forge,
+  .tile-resilife,
+  .tile-commercial,
+  .tile-quote,
+  .tile-drone,
+  .tile-pb,
+  .tile-blackbook {
+    grid-column: span 2;
+    grid-row: auto;
+  }
+
+  .grid.filter-marketing .tile-commercial {
+    grid-column: 1 / span 4 !important;
+    min-height: 250px;
+  }
+
+  .page-sections {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 620px) {
+  .nav-center { display: none; }
+  .mode-btn { padding: 5px 8px; letter-spacing: 0.14em; }
+  .nav-name .nav-contact { display: none; }
+  .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
+}
+</style>
 </head>
 <body>
-  <div class="bg" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
-  <div id="intro-fade" aria-hidden="true"></div>
 
-  <main class="stage">
-    <section class="hero" aria-label="Landing page">
-      <header class="name-block">
-        <h1 class="name">Taylor <em>Olsen-Vogt</em></h1>
-        <p class="descriptor" id="descriptor-line">
-          <span>Software</span>
-          <span class="dot">•</span>
-          <span>Hardware</span>
-          <span class="dot">•</span>
-          <span>Marketing</span>
-        </p>
-      </header>
+<nav>
+  <div class="nav-name">
+    <strong>Taylor Olsen-Vogt</strong>
+    <div class="nav-contact">
+      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+      <a href="tel:+15619710963">561 971 0963</a>
+    </div>
+  </div>
+  <ul class="nav-center">
+    <li><a href="#work" class="active">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="mode-row">
+      <a class="mode-btn active" href="index.html">Serious</a>
+      <a class="mode-btn" href="network.html">Network</a>
+    </div>
+    <button class="gideon-btn" id="openGideon" type="button">Speak to Gideon</button>
+  </div>
+</nav>
 
-      <div class="pathways" role="group" aria-label="Choose a mode">
-        <a class="path-btn" id="btn-serious" href="serious.html">Serious</a>
-        <a class="path-btn" id="btn-unserious" href="unserious.html">Unserious</a>
-      </div>
-    </section>
-  </main>
+<div class="filterbar">
+  <button class="filt active" data-f="all">All</button>
+  <button class="filt" data-f="hardware">Hardware</button>
+  <button class="filt" data-f="software">Software</button>
+  <button class="filt" data-f="marketing">Marketing</button>
+</div>
+
+<div class="grid" id="work">
+  <div class="tile tile-mach1 has-img" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-overlay"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware · Robotics</div>
+      <div class="tile-name">Mach 1</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-archive has-img" data-cat="software">
+     <iframe src="https://taylorolsen-vogt.github.io/The-Archive/" title="The Archive"></iframe>
+    <div class="tile-overlay"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">The <em>Archive</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-lidi" data-cat="venture">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Venture</div>
+      <div class="tile-name">LIDI</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai">
+    <div class="gideon-dot"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">AI Agent</div>
+      <div class="tile-name">Gideon</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-forge has-img" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">FORGE</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-resilife has-img" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">App</div>
+      <div class="tile-name">ResiLife</div>
+    </div>
+  </div>
+
+  <div class="tile t2x1 tile-commercial tile-video" data-cat="marketing" data-video="assets/resilife-commercial.mp4">
+    <div class="tile-bg" style="background-image:url('assets/commercial1_thumbnail.png');background-size:cover;background-position:center"></div>
+    <div class="play-icon" aria-hidden="true">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <polygon points="4,2 12,7 4,12" fill="rgba(255,255,255,0.78)"></polygon>
+      </svg>
+    </div>
+    <div class="tile-label">
+      <div class="tile-kicker">Commercial</div>
+      <div class="tile-name">ResiLife <em>Commercial</em></div>
+    </div>
+  </div>
+
+  <div class="tile t2x1 tile-mach2" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware · In Design</div>
+      <div class="tile-name">Mach 2</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-quote" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">Quote <em>Calculators</em></div>
+    </div>
+    <div class="quote-links" aria-label="Quote calculator links">
+      <a class="quote-link" href="#">Commercial Quote Calculator</a>
+      <a class="quote-link" href="#">Retainer Quote Calculator</a>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-drone" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Hardware</div>
+      <div class="tile-name">Drone</div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-pb" data-cat="hardware">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Research · EE</div>
+      <div class="tile-name">Power <em>Beaming</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-blackbook" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software</div>
+      <div class="tile-name">Black <em>Book</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-redstone" data-cat="venture">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Venture</div>
+      <div class="tile-name">Redstone <em>Laboratories</em></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="page-sections">
+  <section class="page-section" id="about" aria-label="About Taylor Olsen-Vogt">
+    <div class="section-kicker">About</div>
+    <h2 class="section-title">Principal Engineer and Co-Founder</h2>
+    <div class="section-copy">
+      <p>I'm a software and hardware engineer based in Boston. I build robots, iOS apps, AI systems, and whatever else the problem requires.</p>
+      <p>I run Redstone Laboratories, an applied engineering lab, and LIDI, a software and AI consultancy.</p>
+    </div>
+  </section>
+
+  <section class="page-section" id="contact" aria-label="Contact Taylor Olsen-Vogt">
+    <div class="section-kicker">Contact</div>
+    <h2 class="section-title">Let's Build Something</h2>
+    <div class="section-copy">
+      <p>Reach out directly for project collaborations, consulting inquiries, or to talk through a new system idea.</p>
+    </div>
+    <div class="contact-links" aria-label="Contact links">
+      <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+      <a href="tel:+15619710963">561 971 0963</a>
+    </div>
+  </section>
+</div>
+
+<div class="video-overlay" id="videoOverlay">
+  <div class="video-modal" role="dialog" aria-modal="true" aria-label="ResiLife Commercial">
+    <button class="video-close" id="videoClose" aria-label="Close">×</button>
+    <video class="video-player" id="videoPlayer" controls playsinline poster="assets/commercial1_thumbnail.png">
+      <source src="assets/resilife-commercial.mp4" type="video/mp4">
+    </video>
+    <div class="video-fallback" id="videoFallback">Video unavailable. Add assets/resilife-commercial.mp4 to enable playback.</div>
+  </div>
+</div>
+
+<div class="g-drawer" id="gDrawer" role="dialog" aria-modal="false" aria-label="Speak to Gideon">
+  <div class="g-head">
+    <div class="g-title">Gideon</div>
+    <button class="g-close" id="gClose" type="button" aria-label="Close">×</button>
+  </div>
+  <div class="g-msgs" id="gMsgs">
+    <div class="g-msg">Hi. I'm Gideon. Ask me about projects, systems, or what to click next.</div>
+    <div class="g-prompt-row" id="gPrompts">
+      <button class="g-prompt" type="button" data-q="What should I click first?">Start Here</button>
+      <button class="g-prompt" type="button" data-q="Tell me about Mach 1 and Mach 2.">Robotics</button>
+      <button class="g-prompt" type="button" data-q="Show me software highlights.">Software</button>
+    </div>
+  </div>
+  <div class="g-input-row">
+    <input class="g-input" id="gInput" type="text" placeholder="Ask Gideon...">
+    <button class="g-send" id="gSend" type="button">Send</button>
+  </div>
+</div>
+
+<script>
+const gridEl = document.getElementById('grid');
+const filterLayoutClasses = ['filter-hardware', 'filter-software', 'filter-marketing'];
+
+document.querySelectorAll('.filt').forEach((b) => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.filt').forEach((x) => x.classList.remove('active'));
+    b.classList.add('active');
+    const f = b.dataset.f;
+
+    gridEl.classList.remove(...filterLayoutClasses);
+    if (f !== 'all') {
+      gridEl.classList.add(`filter-${f}`);
+    }
+
+    document.querySelectorAll('.tile').forEach((t) => {
+      t.style.display = (f === 'all' || t.dataset.cat === f) ? '' : 'none';
+    });
+  });
+});
+
+const gDrawer = document.getElementById('gDrawer');
+const gOpenBtn = document.getElementById('openGideon');
+const gTile = document.getElementById('gideonTile');
+const gClose = document.getElementById('gClose');
+const gInput = document.getElementById('gInput');
+const gSend = document.getElementById('gSend');
+const gMsgs = document.getElementById('gMsgs');
+const gPrompts = document.getElementById('gPrompts');
+
+function openGideon() {
+  gDrawer.classList.add('open');
+  requestAnimationFrame(() => gInput.focus());
+}
+
+function closeGideon() {
+  gDrawer.classList.remove('open');
+}
+
+function addGideonMessage(text, isUser = false) {
+  const m = document.createElement('div');
+  m.className = `g-msg${isUser ? ' user' : ''}`;
+  m.textContent = text;
+  gMsgs.appendChild(m);
+  gMsgs.scrollTop = gMsgs.scrollHeight;
+}
+
+function sendToGideon() {
+  const text = gInput.value.trim();
+  if (!text) return;
+  addGideonMessage(text, true);
+  gInput.value = '';
+
+  const typing = document.createElement('div');
+  typing.className = 'g-msg';
+  typing.innerHTML = '<div class="g-typing"><span></span><span></span><span></span></div>';
+  gMsgs.appendChild(typing);
+  gMsgs.scrollTop = gMsgs.scrollHeight;
+
+  setTimeout(() => {
+    typing.remove();
+    addGideonMessage('Try FORGE, Mach 1, and The Archive first. If you want, ask me for a guided route by category.');
+  }, 420);
+}
+
+gOpenBtn.addEventListener('click', openGideon);
+gTile.addEventListener('click', openGideon);
+gClose.addEventListener('click', closeGideon);
+gSend.addEventListener('click', sendToGideon);
+gInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendToGideon();
+});
+
+if (gPrompts) {
+  gPrompts.querySelectorAll('.g-prompt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      gInput.value = btn.dataset.q || '';
+      sendToGideon();
+    });
+  });
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && gDrawer.classList.contains('open')) closeGideon();
+});
+
+const videoOverlay = document.getElementById('videoOverlay');
+const videoPlayer = document.getElementById('videoPlayer');
+const videoClose = document.getElementById('videoClose');
+const videoFallback = document.getElementById('videoFallback');
+
+function openVideo() {
+  videoOverlay.classList.add('open');
+  videoFallback.style.display = 'none';
+  videoPlayer.style.display = 'block';
+  const playPromise = videoPlayer.play();
+  if (playPromise) {
+    playPromise.catch(() => {
+      videoPlayer.style.display = 'none';
+      videoFallback.style.display = 'block';
+    });
+  }
+}
+
+function closeVideo() {
+  videoOverlay.classList.remove('open');
+  videoPlayer.pause();
+  videoPlayer.currentTime = 0;
+}
+
+document.querySelectorAll('.tile-video').forEach((tile) => {
+  tile.addEventListener('click', openVideo);
+});
+
+videoClose.addEventListener('click', closeVideo);
+videoOverlay.addEventListener('click', (e) => {
+  if (e.target === videoOverlay) closeVideo();
+});
+
+videoPlayer.addEventListener('error', () => {
+  videoPlayer.style.display = 'none';
+  videoFallback.style.display = 'block';
+});
+
+const archiveFrame = document.querySelector('.tile-archive iframe');
+
+if (archiveFrame) {
+  archiveFrame.addEventListener('load', () => {
+    try {
+      const doc = archiveFrame.contentDocument || archiveFrame.contentWindow.document;
+      if (!doc) return;
+
+      const style = doc.createElement('style');
+      style.textContent = `
+        #timeline,
+        #timelineControls,
+        #playButton,
+        #toggleButton,
+        #layersPanel {
+          display: none !important;
+        }
+      `;
+      doc.head.appendChild(style);
+    } catch (_) {
+      // If iframe access is restricted, fail silently.
+    }
+  });
+}
+</script>
+
 </body>
 </html>
