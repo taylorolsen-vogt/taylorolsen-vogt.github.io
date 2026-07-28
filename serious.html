@@ -1075,13 +1075,13 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </a>
 
-  <div class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai">
+  <a href="gideon-confirmation.html" class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai" style="text-decoration:none;color:inherit;">
     <div class="gideon-dot"></div>
     <div class="tile-label">
       <div class="tile-kicker">AI Agent</div>
       <div class="tile-name">Gideon</div>
     </div>
-  </div>
+  </a>
 
   <div class="tile t1x1 tile-forge has-img" data-cat="software">
     <div class="tile-bg"></div>
@@ -1286,7 +1286,6 @@ function sendToGideon() {
 }
 
 gOpenBtn.addEventListener('click', openGideon);
-gTile.addEventListener('click', openGideon);
 gClose.addEventListener('click', closeGideon);
 gSend.addEventListener('click', sendToGideon);
 gInput.addEventListener('keydown', (e) => {
