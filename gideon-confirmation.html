@@ -62,13 +62,15 @@
 
     .topbar {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       gap: 16px;
       padding: 22px 24px;
       border-bottom: 1px solid var(--rule);
       position: relative;
       z-index: 1;
+      text-align: center;
     }
 
     .brand {
@@ -116,7 +118,9 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       gap: 22px;
+      text-align: center;
     }
 
     h1 {
@@ -126,6 +130,7 @@
       font-weight: 300;
       letter-spacing: -0.03em;
       max-width: 10ch;
+      margin: 0 auto;
     }
 
     .button {
@@ -178,7 +183,9 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      align-items: center;
       gap: 24px;
+      text-align: center;
     }
 
     .panel-title {
@@ -203,6 +210,8 @@
     }
 
     .panel-action {
+      display: flex;
+      justify-content: center;
       margin-top: 18px;
     }
 
