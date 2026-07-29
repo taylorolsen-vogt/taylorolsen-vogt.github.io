@@ -119,13 +119,6 @@
       gap: 22px;
     }
 
-    .eyebrow {
-      font-size: 10px;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--mid);
-    }
-
     h1 {
       font-family: 'Cormorant', serif;
       font-size: clamp(3rem, 7vw, 5.8rem);
@@ -133,42 +126,6 @@
       font-weight: 300;
       letter-spacing: -0.03em;
       max-width: 10ch;
-    }
-
-    .lead {
-      font-size: clamp(1rem, 1.7vw, 1.15rem);
-      line-height: 1.7;
-      color: rgba(14, 14, 14, 0.74);
-      max-width: 44ch;
-    }
-
-    .status-card {
-      margin-top: 8px;
-      border: 1px solid var(--rule);
-      background: rgba(255, 255, 255, 0.92);
-      padding: 18px 20px;
-      display: grid;
-      gap: 10px;
-      max-width: 360px;
-    }
-
-    .status-label {
-      font-size: 9px;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--mid);
-    }
-
-    .status-value {
-      font-size: 1rem;
-      line-height: 1.6;
-    }
-
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 6px;
     }
 
     .button {
@@ -196,9 +153,20 @@
       border: 1px solid var(--rule);
     }
 
+    .button.inverted {
+      background: var(--white);
+      color: var(--ink);
+      border: 1px solid var(--white);
+    }
+
     .button:hover { transform: translateY(-1px); }
     .button.primary:hover { background: #1b1b1b; }
     .button.secondary:hover { border-color: rgba(14, 14, 14, 0.25); background: rgba(255, 255, 255, 0.62); }
+    .button.inverted:hover {
+      background: transparent;
+      color: var(--white);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
 
     .panel {
       padding: clamp(24px, 4vw, 40px);
@@ -234,6 +202,10 @@
       line-height: 1.55;
     }
 
+    .panel-action {
+      margin-top: 18px;
+    }
+
     .panel-list strong {
       display: block;
       font-size: 10px;
@@ -263,9 +235,7 @@
       .topbar a { line-height: 1.4; text-align: right; }
       .copy { padding: 24px 18px 28px; }
       .panel { padding: 22px 18px 24px; }
-      .actions { flex-direction: column; align-items: stretch; }
       .button { width: 100%; }
-      .status-card { max-width: none; }
     }
   </style>
 </head>
@@ -281,16 +251,7 @@
 
     <section class="hero" aria-label="Gideon signup confirmation">
       <div class="copy">
-        <div class="eyebrow">App sign up email</div>
         <h1>You are now connected to the Gideon app.</h1>
-        <div class="status-card">
-          <div class="status-label">Confirmation status</div>
-          <div class="status-value">Email verified, you're ready for next steps.</div>
-        </div>
-
-        <div class="actions">
-          <a class="button primary" href="index.html">Open Gideon</a>
-        </div>
       </div>
 
       <aside class="panel">
@@ -307,6 +268,9 @@
               3. Tell Gideon what to do next.
             </li>
           </ul>
+          <div class="panel-action">
+            <a class="button inverted" href="index.html">Open Gideon</a>
+          </div>
         </div>
         <div class="footer-note">Confirmation page for the Gideon app signup flow.</div>
       </aside>
