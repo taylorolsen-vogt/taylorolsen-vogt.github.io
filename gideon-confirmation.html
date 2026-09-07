@@ -278,7 +278,7 @@
             </li>
           </ul>
           <div class="panel-action">
-            <a class="button inverted" href="gideon1://auth/confirmed" id="open-gideon">Open Gideon</a>
+            <a class="button inverted" href="gideon1://" id="open-gideon">Open Gideon</a>
           </div>
         </div>
         <div class="footer-note">Confirmation page for the Gideon app signup flow.</div>
@@ -304,7 +304,7 @@
       link.addEventListener('click', function (event) {
         event.preventDefault();
         opened = false;
-        window.location.href = 'gideon1://auth/confirmed';
+        window.location.href = 'gideon1://';
 
         setTimeout(function () {
           if (!opened && document.visibilityState === 'visible') {
