@@ -278,12 +278,25 @@
             </li>
           </ul>
           <div class="panel-action">
-            <a class="button inverted" href="index.html">Open Gideon</a>
+            <a class="button inverted" href="gideon1://auth/confirmed" id="open-gideon">Open Gideon</a>
           </div>
         </div>
         <div class="footer-note">Confirmation page for the Gideon app signup flow.</div>
       </aside>
     </section>
   </main>
+  <script>
+    (function () {
+      var link = document.getElementById('open-gideon');
+      if (!link) return;
+      link.addEventListener('click', function () {
+        setTimeout(function () {
+          if (document.visibilityState === 'visible') {
+            window.location.href = 'index.html';
+          }
+        }, 900);
+      });
+    })();
+  </script>
 </body>
 </html>
