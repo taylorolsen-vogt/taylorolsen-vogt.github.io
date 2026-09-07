@@ -290,6 +290,12 @@
       var link = document.getElementById('open-gideon');
       if (!link) return;
 
+      var isLikelyMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (!isLikelyMobile) {
+        link.href = 'index.html';
+        link.textContent = 'Open Portfolio';
+      }
+
       var opened = false;
       function markOpened() {
         opened = true;
@@ -302,6 +308,7 @@
       window.addEventListener('blur', markOpened);
 
       link.addEventListener('click', function (event) {
+        if (!isLikelyMobile) return;
         event.preventDefault();
         opened = false;
         window.location.href = 'gideon1://';
