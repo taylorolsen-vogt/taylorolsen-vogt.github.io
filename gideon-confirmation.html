@@ -289,12 +289,28 @@
     (function () {
       var link = document.getElementById('open-gideon');
       if (!link) return;
-      link.addEventListener('click', function () {
+
+      var opened = false;
+      function markOpened() {
+        opened = true;
+      }
+
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'hidden') markOpened();
+      });
+      window.addEventListener('pagehide', markOpened);
+      window.addEventListener('blur', markOpened);
+
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        opened = false;
+        window.location.href = 'gideon1://auth/confirmed';
+
         setTimeout(function () {
-          if (document.visibilityState === 'visible') {
+          if (!opened && document.visibilityState === 'visible') {
             window.location.href = 'index.html';
           }
-        }, 900);
+        }, 1800);
       });
     })();
   </script>
