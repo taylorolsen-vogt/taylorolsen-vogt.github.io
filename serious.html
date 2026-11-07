@@ -629,7 +629,8 @@ nav {
 .grid.filter-software .tile-blackbook { grid-column: 4 !important; grid-row: 2 !important; }
 .grid.filter-software .tile-resilife { grid-column: 5 !important; grid-row: 2 !important; }
 .grid.filter-software .tile-quote { grid-column: 1 / span 2 !important; grid-row: 3 !important; }
-.grid.filter-software .tile-airremote { grid-column: 3 / span 3 !important; grid-row: 3 !important; }
+.grid.filter-software .tile-gideon { grid-column: 3 !important; grid-row: 3 !important; }
+.grid.filter-software .tile-airremote { grid-column: 4 / span 2 !important; grid-row: 3 !important; }
 
 .grid.filter-marketing {
   background: transparent;
@@ -789,6 +790,7 @@ nav {
     grid-row: auto;
     min-height: 0;
     aspect-ratio: auto;
+    height: min(100vw, 560px);
   }
   .t2x1,
   .t1x1,
@@ -812,13 +814,28 @@ nav {
     grid-column: 1 / span 4 !important;
     min-height: 250px;
   }
+
+  /* Filtered views drop the 5-column desktop placement and flow in pairs */
+  .grid.filter-hardware > .tile,
+  .grid.filter-software > .tile {
+    grid-column: span 2 !important;
+    grid-row: auto !important;
+  }
+  .grid.filter-hardware > .tile-mach1,
+  .grid.filter-hardware > .tile-mach2,
+  .grid.filter-software > .tile-forge {
+    grid-column: span 4 !important;
+  }
 }
 
 @media (max-width: 620px) {
   .nav-center { display: none; }
   .mode-btn { padding: 7px 12px; letter-spacing: 0.14em; }
   .nav-name .nav-contact { display: none; }
-  .grid > .tile { grid-column: span 4 !important; grid-row: auto !important; }
+  .grid > .tile,
+  .grid.filter-hardware > .tile,
+  .grid.filter-software > .tile,
+  .grid.filter-marketing > .tile { grid-column: span 4 !important; grid-row: auto !important; }
   .about {
     min-height: auto;
     padding: clamp(28px, 6vw, 48px) clamp(18px, 4vw, 32px);
@@ -1090,7 +1107,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </a>
 
-  <a href="gideon-confirmation.html" class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai" style="text-decoration:none;color:inherit;">
+  <a href="gideon-confirmation.html" class="tile t1x1 tile-gideon" id="gideonTile" data-cat="software" style="text-decoration:none;color:inherit;">
     <div class="gideon-dot"></div>
     <div class="tile-label">
       <div class="tile-kicker">AI Agent · iPhone &amp; Mac</div>
