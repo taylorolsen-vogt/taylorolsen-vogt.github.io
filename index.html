@@ -390,24 +390,6 @@ nav {
 
 .tile:hover .tile-bg { transform: scale(1.03); }
 
-.tile iframe {
-  position: absolute;
-  inset: 0;
-  width: 140%;
-  height: 140%;
-  transform: scale(0.72);
-  transform-origin: top left;
-  border: none;
-  background: #000;
-  opacity: 1;
-  transition: transform 0.45s ease, opacity 0.25s ease;
-}
-
-.tile-archive:hover iframe {
-  transform: scale(0.742);
-  opacity: 0.25;
-}
-
 .tile-overlay {
   position: absolute;
   inset: 0;
@@ -497,6 +479,12 @@ nav {
   grid-row: 1;
   background: #000;
 }
+.tile-archive .tile-bg {
+  background-image: url('assets/archive.jpg');
+  background-size: cover;
+  background-position: center;
+  background-color: #000;
+}
 
 .tile-lidi { grid-column: 5; grid-row: 5; }
 .tile-lidi .tile-bg {
@@ -548,6 +536,7 @@ nav {
 .tile-drone { grid-column: 5; grid-row: 1; }
 .tile-pb { grid-column: 3 / span 3; grid-row: 6; }
 .tile-blackbook { grid-column: 1 / span 2; grid-row: 5; }
+.tile-airremote { grid-column: 1 / span 2; grid-row: 6; }
 
 .tile-quote {
   cursor: default;
@@ -616,6 +605,7 @@ nav {
 .grid.filter-software .tile-blackbook { grid-column: 4 !important; grid-row: 2 !important; }
 .grid.filter-software .tile-resilife { grid-column: 5 !important; grid-row: 2 !important; }
 .grid.filter-software .tile-quote { grid-column: 1 / span 2 !important; grid-row: 3 !important; }
+.grid.filter-software .tile-airremote { grid-column: 3 / span 3 !important; grid-row: 3 !important; }
 
 .grid.filter-marketing {
   background: transparent;
@@ -788,7 +778,8 @@ nav {
   .tile-quote,
   .tile-drone,
   .tile-pb,
-  .tile-blackbook {
+  .tile-blackbook,
+  .tile-airremote {
     grid-column: span 2;
     grid-row: auto;
   }
@@ -1058,14 +1049,14 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-archive has-img" data-cat="software">
-     <iframe src="https://taylorolsen-vogt.github.io/The-Archive/" title="The Archive"></iframe>
+  <a href="https://the-archive-a5x.pages.dev" target="_blank" rel="noopener noreferrer" class="tile t1x1 tile-archive has-img" data-cat="software" style="text-decoration:none;color:inherit;">
+    <div class="tile-bg"></div>
     <div class="tile-overlay"></div>
     <div class="tile-label">
-      <div class="tile-kicker">Software</div>
+      <div class="tile-kicker">Software · Live</div>
       <div class="tile-name">The <em>Archive</em></div>
     </div>
-  </div>
+  </a>
 
   <a href="https://lidisolutions.ai" target="_blank" rel="noopener noreferrer" class="tile t1x1 tile-lidi" data-cat="venture" style="text-decoration:none;color:inherit;">
     <div class="tile-bg"></div>
@@ -1078,7 +1069,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
   <a href="gideon-confirmation.html" class="tile t1x1 tile-gideon" id="gideonTile" data-cat="ai" style="text-decoration:none;color:inherit;">
     <div class="gideon-dot"></div>
     <div class="tile-label">
-      <div class="tile-kicker">AI Agent</div>
+      <div class="tile-kicker">AI Agent · iPhone &amp; Mac</div>
       <div class="tile-name">Gideon</div>
     </div>
   </a>
@@ -1127,8 +1118,8 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
       <div class="tile-name">Quote <em>Calculators</em></div>
     </div>
     <div class="quote-links" aria-label="Quote calculator links">
-      <a class="quote-link" href="#">Commercial Quote Calculator</a>
-      <a class="quote-link" href="#">Retainer Quote Calculator</a>
+      <a class="quote-link" href="https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/" target="_blank" rel="noopener noreferrer">Commercial Quote Calculator</a>
+      <a class="quote-link" href="https://taylorolsen-vogt.github.io/retainer-quote-calculator-/" target="_blank" rel="noopener noreferrer">Retainer Quote Calculator</a>
     </div>
   </div>
 
@@ -1153,6 +1144,14 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
       <div class="tile-name">Black <em>Book</em></div>
+    </div>
+  </div>
+
+  <div class="tile t1x1 tile-airremote" data-cat="software">
+    <div class="tile-bg"></div>
+    <div class="tile-label">
+      <div class="tile-kicker">Software · In Progress</div>
+      <div class="tile-name">Air<em>Remote</em></div>
     </div>
   </div>
 
@@ -1281,7 +1280,7 @@ function sendToGideon() {
 
   setTimeout(() => {
     typing.remove();
-    addGideonMessage('Try FORGE, Mach 1, and The Archive first. If you want, ask me for a guided route by category.');
+    addGideonMessage('Start with The Archive: Earth, the Moon and the sky as they were at any moment, built from public scientific data. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.');
   }, 420);
 }
 
@@ -1342,31 +1341,6 @@ videoPlayer.addEventListener('error', () => {
   videoPlayer.style.display = 'none';
   videoFallback.style.display = 'block';
 });
-
-const archiveFrame = document.querySelector('.tile-archive iframe');
-
-if (archiveFrame) {
-  archiveFrame.addEventListener('load', () => {
-    try {
-      const doc = archiveFrame.contentDocument || archiveFrame.contentWindow.document;
-      if (!doc) return;
-
-      const style = doc.createElement('style');
-      style.textContent = `
-        #timeline,
-        #timelineControls,
-        #playButton,
-        #toggleButton,
-        #layersPanel {
-          display: none !important;
-        }
-      `;
-      doc.head.appendChild(style);
-    } catch (_) {
-      // If iframe access is restricted, fail silently.
-    }
-  });
-}
 
 const contactForm = document.getElementById('contact-form');
 const statusMsg = document.getElementById('status-msg');
