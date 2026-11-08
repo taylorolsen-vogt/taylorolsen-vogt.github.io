@@ -1331,6 +1331,23 @@ function addGideonMessage(text, isUser = false) {
   gMsgs.scrollTop = gMsgs.scrollHeight;
 }
 
+const gideonAnswers = [
+  { re: /mach\s*2/i, a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today.' },
+  { re: /mach|robot|hardware|drone|power|beam/i, a: 'Hardware: Mach 1 is the working robot, Mach 2 is in design, and there are early tiles for a drone and for power beaming research. Use the Hardware filter to see them together.' },
+  { re: /archive/i, a: 'The Archive shows Earth, the Moon and the sky as they were at any moment, built from public scientific data. It is live; click its tile to open it.' },
+  { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote is a software project in progress. See its tile for the latest.' },
+  { re: /gideon|agent|task|iphone|mac\b/i, a: 'I am Gideon, an agent and task manager on iPhone and Mac. My tile has the details.' },
+  { re: /resilife|commercial|video|quote|calculator/i, a: 'ResiLife is an app, and its commercial plays from its tile. The Quote Calculators tile links to the commercial and retainer quote calculators.' },
+  { re: /lidi|redstone|venture|company|business|hire|work with/i, a: 'Taylor runs Redstone Laboratories, LLC, also known as LIDI (lidisolutions.ai). For work together, use the contact details on this page.' },
+  { re: /contact|email|phone|reach/i, a: 'The contact details are in the Contact section of this page.' },
+  { re: /software|app|code/i, a: 'Software highlights: The Archive, Gideon, FORGE, ResiLife, the Quote Calculators, Black Book and AirRemote. Use the Software filter to see them together.' },
+];
+
+function gideonReply(text) {
+  const hit = gideonAnswers.find((x) => x.re.test(text));
+  return hit ? hit.a : 'Start with The Archive: Earth, the Moon and the sky as they were at any moment, built from public scientific data. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.';
+}
+
 function sendToGideon() {
   const text = gInput.value.trim();
   if (!text) return;
@@ -1345,7 +1362,7 @@ function sendToGideon() {
 
   setTimeout(() => {
     typing.remove();
-    addGideonMessage('Start with The Archive: Earth, the Moon and the sky as they were at any moment, built from public scientific data. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.');
+    addGideonMessage(gideonReply(text));
   }, 420);
 }
 
