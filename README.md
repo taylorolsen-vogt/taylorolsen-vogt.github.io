@@ -16,3 +16,4 @@ It is plain HTML, CSS and JavaScript with no build step. To preview, run `python
 ## Known gaps
 - The Drone and Power Beaming tiles have no picture yet (text-only placeholders).
 - Company names to show: Redstone Laboratories and LIDI.
+- Not used by any page right now (kept in case they're wanted): `commercial1_thumbnail.png`, `commercial25.mov`, `IMG_5114.jpg`, `LIDI.png`, `pfp.png`, `resilife-commercial.mp4`.
