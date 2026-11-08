@@ -117,7 +117,9 @@ nav {
 .mode-btn:focus-visible,
 .g-send:focus-visible,
 .g-close:focus-visible,
-.g-prompt:focus-visible {
+.g-prompt:focus-visible,
+.tile:focus-visible,
+.quote-link:focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 2px;
 }
@@ -1148,7 +1150,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t2x1 tile-commercial tile-video" data-cat="marketing" data-video="assets/commercial25.mp4">
+  <div class="tile t2x1 tile-commercial tile-video" role="button" tabindex="0" aria-label="Play the ResiLife commercial" data-cat="marketing" data-video="assets/commercial25.mp4">
     <div class="tile-bg" style="background-image:url('assets/commercial1_thumbnail.jpg');background-size:cover;background-position:center"></div>
     <div class="tile-overlay"></div>
     <div class="play-icon" aria-hidden="true">
@@ -1389,6 +1391,9 @@ function closeVideo() {
 
 document.querySelectorAll('.tile-video').forEach((tile) => {
   tile.addEventListener('click', openVideo);
+  tile.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVideo.call(tile, e); }
+  });
 });
 
 videoClose.addEventListener('click', closeVideo);
