@@ -534,10 +534,13 @@ nav {
 }
 .tile-resilife { grid-column: 5; grid-row: 2; }
 .tile-resilife .tile-bg {
-  background-image: url('assets/AppIcon_ResiLife.png');
-  background-size: 124%;
+  /* Fade the logo out behind the label so "ResiLife" stays readable */
+  background-image:
+    linear-gradient(to top, #ece8dc 0%, #ece8dc 26%, rgba(236, 232, 220, 0) 52%),
+    url('assets/AppIcon_ResiLife.png');
+  background-size: 100% 100%, 124%;
   background-repeat: no-repeat;
-  background-position: 62% 42%;
+  background-position: 0 0, 62% 42%;
   background-color: #ece8dc;
   filter: grayscale(1);
   opacity: 1;
@@ -692,7 +695,14 @@ nav {
 .tile-video .tile-bg { display: none; }
 
 .tile-commercial .tile-bg { display: block; }
-.tile-commercial .tile-overlay { display: block; }
+/* Darken the bottom of the busy rooftop photo so the label reads */
+.tile-commercial .tile-overlay {
+  display: block;
+  opacity: 1;
+  background: linear-gradient(to bottom, transparent 35%, rgba(0, 0, 0, 0.72) 100%);
+}
+.tile-commercial .tile-kicker { color: rgba(255, 255, 255, 0.72); }
+.tile-commercial .tile-name em { color: rgba(255, 255, 255, 0.78); }
 
 .play-icon {
   position: absolute;
@@ -1140,6 +1150,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 
   <div class="tile t2x1 tile-commercial tile-video" data-cat="marketing" data-video="assets/commercial25.mp4">
     <div class="tile-bg" style="background-image:url('assets/commercial1_thumbnail.jpg');background-size:cover;background-position:center"></div>
+    <div class="tile-overlay"></div>
     <div class="play-icon" aria-hidden="true">
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
         <polygon points="4,2 12,7 4,12" fill="rgba(255,255,255,0.78)"></polygon>
