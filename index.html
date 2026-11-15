@@ -1405,7 +1405,7 @@ body.p-lock { overflow: hidden; }
   <div class="tile t1x1 tile-airremote" data-cat="software" data-project="airremote">
     <div class="tile-bg"></div>
     <div class="tile-label">
-      <div class="tile-kicker">Software · In Progress</div>
+      <div class="tile-kicker">Software · On hold</div>
       <div class="tile-name">Air<em>Remote</em></div>
     </div>
   </div>
@@ -1541,10 +1541,10 @@ function addGideonMessage(text, isUser = false) {
 }
 
 const gideonAnswers = [
-  { re: /mach\s*2/i, a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today.' },
+  { re: /mach\s*2/i, a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today, and in November 2026 it delivered its first socks into the laundry basket on its own.' },
   { re: /mach|robot|hardware|drone|power|beam/i, a: 'Hardware: Mach 1 is the working robot, Mach 2 is in design, and there are early tiles for a drone and for power beaming research. Use the Hardware filter to see them together.' },
   { re: /archive/i, a: 'The Archive shows Earth, the Moon and the sky as they were at any moment, built from public scientific data. It is live; click its tile to open it.' },
-  { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote is a software project in progress. See its tile for the latest.' },
+  { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote turns a pair of AirPods into a remote for a Mac and an iPad. It is on hold for now while the hardware side is worked out.' },
   { re: /gideon|agent|task|iphone|mac\b/i, a: 'I am Gideon, an agent and task manager on iPhone and Mac. My tile has the details.' },
   { re: /resilife|commercial|video|quote|calculator/i, a: 'ResiLife is an app, and its commercial plays from its tile. The Quote Calculators tile links to the commercial and retainer quote calculators.' },
   { re: /lidi|redstone|venture|company|business|hire|work with/i, a: 'Taylor runs Redstone Laboratories, LLC, also known as LIDI (lidisolutions.ai). For work together, use the contact details on this page.' },
@@ -1650,8 +1650,9 @@ const projects = {
     kicker: 'Hardware · Robotics', title: 'Mach <em>1</em>', status: 'Working prototype',
     img: 'assets/mach-1.jpg', alt: 'The Mach 1 robot: a black robot arm on a mobile base with cameras',
     text: ['Mach 1 is a mobile robot with an arm and cameras, built to tidy the floor of a home.',
-           'Its first job is socks. It looks around the room, drives to a sock, lines itself up, picks it up and drops it in the laundry basket. It remembers where it last saw things, so after each pick it turns straight back toward the next one.'],
-    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Next', 'Mach 2']],
+           'Its first job is socks. It looks around the room, drives to a sock, lines itself up, picks it up and drops it in the laundry basket. It remembers where it last saw things, so after each pick it turns straight back toward the next one.',
+           'In November 2026 it delivered its first socks into the basket on its own. It now checks for room before unfolding its arm and skips a sock it can\u2019t get instead of giving up. Next, it learns to share the floor with a small dog.'],
+    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next', 'Mach 2']],
   },
   archive: {
     kicker: 'Software · Live', title: 'The <em>Archive</em>', status: 'Live',
@@ -1705,8 +1706,9 @@ const projects = {
     text: ['A software project. A fuller write-up and screenshots are on the way.'],
   },
   airremote: {
-    kicker: 'Software · In progress', title: 'Air<em>Remote</em>', status: 'In progress',
-    text: ['AirRemote turns a pair of AirPods into a remote control for a Mac and an iPad.'],
+    kicker: 'Software · On hold', title: 'Air<em>Remote</em>', status: 'On hold',
+    text: ['AirRemote turns a pair of AirPods into a remote control for a Mac and an iPad.',
+           'It is on hold for now while the hardware side is worked out: which AirPods can report head movement.'],
     facts: [['Works with', 'AirPods, Mac, iPad']],
   },
   redstone: {
