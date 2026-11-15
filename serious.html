@@ -1105,6 +1105,134 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 .status-msg.success { color: #2d5a2d; }
 
 .status-msg.error { color: #8b2e2e; }
+
+/* ---- Tile polish: whole pictures, tidy placeholders, an "open" hint ---- */
+.tile { min-height: 190px; }
+.tile-mach1 .tile-bg, .tile-archive .tile-bg, .tile-lidi .tile-bg, .tile-forge .tile-bg { background-repeat: no-repeat; }
+.tile-mach1 .tile-bg { background-size: contain; background-position: center; background-color: #e9e9e8; }
+.tile-archive .tile-bg { background-size: contain; background-position: center; }
+.tile-lidi .tile-bg { background-size: contain; background-color: #a9bde9; }
+.tile-resilife .tile-bg {
+  background-image: url('assets/AppIcon_ResiLife.png');
+  background-size: auto 62%;
+  background-position: center 38%;
+  background-color: #ece8dc;
+}
+.tile-forge .tile-bg { background-size: contain; background-position: center; }
+/* Hovering a photo tile dims the picture gently instead of hiding it */
+.tile.has-img:hover .tile-bg,
+.tile-lidi:hover .tile-bg { opacity: 0.35; }
+.tile-resilife.has-img:hover .tile-bg { opacity: 0.35; filter: grayscale(0); }
+.tile-resilife:hover .tile-kicker,
+.tile-resilife:hover .tile-name,
+.tile-resilife:hover .tile-name em { color: var(--white); }
+
+/* Tiles with no photo yet: a soft wash of the site's lilac instead of flat grey */
+.tile-mach2 .tile-bg, .tile-pb .tile-bg, .tile-drone .tile-bg,
+.tile-blackbook .tile-bg, .tile-airremote .tile-bg, .tile-redstone .tile-bg, .tile-quote .tile-bg {
+  background-color: #f7f6f8;
+  background-image: radial-gradient(120% 90% at 100% 0%, rgba(173, 176, 204, 0.32) 0%, rgba(221, 212, 220, 0.18) 45%, rgba(255, 255, 255, 0) 75%);
+}
+.tile-mach2 .tile-kicker, .tile-mach2 .tile-name,
+.tile-pb .tile-kicker, .tile-pb .tile-name { color: var(--ink); }
+.tile-mach2 .tile-kicker, .tile-pb .tile-kicker { color: var(--mid); }
+.tile-mach2 .tile-name::after, .tile-pb .tile-name::after { color: var(--mid); }
+
+.gideon-tile-icon {
+  position: absolute; top: 50%; left: 50%;
+  width: 64px; height: 64px; border-radius: 15px;
+  transform: translate(-50%, -70%);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 40px rgba(173, 176, 204, 0.35);
+}
+
+.tile[data-project] { cursor: pointer; }
+.tile[data-project]::after {
+  content: '';
+  position: absolute; top: 0.9rem; right: 0.9rem; z-index: 3;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.86) no-repeat center / 12px 12px
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1v10M1 6h10' stroke='%230e0e0e' stroke-width='1.2'/%3E%3C/svg%3E");
+  box-shadow: 0 0 0 1px rgba(14, 14, 14, 0.1);
+  opacity: 0; transform: scale(0.85);
+  transition: opacity 0.2s, transform 0.2s;
+}
+.tile[data-project]:hover::after,
+.tile[data-project]:focus-visible::after { opacity: 1; transform: none; }
+.tile-gideon .gideon-dot { right: auto; left: 1rem; }
+@media (hover: none) { .tile[data-project]::after { opacity: 0.9; transform: none; } }
+
+/* ---- Project panel ---- */
+.p-overlay {
+  position: fixed; inset: 0; z-index: 600;
+  background: rgba(14, 14, 14, 0.38);
+  backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity 0.25s;
+}
+.p-overlay.open { opacity: 1; pointer-events: auto; }
+.p-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 620;
+  width: min(560px, 100%);
+  background: var(--white);
+  border-left: 1px solid var(--rule);
+  box-shadow: none;
+  visibility: hidden;
+  transform: translateX(104%);
+  transition: transform 0.34s cubic-bezier(.2, .7, .2, 1), visibility 0.34s;
+  overflow-y: auto; overscroll-behavior: contain;
+  display: flex; flex-direction: column;
+}
+.p-panel.open { transform: none; visibility: visible; box-shadow: -20px 0 60px rgba(14, 14, 14, 0.18); }
+.p-close {
+  position: sticky; top: 0; align-self: flex-end; z-index: 2;
+  margin: 0.8rem 0.8rem -3rem 0;
+  width: 38px; height: 38px; border-radius: 50%;
+  border: 1px solid var(--rule); background: rgba(255, 255, 255, 0.94);
+  font-size: 22px; line-height: 1; color: var(--ink); cursor: pointer;
+}
+.p-close:focus-visible, .p-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.p-media { background: #f4f3f5; display: flex; align-items: center; justify-content: center; }
+.p-media img { display: block; width: 100%; height: auto; max-height: 62vh; object-fit: contain; }
+.p-media.dark { background: #000; }
+.p-media.icon { padding: 3rem 0; background: radial-gradient(90% 90% at 70% 0%, rgba(173,176,204,0.45), rgba(221,212,220,0.25) 50%, #f7f6f8 80%); }
+.p-media.icon img { width: 120px; height: 120px; border-radius: 27px; box-shadow: 0 14px 40px rgba(14,14,14,0.18); }
+.p-media.wash { min-height: 140px; background: radial-gradient(120% 120% at 100% 0%, rgba(173,176,204,0.4), rgba(221,212,220,0.22) 50%, #f7f6f8 85%); }
+.p-body { padding: 1.6rem clamp(1.3rem, 4vw, 2.2rem) 2.4rem; }
+.p-kicker { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--mid); }
+.p-title { font-family: 'Cormorant', serif; font-weight: 300; font-size: clamp(2.2rem, 6vw, 3rem); line-height: 1; margin: 0.4rem 0 0.9rem; }
+.p-title em { font-style: italic; color: var(--mid); }
+.p-status {
+  display: inline-block; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 5px 10px; border: 1px solid transparent; border-radius: 999px;
+  background: linear-gradient(var(--white), var(--white)) padding-box, var(--accent-grad) border-box;
+}
+.p-text { margin-top: 1.2rem; font-size: 0.95rem; line-height: 1.6; }
+.p-text p + p { margin-top: 0.8rem; }
+.p-facts { margin-top: 1.5rem; border-top: 1px solid var(--rule); }
+.p-facts div { display: flex; gap: 1rem; padding: 0.7rem 0; border-bottom: 1px solid var(--rule); font-size: 13px; }
+.p-facts dt { flex: 0 0 7.5rem; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--mid); padding-top: 2px; }
+.p-facts dd { flex: 1; }
+.p-links { margin-top: 1.6rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+.p-link {
+  font-family: 'DM Sans', sans-serif; font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  padding: 11px 18px; text-decoration: none; cursor: pointer;
+  border: 1px solid var(--ink); background: var(--white); color: var(--ink);
+  transition: background 0.15s, color 0.15s;
+}
+.p-link.primary, .p-link:hover { background: var(--ink); color: var(--white); }
+.p-link.primary:hover { background: #2b2b2b; }
+body.p-lock { overflow: hidden; }
+@media (max-width: 620px) {
+  .p-panel { top: auto; height: 92vh; height: 92dvh; width: 100%; border-left: 0; border-top: 1px solid var(--rule); border-radius: 16px 16px 0 0; transform: translateY(104%); }
+  .p-media img { max-height: 46vh; }
+}
+
+/* Phones: stack the photo above the intro (this must come after the base .about rules) */
+@media (max-width: 620px) {
+  .about-header { grid-template-columns: 1fr; gap: 1.6rem; justify-items: center; text-align: center; }
+  .about-photo { width: 150px; }
+  .about-list { justify-content: center; }
+  .about > .about-section { text-align: center; }
+}
 .skip-link { position: absolute; left: 8px; top: -48px; z-index: 1000; background: var(--ink); color: #fff; padding: 8px 14px; font-size: 13px; text-decoration: none; transition: top 0.15s; }
 .skip-link:focus { top: 8px; }
 </style>
@@ -1164,7 +1292,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 </div>
 
 <div class="grid" id="grid">
-  <div class="tile tile-mach1 has-img" data-cat="hardware">
+  <div class="tile tile-mach1 has-img" data-cat="hardware" data-project="mach1">
     <div class="tile-bg"></div>
     <div class="tile-overlay"></div>
     <div class="tile-label">
@@ -1173,32 +1301,33 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <a href="https://the-archive-a5x.pages.dev" target="_blank" rel="noopener noreferrer" class="tile t1x1 tile-archive has-img" data-cat="software" style="text-decoration:none;color:inherit;">
+  <div class="tile t1x1 tile-archive has-img" data-cat="software" data-project="archive">
     <div class="tile-bg"></div>
     <div class="tile-overlay"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software · Live</div>
       <div class="tile-name">The <em>Archive</em></div>
     </div>
-  </a>
+  </div>
 
-  <a href="https://lidisolutions.ai" target="_blank" rel="noopener noreferrer" class="tile t1x1 tile-lidi" data-cat="venture" style="text-decoration:none;color:inherit;">
+  <div class="tile t1x1 tile-lidi" data-cat="venture" data-project="lidi">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Venture</div>
       <div class="tile-name">LIDI</div>
     </div>
-  </a>
+  </div>
 
-  <a href="gideon-confirmation.html" class="tile t1x1 tile-gideon" id="gideonTile" data-cat="software" style="text-decoration:none;color:inherit;">
+  <div class="tile t1x1 tile-gideon" id="gideonTile" data-cat="software" data-project="gideon">
+    <img class="gideon-tile-icon" src="assets/gideon-icon-dark.webp" alt="" width="256" height="256" loading="lazy">
     <div class="gideon-dot"></div>
     <div class="tile-label">
       <div class="tile-kicker">AI Agent · iPhone &amp; Mac</div>
       <div class="tile-name">Gideon</div>
     </div>
-  </a>
+  </div>
 
-  <div class="tile t1x1 tile-forge has-img" data-cat="software">
+  <div class="tile t1x1 tile-forge has-img" data-cat="software" data-project="forge">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
@@ -1206,7 +1335,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-resilife has-img" data-cat="software">
+  <div class="tile t1x1 tile-resilife has-img" data-cat="software" data-project="resilife">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">App</div>
@@ -1228,7 +1357,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t2x1 tile-mach2" data-cat="hardware">
+  <div class="tile t2x1 tile-mach2" data-cat="hardware" data-project="mach2">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Hardware · In Design</div>
@@ -1236,7 +1365,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-quote" data-cat="software">
+  <div class="tile t1x1 tile-quote" data-cat="software" data-project="quotes">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
@@ -1248,7 +1377,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-drone" data-cat="hardware">
+  <div class="tile t1x1 tile-drone" data-cat="hardware" data-project="drone">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Hardware</div>
@@ -1256,7 +1385,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-pb" data-cat="hardware">
+  <div class="tile t1x1 tile-pb" data-cat="hardware" data-project="pb">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Research · EE</div>
@@ -1264,7 +1393,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-blackbook" data-cat="software">
+  <div class="tile t1x1 tile-blackbook" data-cat="software" data-project="blackbook">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
@@ -1272,7 +1401,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-airremote" data-cat="software">
+  <div class="tile t1x1 tile-airremote" data-cat="software" data-project="airremote">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software · In Progress</div>
@@ -1280,7 +1409,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-redstone" data-cat="venture">
+  <div class="tile t1x1 tile-redstone" data-cat="venture" data-project="redstone">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Venture</div>
@@ -1324,6 +1453,21 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
     <div class="video-fallback" id="videoFallback">Video unavailable.</div>
   </div>
 </div>
+
+
+<div class="p-overlay" id="pOverlay"></div>
+<aside class="p-panel" id="pPanel" role="dialog" aria-modal="true" aria-labelledby="pTitle" aria-hidden="true">
+  <button class="p-close" id="pClose" type="button" aria-label="Close">×</button>
+  <div class="p-media" id="pMedia"></div>
+  <div class="p-body">
+    <div class="p-kicker" id="pKicker"></div>
+    <h2 class="p-title" id="pTitle"></h2>
+    <span class="p-status" id="pStatus"></span>
+    <div class="p-text" id="pText"></div>
+    <dl class="p-facts" id="pFacts"></dl>
+    <div class="p-links" id="pLinks"></div>
+  </div>
+</aside>
 
 <div class="g-drawer" id="gDrawer" role="dialog" aria-modal="false" aria-label="Speak to Gideon">
   <div class="g-head">
@@ -1372,7 +1516,6 @@ document.querySelectorAll('.filt').forEach((b) => {
 
 const gDrawer = document.getElementById('gDrawer');
 const gOpenBtn = document.getElementById('openGideon');
-const gTile = document.getElementById('gideonTile');
 const gClose = document.getElementById('gClose');
 const gInput = document.getElementById('gInput');
 const gSend = document.getElementById('gSend');
@@ -1500,6 +1643,163 @@ if (contactForm) {
     statusMsg.classList.add('show');
   });
 }
+// ---- Project panels: each tile opens a page-in-a-panel with its picture, story and links ----
+const projects = {
+  mach1: {
+    kicker: 'Hardware · Robotics', title: 'Mach <em>1</em>', status: 'Working prototype',
+    img: 'assets/mach-1.jpg', alt: 'The Mach 1 robot: a black robot arm on a mobile base with cameras',
+    text: ['Mach 1 is a mobile robot with an arm and cameras, built to tidy the floor of a home.',
+           'Its first job is socks. It looks around the room, drives to a sock, lines itself up, picks it up and drops it in the laundry basket. It remembers where it last saw things, so after each pick it turns straight back toward the next one.'],
+    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Next', 'Mach 2']],
+  },
+  archive: {
+    kicker: 'Software · Live', title: 'The <em>Archive</em>', status: 'Live',
+    img: 'assets/archive.jpg', alt: 'The Archive showing Earth from space', dark: true,
+    text: ['The Archive shows Earth, the Moon and the sky as they were at any moment, built from public scientific data.',
+           'Search for a place or a world and a panel opens with its photograph, history and facts. Scrub the timeline to move through time, or put on a VR headset and stand inside it.'],
+    facts: [['Built from', 'Public scientific data'], ['Runs in', 'Any browser, and VR headsets']],
+    links: [['Open The Archive', 'https://the-archive-a5x.pages.dev', true]],
+  },
+  gideon: {
+    kicker: 'AI Agent · iPhone & Mac', title: 'Gideon', status: 'In daily use',
+    icon: 'assets/gideon-icon-light.webp', alt: 'The Gideon app icon',
+    text: ['Gideon is an AI agent and task manager for iPhone and Mac.',
+           'It keeps one task list for every project, sends coding agents to work on tasks in the background, and hands finished work back for review. It also keeps this site up to date.'],
+    facts: [['Platforms', 'iPhone and Mac'], ['Role', 'Agent and task manager']],
+    links: [['Speak to Gideon', '#gideon', true], ['Open the app', 'gideon-confirmation.html']],
+  },
+  forge: {
+    kicker: 'Software', title: 'FORGE', status: 'Prototype',
+    img: 'assets/FORGE_example.webp', alt: 'The FORGE STL editor with a cube in its 3D view', dark: true,
+    text: ['FORGE is a 3D model editor that runs in the browser, with an AI assistant built in.',
+           'Open an STL file, sculpt it with a brush, move and rotate it, or describe the change you want in plain words. Then export it, ready to print.'],
+    facts: [['Works with', 'STL files'], ['Tools', 'Sculpt brush, transform, wireframe, AI assist']],
+  },
+  resilife: {
+    kicker: 'App', title: 'ResiLife', status: 'Client work',
+    img: 'assets/AppIcon_ResiLife.png', alt: 'The ResiLife app icon',
+    text: ['ResiLife is an app built for a client, together with the commercial that launched it.'],
+    links: [['Watch the commercial', '#commercial', true]],
+  },
+  mach2: {
+    kicker: 'Hardware · Robotics', title: 'Mach <em>2</em>', status: 'In design',
+    text: ['Mach 2 is the next robot, taking what Mach 1 has learned into a new design.'],
+    facts: [['Follows', 'Mach 1']],
+  },
+  quotes: {
+    kicker: 'Software', title: 'Quote <em>Calculators</em>', status: 'Live',
+    text: ['Two small tools for pricing client work: one for commercial video shoots, one for monthly retainers.'],
+    links: [['Commercial quote', 'https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/', true], ['Retainer quote', 'https://taylorolsen-vogt.github.io/retainer-quote-calculator-/']],
+  },
+  drone: {
+    kicker: 'Hardware', title: 'Drone', status: 'Early concept',
+    text: ['A drone of Taylor’s own design, at the concept stage.'],
+  },
+  pb: {
+    kicker: 'Research · EE', title: 'Power <em>Beaming</em>', status: 'In research',
+    text: ['Electrical engineering research into sending power through the air, without wires.'],
+  },
+  blackbook: {
+    kicker: 'Software', title: 'Black <em>Book</em>', status: 'Software',
+    text: ['A software project. A fuller write-up and screenshots are on the way.'],
+  },
+  airremote: {
+    kicker: 'Software · In progress', title: 'Air<em>Remote</em>', status: 'In progress',
+    text: ['AirRemote turns a pair of AirPods into a remote control for a Mac and an iPad.'],
+    facts: [['Works with', 'AirPods, Mac, iPad']],
+  },
+  redstone: {
+    kicker: 'Venture', title: 'Redstone <em>Laboratories</em>', status: 'Company',
+    text: ['Redstone Laboratories is the applied engineering lab Taylor runs. Most of the hardware and software on this page comes out of it.'],
+    facts: [['Sister company', 'LIDI']],
+  },
+  lidi: {
+    kicker: 'Venture', title: 'LIDI', status: 'Company',
+    img: 'assets/LIDI.jpg', alt: 'The LIDI Solutions logo',
+    text: ['LIDI is a software and AI consultancy, building websites, apps and AI systems for clients.'],
+    links: [['Visit lidisolutions.ai', 'https://lidisolutions.ai', true]],
+  },
+};
+
+const pPanel = document.getElementById('pPanel');
+const pOverlay = document.getElementById('pOverlay');
+let pReturnFocus = null;
+
+function openProject(key, fromEl) {
+  const p = projects[key];
+  if (!p) return;
+  const media = document.getElementById('pMedia');
+  media.className = 'p-media' + (p.dark ? ' dark' : '') + (p.icon ? ' icon' : '') + (!p.img && !p.icon ? ' wash' : '');
+  media.innerHTML = '';
+  if (p.img || p.icon) {
+    const im = document.createElement('img');
+    im.src = p.img || p.icon; im.alt = p.alt || '';
+    media.appendChild(im);
+  }
+  document.getElementById('pKicker').textContent = p.kicker;
+  document.getElementById('pTitle').innerHTML = p.title;
+  document.getElementById('pStatus').textContent = p.status;
+  const text = document.getElementById('pText');
+  text.innerHTML = '';
+  p.text.forEach((t) => { const el = document.createElement('p'); el.textContent = t; text.appendChild(el); });
+  const facts = document.getElementById('pFacts');
+  facts.innerHTML = '';
+  (p.facts || []).forEach(([k, v]) => {
+    const row = document.createElement('div');
+    const dt = document.createElement('dt'); dt.textContent = k;
+    const dd = document.createElement('dd'); dd.textContent = v;
+    row.append(dt, dd); facts.appendChild(row);
+  });
+  facts.style.display = (p.facts || []).length ? '' : 'none';
+  const links = document.getElementById('pLinks');
+  links.innerHTML = '';
+  (p.links || []).forEach(([label, href, primary]) => {
+    const a = document.createElement('a');
+    a.className = 'p-link' + (primary ? ' primary' : '');
+    a.textContent = label; a.href = href;
+    if (href === '#gideon') a.addEventListener('click', (e) => { e.preventDefault(); closeProject(); openGideon(); });
+    else if (href === '#commercial') a.addEventListener('click', (e) => { e.preventDefault(); closeProject(); openVideo(); });
+    else if (/^https?:/.test(href)) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
+    links.appendChild(a);
+  });
+  pReturnFocus = fromEl || null;
+  history.replaceState(null, '', '#' + key);
+  pPanel.scrollTop = 0;
+  pPanel.classList.add('open'); pOverlay.classList.add('open');
+  pPanel.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('p-lock');
+  requestAnimationFrame(() => document.getElementById('pClose').focus());
+}
+
+function closeProject() {
+  if (!pPanel.classList.contains('open')) return;
+  pPanel.classList.remove('open'); pOverlay.classList.remove('open');
+  pPanel.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('p-lock');
+  history.replaceState(null, '', location.pathname + location.search);
+  if (pReturnFocus) pReturnFocus.focus();
+}
+
+document.querySelectorAll('.tile[data-project]').forEach((tile) => {
+  const key = tile.dataset.project;
+  tile.setAttribute('tabindex', '0');
+  tile.setAttribute('role', 'button');
+  tile.setAttribute('aria-label', 'About ' + tile.querySelector('.tile-name').textContent.trim());
+  tile.addEventListener('click', (e) => {
+    if (e.target.closest('a')) return; // links inside a tile (the quote calculators) keep working
+    openProject(key, tile);
+  });
+  tile.addEventListener('keydown', (e) => {
+    if (e.target !== tile) return;
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openProject(key, tile); }
+  });
+});
+document.getElementById('pClose').addEventListener('click', closeProject);
+pOverlay.addEventListener('click', closeProject);
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProject(); });
+// A link such as /#mach1 opens straight onto that project
+const startKey = location.hash.slice(1);
+if (projects[startKey]) openProject(startKey, document.querySelector('[data-project="' + startKey + '"]'));
 </script>
 
 </body>
