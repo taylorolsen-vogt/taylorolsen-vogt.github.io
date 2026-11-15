@@ -690,6 +690,24 @@ nav {
   color: #b5b5b5;
 }
 
+/* Tiles without a photo yet: a quiet status line so they read as intentional */
+.tile-drone .tile-name::after,
+.tile-pb .tile-name::after,
+.tile-mach2 .tile-name::after {
+  display: block;
+  margin-top: 0.55rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--mid);
+}
+.tile-drone .tile-name::after { content: 'Early concept'; }
+.tile-pb .tile-name::after { content: 'In research'; }
+.tile-mach2 .tile-name::after { content: 'In design'; }
+.tile-mach2 .tile-name::after,
+.tile-pb .tile-name::after { color: #8a8a8a; }
+
 .tile-video {
   background: var(--ink);
 }
