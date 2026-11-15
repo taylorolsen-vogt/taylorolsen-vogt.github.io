@@ -1542,6 +1542,7 @@ function addGideonMessage(text, isUser = false) {
 
 const gideonAnswers = [
   { re: /mach\s*2/i, a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today, and in November 2026 it delivered its first socks into the laundry basket on its own.' },
+  { re: /mach\s*1|sock|laundry/i, a: 'Mach 1 is a home robot with an arm and cameras, and its first job is putting socks in the laundry basket. In November 2026 it delivered its first socks on its own. It looks with its wrist camera before turning its wheels, and stops and backs off if its arm meets resistance. Next it gets a small AI model running on board.' },
   { re: /mach|robot|hardware|drone|power|beam/i, a: 'Hardware: Mach 1 is the working robot, Mach 2 is in design, and there are early tiles for a drone and for power beaming research. Use the Hardware filter to see them together.' },
   { re: /archive/i, a: 'The Archive puts public scientific data about Earth, the Solar System and the stars side by side, so things never looked at together can be cross-referenced and new questions answered. It is live; click its tile to open it.' },
   { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote turns a pair of AirPods into a remote for a Mac and an iPad. It is on hold for now while the hardware side is worked out.' },
@@ -1653,8 +1654,10 @@ const projects = {
     img: 'assets/mach-1.jpg', alt: 'The Mach 1 robot: a black robot arm on a mobile base with cameras',
     text: ['Mach 1 is a mobile robot with an arm and cameras, built to tidy the floor of a home.',
            'Its first job is socks. It looks around the room, drives to a sock, lines itself up, picks it up and drops it in the laundry basket. It remembers where it last saw things, so after each pick it turns straight back toward the next one.',
-           'In November 2026 it delivered its first socks into the basket on its own. It now checks for room before unfolding its arm and skips a sock it can\u2019t get instead of giving up. Next, it learns to share the floor with a small dog.'],
-    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next', 'Mach 2']],
+           'In November 2026 it delivered its first socks into the basket on its own. Within reach of its arm it now looks with the wrist camera first and turns its wheels only for what lies beyond. When other socks block its approach it edges in closer and grabs anyway, and a sock it can\u2019t get is skipped, not a reason to stop.',
+           'It also got more careful: it checks there is room before unfolding its arm, and if the arm meets resistance it stops and backs off.',
+           'Next: a smoother, faster arm, then a small AI model running on the robot itself to decide how to handle each situation. Before it leaves its practice area, it learns to share the floor with a small dog.'],
+    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next up', 'A small AI model on board'], ['Then', 'Mach 2']],
   },
   archive: {
     kicker: 'Science · Live', title: 'The <em>Archive</em>', status: 'Live',
