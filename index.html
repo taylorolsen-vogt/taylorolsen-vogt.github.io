@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffffff">
   <link rel="icon" href="favicon.ico" sizes="any">
   <link rel="icon" href="assets/favicon-32.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
@@ -51,7 +52,8 @@
   --accent-grad: linear-gradient(90deg, var(--grad-left) 0%, var(--grad-mid) 52%, var(--grad-right) 100%);
 }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scroll-padding-top: 96px; }
+::selection { background: var(--grad-right); color: var(--ink); }
 
 body {
   background: var(--white);
