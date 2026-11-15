@@ -1546,7 +1546,9 @@ const gideonAnswers = [
   { re: /archive/i, a: 'The Archive puts public scientific data about Earth, the Solar System and the stars side by side, so things never looked at together can be cross-referenced and new questions answered. It is live; click its tile to open it.' },
   { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote turns a pair of AirPods into a remote for a Mac and an iPad. It is on hold for now while the hardware side is worked out.' },
   { re: /gideon|agent|task|iphone|mac\b/i, a: 'I am Gideon, an agent and task manager on iPhone and Mac. Since November 2026 I also work through a team\u2019s shared task board on my own: I pick the next story, build and test it, and put it up for review. My tile has the details.' },
-  { re: /resilife|commercial|video|quote|calculator/i, a: 'ResiLife is an app, and its commercial plays from its tile. The Quote Calculators tile links to the commercial and retainer quote calculators.' },
+  { re: /forge|\bstl\b|sculpt|3d print/i, a: 'FORGE is a 3D model editor for 3D printing that runs in the browser. Open an STL, sculpt it with push, pull and smooth brushes, or describe the change in plain words and its Claude assistant makes it. Then export it, ready to print. Its tile links to it.' },
+  { re: /quote|calculator|pric/i, a: 'The Quote Calculators price client work on the spot: one for AI-made commercials (length, revisions, turnaround, voiceover, music), one for short advisory retainers. Both are linked from their tile.' },
+  { re: /resilife|commercial|video/i, a: 'ResiLife is an app built for a client, and the commercial that launched it plays from its tile.' },
   { re: /lidi|redstone|venture|company|business|hire|work with/i, a: 'Taylor runs Redstone Laboratories, LLC, also known as LIDI (lidisolutions.ai). For work together, use the contact details on this page.' },
   { re: /contact|email|phone|reach/i, a: 'The contact details are in the Contact section of this page.' },
   { re: /software|app|code/i, a: 'Software highlights: The Archive, Gideon, FORGE, ResiLife, the Quote Calculators, Black Book and AirRemote. Use the Software filter to see them together.' },
@@ -1676,9 +1678,12 @@ const projects = {
   forge: {
     kicker: 'Software', title: 'FORGE', status: 'Prototype',
     img: 'assets/FORGE_example.webp', alt: 'The FORGE STL editor with a cube in its 3D view', dark: true,
-    text: ['FORGE is a 3D model editor that runs in the browser, with an AI assistant built in.',
-           'Open an STL file, sculpt it with a brush, move and rotate it, or describe the change you want in plain words. Then export it, ready to print.'],
-    facts: [['Works with', 'STL files'], ['Tools', 'Sculpt brush, transform, wireframe, AI assist']],
+    text: ['FORGE is a 3D model editor for 3D printing that runs as a single web page, with an AI assistant built in. There is nothing to install.',
+           'Open an STL file and shape it by hand with push, pull and smooth brushes, setting each brush’s size, strength and falloff, with undo for every stroke. Move, rotate and scale it by exact numbers, check it in wireframe, and keep an eye on its size and vertex count as you work.',
+           'Or describe the change in plain words. The assistant reads the model’s current state and turns a request like “twice as tall, mirrored, sitting on the floor” into steps: scale, rotate, mirror, centre, set it down on the print bed, or change its colour and finish. It uses Claude, with your own key.',
+           'When it looks right, export a new STL, ready to print.'],
+    facts: [['Works with', 'STL files'], ['By hand', 'Push, pull and smooth brushes; move, rotate, scale'], ['In words', 'Claude turns a request into edits'], ['Runs in', 'Any browser, as one page']],
+    links: [['Open FORGE', 'https://taylorolsen-vogt.github.io/FORGE/forge_final.html', true]],
   },
   resilife: {
     kicker: 'App', title: 'ResiLife', status: 'Client work',
@@ -1693,7 +1698,10 @@ const projects = {
   },
   quotes: {
     kicker: 'Software', title: 'Quote <em>Calculators</em>', status: 'Live',
-    text: ['Two small tools for pricing client work: one for commercial video shoots, one for monthly retainers.'],
+    text: ['Two small tools Redstone Laboratories uses to price client work on the spot, so a client sees how each choice changes the quote.',
+           'The commercial calculator prices an AI-made commercial. Pick a starting point (an existing demo or a new concept), a length of 30, 60 or 90 seconds, how many revision rounds, and a rush or standard turnaround. Add a voiceover, licensed music, extra export formats or the raw files, and it adds up the hours, the generation costs and any rush fee into one total.',
+           'The retainer calculator does the same for a short advisory engagement: one, three or six months, how many sessions a week, onboarding calls, and extras such as support between sessions, written notes after each one and a final report.'],
+    facts: [['Prices', 'AI-made commercials and advisory retainers'], ['Shows', 'Hours, costs and add-ons line by line'], ['Runs in', 'Any browser']],
     links: [['Commercial quote', 'https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/', true], ['Retainer quote', 'https://taylorolsen-vogt.github.io/retainer-quote-calculator-/']],
   },
   drone: {
