@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f8f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="../../favicon.ico" sizes="any">
+<link rel="icon" href="../../assets/favicon-32.png" type="image/png">
+<link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+<title>Direction D · Gideon's language | Taylor Olsen-Vogt</title>
+<!--
+  Direction D: the portfolio in the same design language as Gideon.
+  Light mode = Gideon's original look (cool gray, glass cards, thin uppercase
+  titles, the water orb in the top-right corner). Dark mode = Gideon's stark
+  black and white. System fonts only, like the apps: nothing to download.
+-->
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[hidden] { display: none !important; }
+:root {
+  --bg: #f8f8fa;
+  --ink: #121419;
+  --t2: rgba(18, 20, 25, 0.64);
+  --t3: rgba(18, 20, 25, 0.50);
+  --line: rgba(0, 0, 0, 0.08);
+  --surface: #ffffff;
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-edge: rgba(255, 255, 255, 0.9);
+  --shadow: 0 1px 0 rgba(0, 0, 0, 0.035), 0 8px 28px rgba(0, 0, 0, 0.055);
+  --pill: rgba(255, 255, 255, 0.6);
+  --pill-edge: rgba(0, 0, 0, 0.07);
+  --soft: rgba(18, 20, 25, 0.06);
+  --on-ink: #ffffff;
+  --green: #33c775;
+  --orange: #eb9433;
+  --sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --pad: clamp(18px, 4vw, 48px);
+  --max: 1120px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --ink: #ffffff;
+    --t2: rgba(255, 255, 255, 0.66);
+    --t3: rgba(255, 255, 255, 0.50);
+    --line: rgba(255, 255, 255, 0.12);
+    --surface: #1a1a1a;
+    --glass: rgba(255, 255, 255, 0.035);
+    --glass-edge: rgba(255, 255, 255, 0.2);
+    --shadow: none;
+    --pill: rgba(255, 255, 255, 0.08);
+    --pill-edge: rgba(255, 255, 255, 0.14);
+    --soft: rgba(255, 255, 255, 0.08);
+    --on-ink: #000000;
+  }
+}
+html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+h1, h2 { text-wrap: balance; }
+p { text-wrap: pretty; }
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+::selection { background: var(--ink); color: var(--on-ink); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; border-radius: 6px; }
+
+/* Gideon's two type styles: the eyebrow and the thin uppercase title. */
+.eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--t3); }
+.title { font-weight: 300; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1; }
+
+.glass { background: var(--glass); border: 1px solid var(--glass-edge); border-radius: 22px; box-shadow: var(--shadow); -webkit-backdrop-filter: blur(20px) saturate(1.2); backdrop-filter: blur(20px) saturate(1.2); }
+
+.skip-link { position: absolute; left: 8px; top: -48px; z-index: 1000; background: var(--ink); color: var(--on-ink); padding: 8px 14px; border-radius: 999px; font-size: 13px; text-decoration: none; }
+.skip-link:focus { top: 8px; }
+
+/* The water orb, coming in from the top-right corner (light mode only). */
+.orb { position: absolute; top: 64px; right: -300px; width: 560px; height: 560px; pointer-events: none; z-index: 0; opacity: 0.6; filter: saturate(0.6) brightness(1.06); border-radius: 50%; }
+@media (prefers-color-scheme: dark) { .orb { display: none; } }
+
+/* Top bar */
+.bar { position: sticky; top: 0; z-index: 200; background: color-mix(in srgb, var(--bg) 72%, transparent); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+.bar.scrolled { border-bottom-color: var(--line); }
+.bar-in { max-width: var(--max); margin: 0 auto; height: 60px; padding: 0 var(--pad); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.bar-id { font-size: 12px; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; text-decoration: none; white-space: nowrap; }
+.bar-nav { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 28px); }
+.bar-nav a { font-size: 11px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; color: var(--t2); }
+.bar-nav a:hover { color: var(--ink); }
+.g-btn { display: inline-flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px 0 5px; border: 0; border-radius: 999px; background: var(--ink); color: var(--on-ink); font: 500 13px/1 var(--sans); cursor: pointer; white-space: nowrap; }
+.g-btn img { width: 26px; height: 26px; border-radius: 50%; }
+.g-btn:hover { opacity: 0.86; }
+
+main { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; padding: 0 var(--pad); }
+.foot { position: relative; z-index: 1; }
+
+/* Intro */
+.intro { padding: clamp(40px, 9vw, 112px) 0 clamp(28px, 4vw, 44px); }
+.who { display: flex; align-items: center; gap: 14px; margin-bottom: clamp(22px, 3vw, 30px); }
+.who img { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; }
+.who-line { display: flex; flex-direction: column; gap: 4px; }
+.who-line .role { font-size: 14px; font-weight: 500; }
+.intro h1 { font-size: clamp(42px, 8.4vw, 104px); letter-spacing: 0.035em; }
+.intro h1 span { display: block; }
+.lede { margin-top: clamp(20px, 3vw, 30px); max-width: 34em; font-size: clamp(16px, 1.6vw, 19px); line-height: 1.55; color: var(--t2); }
+.lede strong { color: var(--ink); font-weight: 500; }
+
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: clamp(28px, 4vw, 40px); padding: 6px; }
+.facts > div { padding: 14px 16px; }
+.facts > div + div { border-left: 1px solid var(--line); }
+.facts dt { margin-bottom: 6px; }
+.facts dd { font-size: 14px; font-weight: 500; overflow-wrap: anywhere; }
+.facts a { text-decoration: none; border-bottom: 1px solid var(--line); }
+.facts a:hover { border-bottom-color: var(--ink); }
+
+/* Work */
+.sec-head { display: flex; align-items: end; justify-content: space-between; gap: 16px 24px; flex-wrap: wrap; padding: clamp(44px, 7vw, 84px) 0 22px; }
+.sec-head .eyebrow { display: block; margin-bottom: 10px; }
+.sec-head h2 { font-size: clamp(28px, 3.4vw, 36px); }
+.filters { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--pill); border: 1px solid var(--pill-edge); }
+.filt { font: 500 12px/1 var(--sans); letter-spacing: 0.04em; color: var(--t2); background: none; border: 0; border-radius: 999px; padding: 9px 14px; cursor: pointer; }
+.filt:hover { color: var(--ink); }
+.filt.active { background: var(--surface); color: var(--ink); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); }
+
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.cards:not(:has(> :not([hidden]))) { display: none; }
+.card { display: flex; flex-direction: column; padding: 8px; text-decoration: none; color: inherit; transition: transform 0.25s ease, box-shadow 0.25s ease; }
+a.card:hover, .card.tile-video:hover { transform: translateY(-2px); }
+.card-img { position: relative; aspect-ratio: 4 / 3; border-radius: 15px; overflow: hidden; background: var(--soft); }
+.card-img img { width: 100%; height: 100%; object-fit: cover; }
+.card-img.icon, .card-img.icon picture { display: grid; place-items: center; width: 100%; height: 100%; }
+.card-img.icon img { width: 34%; height: auto; border-radius: 22%; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12); }
+.card-text { padding: 14px 10px 10px; }
+.card-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.name { font-size: 16px; font-weight: 600; letter-spacing: -0.005em; }
+.desc { margin-top: 3px; font-size: 13.5px; color: var(--t2); }
+.play { position: absolute; inset: 0; display: grid; place-items: center; }
+.play span { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(255, 255, 255, 0.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); }
+.card.tile-video { cursor: pointer; }
+
+/* Status: a dot and a word, in Gideon's green / orange. */
+.status { flex: none; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--t3); white-space: nowrap; }
+.status::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.55; }
+.status.go::before { background: var(--green); opacity: 1; }
+.status.wip::before { background: var(--orange); opacity: 1; }
+
+.list { margin-top: 16px; padding: 6px 0; }
+.list:not(:has(> :not([hidden]))) { display: none; }
+.row { display: grid; grid-template-columns: 40px minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; padding: 14px 20px; text-decoration: none; color: inherit; }
+.list > .row:not([hidden]) ~ .row:not([hidden]) { border-top: 1px solid var(--line); }
+a.row:hover .name { text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.mark { width: 40px; height: 40px; border-radius: 11px; background: var(--soft); display: grid; place-items: center; font-size: 13px; font-weight: 500; letter-spacing: 0.04em; color: var(--t2); overflow: hidden; }
+.mark img { width: 100%; height: 100%; object-fit: cover; }
+.row .links { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 4px; font-size: 13.5px; }
+.row .links a { color: var(--t2); text-decoration: none; border-bottom: 1px solid var(--line); }
+.row .links a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+/* Contact */
+.contact { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 56px); padding-bottom: clamp(48px, 7vw, 88px); align-items: start; }
+.contact .sec-head { padding-bottom: 0; }
+.contact-lines { margin-top: 22px; display: flex; flex-direction: column; gap: 10px; }
+.contact-lines a { font-size: clamp(16px, 1.6vw, 19px); text-decoration: none; border-bottom: 1px solid var(--line); align-self: flex-start; }
+.contact-lines a:hover { border-bottom-color: var(--ink); }
+#contact-form { padding: clamp(18px, 2.4vw, 26px); display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: clamp(0px, 7vw, 84px); }
+#contact-form .full { grid-column: 1 / -1; }
+#contact-form label { display: block; margin-bottom: 7px; }
+#contact-form input, #contact-form textarea { width: 100%; font: 15px/1.4 var(--sans); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; outline: none; }
+#contact-form input:focus, #contact-form textarea:focus { border-color: var(--t3); }
+#contact-form textarea { min-height: 120px; resize: vertical; }
+.form-submit { justify-self: start; height: 42px; padding: 0 22px; border: 0; border-radius: 999px; background: var(--ink); color: var(--on-ink); font: 500 14px/1 var(--sans); cursor: pointer; }
+.form-submit:hover { opacity: 0.86; }
+.status-msg { display: none; align-self: center; font-size: 13px; color: var(--t2); }
+.status-msg.show { display: block; }
+
+.foot { margin-inline: var(--pad); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 22px; padding-bottom: calc(28px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); font-size: 12px; color: var(--t3); }
+.foot a { text-decoration: none; }
+.foot a:hover { color: var(--ink); }
+@media (min-width: 1120px) { .foot { max-width: calc(var(--max) - 2 * var(--pad)); margin-inline: auto; } }
+
+/* Video */
+.video-overlay { position: fixed; inset: 0; z-index: 900; display: none; align-items: center; justify-content: center; padding: 20px; background: rgba(0, 0, 0, 0.72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+.video-overlay.open { display: flex; }
+.video-modal { position: relative; width: min(960px, 100%); }
+.video-player { width: 100%; border-radius: 16px; background: #000; display: block; }
+.video-close { position: absolute; top: -46px; right: 0; width: 36px; height: 36px; border-radius: 50%; border: 0; background: rgba(255, 255, 255, 0.16); color: #fff; font-size: 20px; cursor: pointer; }
+.video-fallback { display: none; color: #fff; text-align: center; padding: 40px; }
+
+/* Gideon drawer: docked on the right, full height, like Gideon for Mac. */
+.g-drawer { position: fixed; top: 0; right: 0; bottom: 0; z-index: 800; width: min(400px, 100vw); display: flex; flex-direction: column; background: color-mix(in srgb, var(--bg) 86%, transparent); -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3); border-left: 1px solid var(--line); box-shadow: -12px 0 40px rgba(0, 0, 0, 0.08); transform: translateX(104%); transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); visibility: hidden; }
+.g-drawer.open { transform: none; visibility: visible; }
+.g-head { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+.g-head img { width: 34px; height: 34px; border-radius: 50%; }
+.g-title { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+.g-title b { font-size: 15px; font-weight: 300; letter-spacing: 0.14em; text-transform: uppercase; }
+.g-close { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--pill-edge); background: var(--pill); color: var(--ink); font-size: 17px; line-height: 1; cursor: pointer; }
+.g-msgs { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
+.g-msg { max-width: 86%; align-self: flex-start; padding: 10px 14px; border-radius: 18px 18px 18px 6px; background: var(--soft); font-size: 14px; line-height: 1.45; }
+.g-msg.user { align-self: flex-end; background: var(--ink); color: var(--on-ink); border-radius: 18px 18px 6px 18px; }
+.g-prompt-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
+.g-prompt { font: 500 12.5px/1 var(--sans); color: var(--ink); background: var(--pill); border: 1px solid var(--pill-edge); border-radius: 999px; padding: 9px 13px; cursor: pointer; }
+.g-prompt:hover { border-color: var(--t3); }
+.g-typing { display: flex; gap: 4px; padding: 3px 0; }
+.g-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--t3); animation: blink 1s infinite; }
+.g-typing span:nth-child(2) { animation-delay: 0.15s; }
+.g-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes blink { 50% { opacity: 0.25; } }
+.g-input-row { display: flex; gap: 8px; padding: 12px 14px calc(14px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); }
+.g-input { flex: 1; min-width: 0; height: 42px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: 15px var(--sans); outline: none; }
+.g-input:focus { border-color: var(--t3); }
+.g-send { height: 42px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--ink); color: var(--on-ink); font: 500 13px/1 var(--sans); cursor: pointer; }
+
+@media (max-width: 900px) {
+  .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts > div:nth-child(3) { border-left: 0; }
+  .facts > div:nth-child(n+3) { border-top: 1px solid var(--line); }
+  .contact { grid-template-columns: 1fr; }
+  #contact-form { margin-top: 0; }
+}
+@media (max-width: 600px) {
+  .hide-sm { display: none; }
+  .bar-id { letter-spacing: 0.16em; }
+  .g-btn { padding-right: 12px; }
+  .orb { width: 220px; height: 220px; top: 60px; right: -140px; opacity: 0.45; }
+  .facts { grid-template-columns: 1fr; padding: 4px 0; }
+  .facts > div { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 12px 18px; border-left: 0 !important; }
+  .facts > div + div { border-top: 1px solid var(--line); }
+  .facts dt { margin: 0; }
+  .facts dd { text-align: right; }
+  .cards { grid-template-columns: 1fr; gap: 12px; }
+  .row { padding: 14px 16px; grid-template-columns: 36px minmax(0, 1fr); }
+  .row .status { grid-column: 2; }
+  .mark { width: 36px; height: 36px; }
+  #contact-form { grid-template-columns: 1fr; }
+  .filters { width: 100%; justify-content: space-between; }
+  .filt { flex: 1; padding: 9px 6px; }
+  .g-drawer { top: auto; height: 82vh; height: 82dvh; width: 100vw; border-left: 0; border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; transform: translateY(104%); }
+}
+@media (prefers-reduced-motion: reduce) { .card, .g-drawer { transition: none; } }
+</style>
+</head>
+<body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
+<img class="orb" src="../../assets/orb.webp" width="800" height="800" alt="" aria-hidden="true">
+
+<header class="bar" id="bar">
+  <div class="bar-in">
+    <a class="bar-id" href="#top">Taylor Olsen-Vogt</a>
+    <nav class="bar-nav" aria-label="Main">
+      <a class="hide-sm" href="#work">Work</a>
+      <a class="hide-sm" href="#contact">Contact</a>
+      <a href="../../network.html">Network</a>
+      <button class="g-btn" type="button" data-open-gideon>
+        <picture><source srcset="../../assets/gideon-icon-dark.webp" media="(prefers-color-scheme: dark)"><img src="../../assets/gideon-icon-light.webp" width="26" height="26" alt=""></picture>
+        Gideon
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <section class="intro" aria-label="Introduction">
+    <div class="who">
+      <img src="../../assets/pfp.jpg" width="104" height="104" fetchpriority="high" decoding="async" alt="Taylor Olsen-Vogt">
+      <div class="who-line">
+        <span class="role">Principal Engineer &amp; Co-Founder</span>
+        <span class="eyebrow">Boston, MA</span>
+      </div>
+    </div>
+    <h1 class="title"><span>Taylor</span><span>Olsen-Vogt</span></h1>
+    <p class="lede">Software and hardware engineer. I build robots, iOS apps, AI systems, and whatever else the problem requires. I run <strong>Redstone Laboratories</strong>, an applied engineering lab, and <strong>LIDI</strong>, a software and AI consultancy.</p>
+    <dl class="facts glass">
+      <div><dt class="eyebrow">Focus</dt><dd>Robotics · Software · AI</dd></div>
+      <div><dt class="eyebrow">Lab</dt><dd>Redstone Laboratories</dd></div>
+      <div><dt class="eyebrow">Consultancy</dt><dd><a href="https://lidisolutions.ai" target="_blank" rel="noopener noreferrer">LIDI ↗</a></dd></div>
+      <div><dt class="eyebrow">Email</dt><dd><a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a></dd></div>
+    </dl>
+  </section>
+
+  <section id="work" aria-labelledby="work-title">
+    <div class="sec-head">
+      <div><span class="eyebrow">Work</span><h2 class="title" id="work-title">Projects</h2></div>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="filt active" type="button" data-f="all" aria-pressed="true">All</button>
+        <button class="filt" type="button" data-f="hardware" aria-pressed="false">Hardware</button>
+        <button class="filt" type="button" data-f="software" aria-pressed="false">Software</button>
+        <button class="filt" type="button" data-f="marketing" aria-pressed="false">Marketing</button>
+      </div>
+    </div>
+
+    <div id="grid">
+      <div class="cards">
+        <div class="card glass" data-cat="hardware">
+          <div class="card-img"><img src="../../assets/mach-1.jpg" alt="Mach 1, the robot" loading="lazy"></div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">Mach 1</span><span class="status wip">Testing</span></div>
+            <p class="desc">A sock-collecting robot. The first one built.</p>
+          </div>
+        </div>
+        <a class="card glass" data-cat="software" href="https://the-archive-a5x.pages.dev" target="_blank" rel="noopener noreferrer">
+          <div class="card-img"><img src="../../assets/archive.jpg" alt="The Archive" loading="lazy"></div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">The Archive ↗</span><span class="status go">Live</span></div>
+            <p class="desc">Earth, the Moon and the sky as they were at any moment, from public scientific data.</p>
+          </div>
+        </a>
+        <a class="card glass" data-cat="software" href="../../gideon-confirmation.html">
+          <div class="card-img icon"><picture><source srcset="../../assets/gideon-icon-dark.webp" media="(prefers-color-scheme: dark)"><img src="../../assets/gideon-icon-light.webp" width="256" height="256" alt="Gideon app icon" loading="lazy"></picture></div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">Gideon ↗</span><span class="status go">In use</span></div>
+            <p class="desc">An AI agent and task manager on iPhone and Mac. It keeps this site up to date.</p>
+          </div>
+        </a>
+        <a class="card glass" data-cat="venture" href="https://lidisolutions.ai" target="_blank" rel="noopener noreferrer">
+          <div class="card-img"><img src="../../assets/LIDI.jpg" alt="" loading="lazy"></div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">LIDI ↗</span></div>
+            <p class="desc">Software and AI consultancy.</p>
+          </div>
+        </a>
+        <div class="card glass" data-cat="software">
+          <div class="card-img"><img src="../../assets/FORGE_example.webp" alt="FORGE" loading="lazy"></div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">FORGE</span></div>
+            <p class="desc">Software.</p>
+          </div>
+        </div>
+        <div class="card glass tile-video" data-cat="marketing" role="button" tabindex="0" aria-label="Play the ResiLife commercial">
+          <div class="card-img"><img src="../../assets/commercial1_thumbnail.jpg" alt="" loading="lazy">
+            <div class="play" aria-hidden="true"><span><svg width="16" height="16" viewBox="0 0 14 14"><polygon points="4,2 12,7 4,12" fill="#121419"/></svg></span></div>
+          </div>
+          <div class="card-text">
+            <div class="card-row"><span class="name">ResiLife Commercial</span><span class="status">Film</span></div>
+            <p class="desc">A commercial for the ResiLife app. Press to play.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="list glass">
+        <div class="row" data-cat="software">
+          <span class="mark"><img src="../../assets/AppIcon_ResiLife.png" alt="" loading="lazy"></span>
+          <div><div class="name">ResiLife</div><p class="desc">iPhone app.</p></div>
+        </div>
+        <div class="row" data-cat="software">
+          <span class="mark" aria-hidden="true">$</span>
+          <div><div class="name">Quote Calculators</div>
+            <div class="links"><a href="https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/" target="_blank" rel="noopener noreferrer">Commercial ↗</a><a href="https://taylorolsen-vogt.github.io/retainer-quote-calculator-/" target="_blank" rel="noopener noreferrer">Retainer ↗</a></div>
+          </div>
+          <span class="status go">Live</span>
+        </div>
+        <div class="row" data-cat="software">
+          <span class="mark" aria-hidden="true">AR</span>
+          <div><div class="name">AirRemote</div><p class="desc">AirPods as a remote for Mac and iPad.</p></div>
+          <span class="status wip">In progress</span>
+        </div>
+        <div class="row" data-cat="software">
+          <span class="mark" aria-hidden="true">BB</span>
+          <div><div class="name">Black Book</div><p class="desc">Software.</p></div>
+        </div>
+        <div class="row" data-cat="hardware">
+          <span class="mark" aria-hidden="true">M2</span>
+          <div><div class="name">Mach 2</div><p class="desc">The next robot.</p></div>
+          <span class="status wip">In design</span>
+        </div>
+        <div class="row" data-cat="hardware">
+          <span class="mark" aria-hidden="true">DR</span>
+          <div><div class="name">Drone</div><p class="desc">Hardware.</p></div>
+          <span class="status">Concept</span>
+        </div>
+        <div class="row" data-cat="hardware">
+          <span class="mark" aria-hidden="true">PB</span>
+          <div><div class="name">Power Beaming</div><p class="desc">Electrical engineering research.</p></div>
+          <span class="status">Research</span>
+        </div>
+        <div class="row" data-cat="venture">
+          <span class="mark" aria-hidden="true">RL</span>
+          <div><div class="name">Redstone Laboratories</div><p class="desc">An applied engineering lab.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div>
+      <div class="sec-head"><div><span class="eyebrow">Contact</span><h2 class="title" id="contact-title">Get in touch</h2></div></div>
+      <div class="contact-lines">
+        <a href="mailto:taylor.olsen@outlook.com">taylor.olsen@outlook.com</a>
+        <a href="tel:+15619710963">561 971 0963</a>
+      </div>
+    </div>
+    <form id="contact-form" class="glass" method="POST" action="https://formspree.io/f/mjgpeonp">
+      <div><label class="eyebrow" for="name">Name</label><input type="text" id="name" name="name" autocomplete="name" required></div>
+      <div><label class="eyebrow" for="email">Email</label><input type="email" id="email" name="email" autocomplete="email" required></div>
+      <div class="full"><label class="eyebrow" for="phone">Phone (optional)</label><input type="tel" id="phone" name="phone" autocomplete="tel"></div>
+      <div class="full"><label class="eyebrow" for="message">Message</label><textarea id="message" name="message" required></textarea></div>
+      <button type="submit" class="form-submit">Send message</button>
+      <p class="status-msg" id="status-msg"></p>
+    </form>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>&copy; 2026 Taylor Olsen-Vogt · Boston, MA</span>
+  <span><a href="../../network.html">Network</a> · <a href="#top">Top ↑</a></span>
+</footer>
+
+<div class="video-overlay" id="videoOverlay">
+  <div class="video-modal" role="dialog" aria-modal="true" aria-label="ResiLife Commercial">
+    <button class="video-close" id="videoClose" type="button" aria-label="Close">×</button>
+    <video class="video-player" id="videoPlayer" controls playsinline preload="none" poster="../../assets/commercial1_thumbnail.jpg">
+      <source src="../../assets/commercial25.mp4" type="video/mp4">
+    </video>
+    <div class="video-fallback" id="videoFallback">Video unavailable.</div>
+  </div>
+</div>
+
+<div class="g-drawer" id="gDrawer" role="dialog" aria-modal="false" aria-label="Speak to Gideon">
+  <div class="g-head">
+    <picture><source srcset="../../assets/gideon-icon-dark.webp" media="(prefers-color-scheme: dark)"><img src="../../assets/gideon-icon-light.webp" width="34" height="34" alt=""></picture>
+    <div class="g-title"><b>Gideon</b><span class="eyebrow">Guide to this site</span></div>
+    <button class="g-close" id="gClose" type="button" aria-label="Close">×</button>
+  </div>
+  <div class="g-msgs" id="gMsgs">
+    <div class="g-msg">Hi, I'm Gideon. I can point you around Taylor's work. What are you looking for?</div>
+    <div class="g-prompt-row" id="gPrompts">
+      <button class="g-prompt" type="button" data-q="What should I click first?">Start here</button>
+      <button class="g-prompt" type="button" data-q="Tell me about Mach 1 and Mach 2.">Robotics</button>
+      <button class="g-prompt" type="button" data-q="Show me software highlights.">Software</button>
+    </div>
+  </div>
+  <div class="g-input-row">
+    <input class="g-input" id="gInput" type="text" placeholder="Ask Gideon" aria-label="Message Gideon">
+    <button class="g-send" id="gSend" type="button">Send</button>
+  </div>
+</div>
+
+<script src="../directions.js"></script>
+<script>
+  // Hairline under the top bar only once the page has scrolled.
+  const bar = document.getElementById('bar');
+  const onScroll = () => bar.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+</script>
+</body>
+</html>
