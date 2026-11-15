@@ -1306,7 +1306,7 @@ body.p-lock { overflow: hidden; }
     <div class="tile-bg"></div>
     <div class="tile-overlay"></div>
     <div class="tile-label">
-      <div class="tile-kicker">Software · Live</div>
+      <div class="tile-kicker">Science · Live</div>
       <div class="tile-name">The <em>Archive</em></div>
     </div>
   </div>
@@ -1543,7 +1543,7 @@ function addGideonMessage(text, isUser = false) {
 const gideonAnswers = [
   { re: /mach\s*2/i, a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today, and in November 2026 it delivered its first socks into the laundry basket on its own.' },
   { re: /mach|robot|hardware|drone|power|beam/i, a: 'Hardware: Mach 1 is the working robot, Mach 2 is in design, and there are early tiles for a drone and for power beaming research. Use the Hardware filter to see them together.' },
-  { re: /archive/i, a: 'The Archive shows Earth, the Moon and the sky as they were at any moment, built from public scientific data. It is live; click its tile to open it.' },
+  { re: /archive/i, a: 'The Archive puts public scientific data about Earth, the Solar System and the stars side by side, so things never looked at together can be cross-referenced and new questions answered. It is live; click its tile to open it.' },
   { re: /airremote|air\s*remote|airpod/i, a: 'AirRemote turns a pair of AirPods into a remote for a Mac and an iPad. It is on hold for now while the hardware side is worked out.' },
   { re: /gideon|agent|task|iphone|mac\b/i, a: 'I am Gideon, an agent and task manager on iPhone and Mac. Since November 2026 I also work through a team\u2019s shared task board on my own: I pick the next story, build and test it, and put it up for review. My tile has the details.' },
   { re: /resilife|commercial|video|quote|calculator/i, a: 'ResiLife is an app, and its commercial plays from its tile. The Quote Calculators tile links to the commercial and retainer quote calculators.' },
@@ -1554,7 +1554,7 @@ const gideonAnswers = [
 
 function gideonReply(text) {
   const hit = gideonAnswers.find((x) => x.re.test(text));
-  return hit ? hit.a : 'Start with The Archive: Earth, the Moon and the sky as they were at any moment, built from public scientific data. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.';
+  return hit ? hit.a : 'Start with The Archive: public scientific data about Earth, the Solar System and the stars, side by side for cross-referencing. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.';
 }
 
 function sendToGideon() {
@@ -1655,11 +1655,13 @@ const projects = {
     facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head and wrist cameras'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next', 'Mach 2']],
   },
   archive: {
-    kicker: 'Software · Live', title: 'The <em>Archive</em>', status: 'Live',
+    kicker: 'Science · Live', title: 'The <em>Archive</em>', status: 'Live',
     img: 'assets/archive.jpg', alt: 'The Archive showing Earth from space', dark: true,
-    text: ['The Archive shows Earth, the Moon and the sky as they were at any moment, built from public scientific data.',
-           'Search for a place or a world and a panel opens with its photograph, history and facts. Scrub the timeline to move through time, or put on a VR headset and stand inside it.'],
-    facts: [['Built from', 'Public scientific data'], ['Runs in', 'Any browser, and VR headsets']],
+    text: ['The Archive is built for finding things out: it puts side by side public scientific data that has never been looked at together, so new cross-references become possible.',
+           'It holds Earth, the Solar System and the stars on one timeline. Daily satellite pictures of the whole planet since 2000, the sea floor, 27,658 ancient places and the Roman road network, ice-age coastlines for the last 80,000 years, the continents back 1.8 billion years, 27,000 asteroid orbits and about 1.1 million stars in 3D at their measured distances. Every layer is labelled with how sure it is: recorded, computed, reconstructed or speculative.',
+           'Next to what it holds, it keeps a list of open questions those cross-references could answer, such as where people lived on coasts that are now under the sea, what lies on the two thirds of the sea floor no ship has measured, and which stars each interstellar visitor passed on its way here. It has started logging its own predictions before the answers are known, so they can be checked.',
+           'Search for a place or a world, scrub the timeline to any date, or put on a VR headset and stand inside it.'],
+    facts: [['Purpose', 'Discovery by cross-referencing data'], ['Holds', 'Earth, the Solar System, 1.1 million stars'], ['Every layer', 'Labelled by how sure it is'], ['Runs in', 'Any browser, and VR headsets']],
     links: [['Open The Archive', 'https://the-archive-a5x.pages.dev', true]],
   },
   gideon: {
