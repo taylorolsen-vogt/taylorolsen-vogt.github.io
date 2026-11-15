@@ -1095,9 +1095,12 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 .status-msg.success { color: #2d5a2d; }
 
 .status-msg.error { color: #8b2e2e; }
+.skip-link { position: absolute; left: 8px; top: -48px; z-index: 1000; background: var(--ink); color: #fff; padding: 8px 14px; font-size: 13px; text-decoration: none; transition: top 0.15s; }
+.skip-link:focus { top: 8px; }
 </style>
 </head>
 <body id="top">
+<a class="skip-link" href="#main">Skip to content</a>
 
 <nav>
   <div class="nav-left">
@@ -1111,7 +1114,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
   </div>
 </nav>
 
-<main class="about" aria-label="About Taylor Olsen-Vogt">
+<main id="main" class="about" aria-label="About Taylor Olsen-Vogt">
   <div class="about-header">
     <img class="about-photo" src="assets/pfp.jpg" alt="Taylor Olsen-Vogt">
     <div class="about-intro">
