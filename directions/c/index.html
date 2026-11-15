@@ -205,6 +205,9 @@ textarea { resize: vertical; min-height: 120px; }
   form { grid-template-columns: 1fr; }
   .g-drawer { right: 8px; bottom: 8px; max-width: calc(100% - 16px); }
 }
+@media (max-width: 360px) {
+  .nav-links a { display: none; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

@@ -237,6 +237,10 @@ a.row:hover .name { text-decoration: underline; text-underline-offset: 3px; text
   .filt { flex: 1; padding: 9px 6px; }
   .g-drawer { top: auto; height: 82vh; height: 82dvh; width: 100vw; border-left: 0; border-top: 1px solid var(--line); border-radius: 22px 22px 0 0; transform: translateY(104%); }
 }
+@media (max-width: 360px) {
+  .bar-nav a { display: none; }
+  .facts dd { overflow-wrap: anywhere; }
+}
 @media (prefers-reduced-motion: reduce) { .card, .g-drawer { transition: none; } }
 </style>
 </head>
