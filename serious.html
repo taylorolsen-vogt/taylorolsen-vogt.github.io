@@ -1579,7 +1579,7 @@ const gideonAnswers = [
   { re: /air\s*remote|airpods?/i, open: 'airremote', a: 'AirRemote turns a pair of AirPods into a remote for a Mac and an iPad. It is on hold for now while the hardware side is worked out.' },
   { re: /forge|\bstl\b|sculpt|3d\s*print/i, open: 'forge', a: 'FORGE is a 3D model editor for 3D printing that runs in the browser. Open an STL, sculpt it with push, pull and smooth brushes, or describe the change in plain words and its Claude assistant makes it. Then export it, ready to print.' },
   { re: /\bquotes?\b|calculator|\bpric(e|es|ing)\b|\bretainer/i, open: 'quotes', a: 'The Quote Calculators price client work on the spot: one for AI-made commercials (length, revisions, turnaround, voiceover, music), one for short advisory retainers.' },
-  { re: /resilife|commercial|\bvideo\b|\bad\b|marketing/i, video: true, a: 'ResiLife is an app built for a client, together with the commercial that launched it.' },
+  { re: /resilife|commercial|\bvideo\b|\bad\b|marketing/i, video: true, a: 'ResiLife is an iPhone app, built for a client, that brings personal fitness programming to premium apartment buildings: workouts that adapt to each resident, and one place for the building to run its fitness offering. It is live on the App Store, and the commercial that launched it is here too.' },
   { re: /\bgideon\b|\b(who|what)\s+are\s+you\b|\bwhat\s+(do|can)\s+you\b|\bagents?\b|task\s*(list|manager|board)/i, open: 'gideon', a: 'I am Gideon, an agent and task manager on iPhone and Mac. Since November 2026 I also work through a team’s shared task board on my own: I pick the next story, build and test it, and put it up for review. New users can create an account on the Mac and hand me a first task, using the coding agent they already have.' },
   { re: /\blidi\b|consult/i, open: 'lidi', a: 'LIDI is a software and AI consultancy, building websites, apps and AI systems for clients. Taylor runs it together with Redstone Laboratories.' },
   { re: /redstone|\blab\b|venture|compan(y|ies)|business/i, open: 'redstone', a: 'Taylor runs Redstone Laboratories, LLC, an applied engineering lab, and LIDI (lidisolutions.ai), a software and AI consultancy. Most of the hardware and software on this page comes out of Redstone.' },
@@ -1749,8 +1749,11 @@ const projects = {
   resilife: {
     kicker: 'App', title: 'ResiLife', status: 'Client work',
     img: 'assets/AppIcon_ResiLife.png', alt: 'The ResiLife app icon',
-    text: ['ResiLife is an app built for a client, together with the commercial that launched it.'],
-    links: [['Watch the commercial', '#commercial', true]],
+    text: ['ResiLife is an iPhone app that brings personal fitness programming to premium apartment buildings and wellness communities. It was built for a client and is live on the App Store.',
+           'Residents get workouts that adapt to them as they go. The people who run the building get one place to manage it all: programming, licences and messages to members, instead of a patchwork of separate tools.',
+           'The commercial that launched it is on this page too.'],
+    facts: [['Platform', 'iPhone'], ['Built with', 'Swift and SwiftUI'], ['For', 'Residents and the people who run their building'], ['Status', 'Live on the App Store']],
+    links: [['See it on the App Store', 'https://apps.apple.com/us/app/resilife/id6753708491', true], ['Watch the commercial', '#commercial']],
   },
   mach2: {
     kicker: 'Hardware · Robotics', title: 'Mach <em>2</em>', status: 'In design',
