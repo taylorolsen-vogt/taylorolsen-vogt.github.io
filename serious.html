@@ -657,7 +657,8 @@ nav {
 /* Filter-specific layouts (All remains untouched) */
 .grid.filter-hardware .tile,
 .grid.filter-software .tile,
-.grid.filter-marketing .tile {
+.grid.filter-marketing .tile,
+.grid.filter-venture .tile {
   grid-column: auto !important;
   grid-row: auto !important;
 }
@@ -679,6 +680,10 @@ nav {
 .grid.filter-software .tile-quote { grid-column: 1 / span 2 !important; grid-row: 3 !important; }
 .grid.filter-software .tile-gideon { grid-column: 3 !important; grid-row: 3 !important; }
 .grid.filter-software .tile-airremote { grid-column: 4 / span 2 !important; grid-row: 3 !important; }
+
+/* Ventures: the two companies side by side, the lab first */
+.grid.filter-venture .tile-redstone { grid-column: 1 / span 3 !important; grid-row: 1 !important; min-height: 280px; }
+.grid.filter-venture .tile-lidi { grid-column: 4 / span 2 !important; grid-row: 1 !important; min-height: 280px; }
 
 .grid.filter-marketing {
   background: transparent;
@@ -890,7 +895,8 @@ nav {
 
   /* Filtered views drop the 5-column desktop placement and flow in pairs */
   .grid.filter-hardware > .tile,
-  .grid.filter-software > .tile {
+  .grid.filter-software > .tile,
+  .grid.filter-venture > .tile {
     grid-column: span 2 !important;
     grid-row: auto !important;
   }
@@ -903,12 +909,14 @@ nav {
 
 @media (max-width: 620px) {
   .nav-center { display: none; }
+  .filt { font-size: 10px; letter-spacing: 0.1em; padding: 10px 8px; } /* all five filters fit across a phone */
   .mode-btn { padding: 7px 12px; letter-spacing: 0.14em; }
   .nav-name .nav-contact { display: none; }
   .grid > .tile,
   .grid.filter-hardware > .tile,
   .grid.filter-software > .tile,
-  .grid.filter-marketing > .tile { grid-column: span 4 !important; grid-row: auto !important; }
+  .grid.filter-marketing > .tile,
+  .grid.filter-venture > .tile { grid-column: span 4 !important; grid-row: auto !important; }
   .about {
     min-height: auto;
     padding: clamp(28px, 6vw, 48px) clamp(18px, 4vw, 32px);
@@ -1312,6 +1320,7 @@ body.p-lock { overflow: hidden; }
   <button class="filt" data-f="hardware">Hardware</button>
   <button class="filt" data-f="software">Software</button>
   <button class="filt" data-f="marketing">Marketing</button>
+  <button class="filt" data-f="venture">Ventures</button>
 </div>
 
 <div class="grid" id="grid">
@@ -1519,7 +1528,7 @@ body.p-lock { overflow: hidden; }
 <script src="assets/gideon-answers.js"></script>
 <script>
 const gridEl = document.getElementById('grid');
-const filterLayoutClasses = ['filter-hardware', 'filter-software', 'filter-marketing'];
+const filterLayoutClasses = ['filter-hardware', 'filter-software', 'filter-marketing', 'filter-venture'];
 
 document.querySelectorAll('.filt').forEach((b) => {
   b.addEventListener('click', () => {
