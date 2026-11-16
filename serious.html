@@ -279,11 +279,12 @@ nav {
   z-index: 650;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
 }
 
+/* The shadow only while open, so a closed drawer doesn't leave a grey smudge at the bottom of the page */
 .g-drawer.open {
   transform: translateY(0);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
 }
 
 .g-head {
