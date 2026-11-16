@@ -3,7 +3,7 @@
 // filter the tiles (filter) or scroll to a part of the landing page (go). Each page turns these into buttons itself.
 const gideonAnswers = [
   { re: /\bmach\s*-?\s*2\b|\bmach\s*two\b/i, open: 'mach2', a: 'Mach 2 is the next robot, currently in design. Mach 1 is the one that exists today, and in November 2026 it delivered its first socks into the laundry basket on its own.' },
-  { re: /\bmach\b|\bsocks?\b|laundry|\brobots?\b|robotics/i, open: 'mach1', a: 'Mach 1 is a home robot with an arm and cameras, and its first job is putting socks in the laundry basket. In November 2026 it delivered its first socks on its own. It looks with its wrist camera before turning its wheels, and stops and backs off if its arm meets resistance. Next it gets a small AI model running on board, and then comes Mach 2.' },
+  { re: /\bmach\b|\bsocks?\b|laundry|\brobots?\b|robotics/i, open: 'mach1', a: 'Mach 1 is a home robot with an arm and cameras, and its first job is putting socks in the laundry basket. In November 2026 it delivered its first socks on its own. It scans the floor by swinging its raised arm with a camera on the wrist, and checks every arm move against a 3D picture of what is around it. Next it gets a stop that cuts power to the wheels directly, then a small AI model running on board, and then comes Mach 2.' },
   { re: /\bdrones?\b/i, open: 'drone', a: 'The drone is Taylor’s own design, still at the concept stage.' },
   { re: /power\s*beam|beaming|wireless\s*power/i, open: 'pb', a: 'Power Beaming is electrical engineering research into sending power through the air, without wires.' },
   { re: /black\s*book/i, open: 'blackbook', a: 'Black Book is a software project. A fuller write-up and screenshots are on the way.' },
