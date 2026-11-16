@@ -65,6 +65,67 @@
       white-space: nowrap;
     }
 
+    /* ─── When the 3D desk can't be shown (no WebGL, or the 3D library didn't load) ─── */
+    #fallback { display: none; }
+    body.no-scene { background: #f5f4ef; }
+    body.no-scene #c, body.no-scene #hint { display: none; }
+    body.no-scene #fallback {
+      position: fixed;
+      inset: 60px 0 0 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.6rem;
+      padding: 2rem 1.25rem;
+      text-align: center;
+    }
+    .fb-note {
+      max-width: 30rem;
+      font-family: 'Cormorant', serif;
+      font-size: 24px;
+      font-weight: 300;
+      line-height: 1.25;
+      color: var(--ink);
+      text-wrap: balance;
+    }
+    .fb-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+    .fb-card {
+      width: 9.5rem;
+      text-decoration: none;
+      color: var(--ink);
+      background: var(--white);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .fb-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12); }
+    .fb-card img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+    }
+    .fb-card span {
+      display: block;
+      padding: 0.6rem 0.5rem;
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .fb-all {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+    .fb-card:focus-visible, .fb-all:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+
     /* ─── Nav (matches serious.html) ─────────────────────────────────── */
     nav {
       position: fixed;
@@ -219,9 +280,9 @@
       z-index: 650;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.36);
     }
-    .g-drawer.open { transform: translateY(0); }
+    /* The shadow only while open, so a closed drawer doesn't leave a grey smudge at the bottom of the page */
+    .g-drawer.open { transform: translateY(0); box-shadow: 0 20px 60px rgba(0,0,0,0.36); }
 
     .g-head {
       display: flex;
@@ -302,6 +363,17 @@
   <canvas id="c"></canvas>
   <div id="hint">Click to grab · Click to drop · Orbit with right-click or two fingers</div>
 
+  <!-- Shown instead of the 3D desk when this browser can't draw it -->
+  <main id="fallback" aria-label="Projects">
+    <p class="fb-note">This page is a 3D desk of project pictures, and this browser can’t show it. Here are the same projects.</p>
+    <div class="fb-cards">
+      <a class="fb-card" href="index.html#mach1"><img src="assets/mach-1.jpg" alt="" loading="lazy"><span>Mach 1</span></a>
+      <a class="fb-card" href="index.html#forge"><img src="assets/FORGE_example.webp" alt="" loading="lazy"><span>FORGE</span></a>
+      <a class="fb-card" href="index.html#resilife"><img src="assets/AppIcon_ResiLife.png" alt="" loading="lazy"><span>ResiLife</span></a>
+    </div>
+    <a class="fb-all" href="index.html#grid">See every project</a>
+  </main>
+
   <nav>
     <div class="nav-left">
       <button class="gideon-btn" id="openGideon" type="button">Speak to Gideon</button>
@@ -344,292 +416,317 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-    // ── Scene ───────────────────────────────────────────────────────────
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f4ef);
-    scene.fog = new THREE.Fog(0xf5f4ef, 20, 40);
-
-    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
-    camera.position.set(0, 3.2, 7.5);
-    camera.lookAt(0, 0, 0);
-
-    const canvas = document.getElementById('c');
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-
-    // ── Lights ──────────────────────────────────────────────────────────
-    const ambient = new THREE.AmbientLight(0xffffff, 1.2);
-    scene.add(ambient);
-
-    const sun = new THREE.DirectionalLight(0xfff8f0, 2.5);
-    sun.position.set(4, 8, 3);
-    sun.castShadow = true;
-    sun.shadow.mapSize.width = 2048;
-    sun.shadow.mapSize.height = 2048;
-    sun.shadow.camera.near = 0.1;
-    sun.shadow.camera.far = 30;
-    sun.shadow.camera.left = -8;
-    sun.shadow.camera.right = 8;
-    sun.shadow.camera.top = 8;
-    sun.shadow.camera.bottom = -8;
-    sun.shadow.radius = 3;
-    sun.shadow.bias = -0.0005;
-    scene.add(sun);
-
-    const fill = new THREE.DirectionalLight(0xe8f0ff, 0.6);
-    fill.position.set(-3, 4, -2);
-    scene.add(fill);
-
-    // ── Grid plane + shadow receiver ───────────────────────────────────
-    const gridHelper = new THREE.GridHelper(120, 240, 0x999990, 0xb8b5ae);
-    gridHelper.material.opacity = 0.8;
-    gridHelper.material.transparent = true;
-    scene.add(gridHelper);
-
-    const groundGeo = new THREE.CircleGeometry(60, 64);
-    const groundMat = new THREE.ShadowMaterial({ opacity: 0.08 });
-    const ground = new THREE.Mesh(groundGeo, groundMat);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true;
-    scene.add(ground);
-
-    // ── Orbit controls (scene orbit) ───────────────────────────────────
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0, 0);
-    controls.enableDamping = true;
-    controls.dampingFactor = 0.06;
-    controls.minDistance = 1;
-    controls.maxDistance = 20;
-    controls.maxPolarAngle = Math.PI / 2.1;
-
-    const texLoader = new THREE.TextureLoader();
-
-    function hash(n) { return ((Math.sin(n) * 43758.5453) % 1 + 1) % 1; }
-
-    function noise2(x, y) {
-      const ix = Math.floor(x), iy = Math.floor(y);
-      const fx = x - ix, fy = y - iy;
-      const ux = fx * fx * (3 - 2 * fx);
-      const uy = fy * fy * (3 - 2 * fy);
-      const a = hash(ix + iy * 57.1);
-      const b = hash(ix + 1 + iy * 57.1);
-      const c = hash(ix + (iy + 1) * 57.1);
-      const d = hash(ix + 1 + (iy + 1) * 57.1);
-      return a + (b - a) * ux + (c - a) * uy + (d - b + a - c) * ux * uy;
+    // The 3D desk needs WebGL. Without it, the page shows plain project cards instead (#fallback).
+    function webglAvailable() {
+      try {
+        const test = document.createElement('canvas');
+        return !!(window.WebGLRenderingContext && (test.getContext('webgl2') || test.getContext('webgl')));
+      } catch (e) { return false; }
     }
 
-    function fbm(x, y, oct = 5) {
-      let v = 0, a = 0.5, f = 1, m = 0;
-      for (let i = 0; i < oct; i++) {
-        v += noise2(x * f, y * f) * a;
-        m += a;
-        a *= 0.5;
-        f *= 2.1;
-      }
-      return v / m;
-    }
+    function startScene() {
+      // ── Scene ───────────────────────────────────────────────────────────
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xf5f4ef);
+      scene.fog = new THREE.Fog(0xf5f4ef, 20, 40);
 
-    function makePaper(opts = {}) {
-      const {
-        size = 1.4,
-        segments = 56,
-        crumple = 0.16,
-        seed = 3.7,
-        px = 0, py = 0.01, pz = 0,
-        rotY = 0,
-      } = opts;
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100);
+      camera.position.set(0, 3.2, 7.5);
+      camera.lookAt(0, 0, 0);
 
-      const geo = new THREE.PlaneGeometry(size, size, segments, segments);
-      geo.rotateX(-Math.PI / 2);
+      const canvas = document.getElementById('c');
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.1;
 
-      const pos = geo.attributes.position;
-      const uv = geo.attributes.uv;
+      // ── Lights ──────────────────────────────────────────────────────────
+      const ambient = new THREE.AmbientLight(0xffffff, 1.2);
+      scene.add(ambient);
 
-      for (let i = 0; i < pos.count; i++) {
-        const u = uv.getX(i), v = uv.getY(i);
-        const cu = u - 0.5, cv = v - 0.5;
-        const dist = Math.sqrt(cu * cu + cv * cv);
-        const edge = 0.55 + dist * 0.9;
+      const sun = new THREE.DirectionalLight(0xfff8f0, 2.5);
+      sun.position.set(4, 8, 3);
+      sun.castShadow = true;
+      sun.shadow.mapSize.width = 2048;
+      sun.shadow.mapSize.height = 2048;
+      sun.shadow.camera.near = 0.1;
+      sun.shadow.camera.far = 30;
+      sun.shadow.camera.left = -8;
+      sun.shadow.camera.right = 8;
+      sun.shadow.camera.top = 8;
+      sun.shadow.camera.bottom = -8;
+      sun.shadow.radius = 3;
+      sun.shadow.bias = -0.0005;
+      scene.add(sun);
 
-        const coarse = (fbm(u * 2.2 + seed, v * 2.2 + seed, 3) - 0.5);
-        const fine = (fbm(u * 9 + seed * 1.7, v * 9 + seed * 1.7, 4) - 0.5);
-        const disp = (coarse * 0.65 + fine * 0.35) * crumple * edge;
+      const fill = new THREE.DirectionalLight(0xe8f0ff, 0.6);
+      fill.position.set(-3, 4, -2);
+      scene.add(fill);
 
-        pos.setY(i, pos.getY(i) + disp);
-      }
+      // ── Grid plane + shadow receiver ───────────────────────────────────
+      const gridHelper = new THREE.GridHelper(120, 240, 0x999990, 0xb8b5ae);
+      gridHelper.material.opacity = 0.8;
+      gridHelper.material.transparent = true;
+      scene.add(gridHelper);
 
-      geo.computeVertexNormals();
+      const groundGeo = new THREE.CircleGeometry(60, 64);
+      const groundMat = new THREE.ShadowMaterial({ opacity: 0.08 });
+      const ground = new THREE.Mesh(groundGeo, groundMat);
+      ground.rotation.x = -Math.PI / 2;
+      ground.receiveShadow = true;
+      scene.add(ground);
 
-      const mat = new THREE.MeshStandardMaterial({
-        color: 0xffffff,
-        roughness: 0.88,
-        metalness: 0.0,
-        side: THREE.DoubleSide,
-      });
+      // ── Orbit controls (scene orbit) ───────────────────────────────────
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.target.set(0, 0, 0);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.06;
+      controls.minDistance = 1;
+      controls.maxDistance = 20;
+      controls.maxPolarAngle = Math.PI / 2.1;
 
-      if (opts.textureUrl) {
-        const tex = texLoader.load(opts.textureUrl);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        mat.map = tex;
-        mat.needsUpdate = true;
-      }
+      const texLoader = new THREE.TextureLoader();
 
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.castShadow = true;
-      mesh.receiveShadow = true;
-      mesh.position.set(px, py, pz);
-      mesh.rotation.y = rotY;
-      scene.add(mesh);
+      function hash(n) { return ((Math.sin(n) * 43758.5453) % 1 + 1) % 1; }
 
-      const rc = new THREE.Raycaster();
-      const mp = new THREE.Vector2();
-      const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-      const hit3 = new THREE.Vector3();
-
-      let grabbed = false;
-      let hovered = false;
-      let floatT = Math.random() * Math.PI * 2;
-
-      // messy physics
-      let velX = 0, velZ = 0;
-      let prevHitX = 0, prevHitZ = 0;
-      let tiltX = 0, tiltZ = 0;
-      const liftHeight = 0.6;
-      const baseRotY = rotY;
-
-      function ndc(e) {
-        mp.x = (e.clientX / window.innerWidth) * 2 - 1;
-        mp.y = -(e.clientY / window.innerHeight) * 2 + 1;
+      function noise2(x, y) {
+        const ix = Math.floor(x), iy = Math.floor(y);
+        const fx = x - ix, fy = y - iy;
+        const ux = fx * fx * (3 - 2 * fx);
+        const uy = fy * fy * (3 - 2 * fy);
+        const a = hash(ix + iy * 57.1);
+        const b = hash(ix + 1 + iy * 57.1);
+        const c = hash(ix + (iy + 1) * 57.1);
+        const d = hash(ix + 1 + (iy + 1) * 57.1);
+        return a + (b - a) * ux + (c - a) * uy + (d - b + a - c) * ux * uy;
       }
 
-      function hitsMe(e) {
-        ndc(e);
-        rc.setFromCamera(mp, camera);
-        return rc.intersectObject(mesh).length > 0;
-      }
-
-      function onClick(e) {
-        if (grabbed) {
-          // drop it — impart velocity
-          grabbed = false;
-          controls.enabled = true;
-          renderer.domElement.style.cursor = hovered ? 'grab' : '';
-          return;
+      function fbm(x, y, oct = 5) {
+        let v = 0, a = 0.5, f = 1, m = 0;
+        for (let i = 0; i < oct; i++) {
+          v += noise2(x * f, y * f) * a;
+          m += a;
+          a *= 0.5;
+          f *= 2.1;
         }
-        if (!hitsMe(e)) return;
-        e.stopPropagation();
-        grabbed = true;
-        controls.enabled = false;
-        velX = 0; velZ = 0;
-        dragPlane.constant = -(py + liftHeight);
-        ndc(e);
-        rc.setFromCamera(mp, camera);
-        if (rc.ray.intersectPlane(dragPlane, hit3)) {
-          prevHitX = hit3.x;
-          prevHitZ = hit3.z;
-        }
-        renderer.domElement.style.cursor = 'grabbing';
+        return v / m;
       }
 
-      function onMove(e) {
-        ndc(e);
-        rc.setFromCamera(mp, camera);
-        if (grabbed) {
+      function makePaper(opts = {}) {
+        const {
+          size = 1.4,
+          segments = 56,
+          crumple = 0.16,
+          seed = 3.7,
+          px = 0, py = 0.01, pz = 0,
+          rotY = 0,
+        } = opts;
+
+        const geo = new THREE.PlaneGeometry(size, size, segments, segments);
+        geo.rotateX(-Math.PI / 2);
+
+        const pos = geo.attributes.position;
+        const uv = geo.attributes.uv;
+
+        for (let i = 0; i < pos.count; i++) {
+          const u = uv.getX(i), v = uv.getY(i);
+          const cu = u - 0.5, cv = v - 0.5;
+          const dist = Math.sqrt(cu * cu + cv * cv);
+          const edge = 0.55 + dist * 0.9;
+
+          const coarse = (fbm(u * 2.2 + seed, v * 2.2 + seed, 3) - 0.5);
+          const fine = (fbm(u * 9 + seed * 1.7, v * 9 + seed * 1.7, 4) - 0.5);
+          const disp = (coarse * 0.65 + fine * 0.35) * crumple * edge;
+
+          pos.setY(i, pos.getY(i) + disp);
+        }
+
+        geo.computeVertexNormals();
+
+        const mat = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          roughness: 0.88,
+          metalness: 0.0,
+          side: THREE.DoubleSide,
+        });
+
+        if (opts.textureUrl) {
+          const tex = texLoader.load(opts.textureUrl);
+          tex.colorSpace = THREE.SRGBColorSpace;
+          mat.map = tex;
+          mat.needsUpdate = true;
+        }
+
+        const mesh = new THREE.Mesh(geo, mat);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true;
+        mesh.position.set(px, py, pz);
+        mesh.rotation.y = rotY;
+        scene.add(mesh);
+
+        const rc = new THREE.Raycaster();
+        const mp = new THREE.Vector2();
+        const dragPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const hit3 = new THREE.Vector3();
+
+        let grabbed = false;
+        let hovered = false;
+        let floatT = Math.random() * Math.PI * 2;
+
+        // messy physics
+        let velX = 0, velZ = 0;
+        let prevHitX = 0, prevHitZ = 0;
+        let tiltX = 0, tiltZ = 0;
+        const liftHeight = 0.6;
+        const baseRotY = rotY;
+
+        function ndc(e) {
+          mp.x = (e.clientX / window.innerWidth) * 2 - 1;
+          mp.y = -(e.clientY / window.innerHeight) * 2 + 1;
+        }
+
+        function hitsMe(e) {
+          ndc(e);
+          rc.setFromCamera(mp, camera);
+          return rc.intersectObject(mesh).length > 0;
+        }
+
+        function onClick(e) {
+          if (grabbed) {
+            // drop it — impart velocity
+            grabbed = false;
+            controls.enabled = true;
+            renderer.domElement.style.cursor = hovered ? 'grab' : '';
+            return;
+          }
+          if (!hitsMe(e)) return;
+          e.stopPropagation();
+          grabbed = true;
+          controls.enabled = false;
+          velX = 0; velZ = 0;
           dragPlane.constant = -(py + liftHeight);
+          ndc(e);
+          rc.setFromCamera(mp, camera);
           if (rc.ray.intersectPlane(dragPlane, hit3)) {
-            velX = (hit3.x - prevHitX) * 0.8;
-            velZ = (hit3.z - prevHitZ) * 0.8;
             prevHitX = hit3.x;
             prevHitZ = hit3.z;
-            // lazy follow for messy feel
-            mesh.position.x += (hit3.x - mesh.position.x) * 0.18;
-            mesh.position.z += (hit3.z - mesh.position.z) * 0.18;
           }
-        } else {
-          const wasH = hovered;
-          hovered = rc.intersectObject(mesh).length > 0;
-          if (hovered !== wasH) {
-            renderer.domElement.style.cursor = hovered ? 'grab' : '';
-          }
-        }
-      }
-
-      renderer.domElement.addEventListener('click', onClick, true);
-      window.addEventListener('pointermove', onMove, true);
-
-      function tick(dt) {
-        floatT += dt * 0.5;
-
-        if (grabbed) {
-          // lift up smoothly
-          mesh.position.y += ((py + liftHeight) - mesh.position.y) * 0.12;
-          // accumulate tilt from velocity — builds up with shaking
-          tiltX += velZ * 0.6;
-          tiltZ += -velX * 0.6;
-          // light damping so it swings but doesn't explode
-          tiltX *= 0.92;
-          tiltZ *= 0.92;
-          // wobble rotation
-          mesh.rotation.y += velX * 0.04;
-        } else {
-          // slide with friction
-          mesh.position.x += velX;
-          mesh.position.z += velZ;
-          velX *= 0.92;
-          velZ *= 0.92;
-
-          // settle back down
-          mesh.position.y += (py + Math.sin(floatT) * 0.005 - mesh.position.y) * 0.08;
-
-          // snap tilt to nearest flat side (0 or π)
-          const snapX = Math.abs(tiltX) > Math.PI / 2 ? Math.PI * Math.sign(tiltX) : 0;
-          const snapZ = Math.abs(tiltZ) > Math.PI / 2 ? Math.PI * Math.sign(tiltZ) : 0;
-          tiltX += (snapX - tiltX) * 0.08;
-          tiltZ += (snapZ - tiltZ) * 0.08;
-
-          // add spin from remaining velocity
-          mesh.rotation.y += velX * 0.02;
+          renderer.domElement.style.cursor = 'grabbing';
         }
 
-        mesh.rotation.x = tiltX;
-        mesh.rotation.z = tiltZ;
+        function onMove(e) {
+          ndc(e);
+          rc.setFromCamera(mp, camera);
+          if (grabbed) {
+            dragPlane.constant = -(py + liftHeight);
+            if (rc.ray.intersectPlane(dragPlane, hit3)) {
+              velX = (hit3.x - prevHitX) * 0.8;
+              velZ = (hit3.z - prevHitZ) * 0.8;
+              prevHitX = hit3.x;
+              prevHitZ = hit3.z;
+              // lazy follow for messy feel
+              mesh.position.x += (hit3.x - mesh.position.x) * 0.18;
+              mesh.position.z += (hit3.z - mesh.position.z) * 0.18;
+            }
+          } else {
+            const wasH = hovered;
+            hovered = rc.intersectObject(mesh).length > 0;
+            if (hovered !== wasH) {
+              renderer.domElement.style.cursor = hovered ? 'grab' : '';
+            }
+          }
+        }
+
+        renderer.domElement.addEventListener('click', onClick, true);
+        window.addEventListener('pointermove', onMove, true);
+
+        function tick(dt) {
+          floatT += dt * 0.5;
+
+          if (grabbed) {
+            // lift up smoothly
+            mesh.position.y += ((py + liftHeight) - mesh.position.y) * 0.12;
+            // accumulate tilt from velocity — builds up with shaking
+            tiltX += velZ * 0.6;
+            tiltZ += -velX * 0.6;
+            // light damping so it swings but doesn't explode
+            tiltX *= 0.92;
+            tiltZ *= 0.92;
+            // wobble rotation
+            mesh.rotation.y += velX * 0.04;
+          } else {
+            // slide with friction
+            mesh.position.x += velX;
+            mesh.position.z += velZ;
+            velX *= 0.92;
+            velZ *= 0.92;
+
+            // settle back down
+            mesh.position.y += (py + Math.sin(floatT) * 0.005 - mesh.position.y) * 0.08;
+
+            // snap tilt to nearest flat side (0 or π)
+            const snapX = Math.abs(tiltX) > Math.PI / 2 ? Math.PI * Math.sign(tiltX) : 0;
+            const snapZ = Math.abs(tiltZ) > Math.PI / 2 ? Math.PI * Math.sign(tiltZ) : 0;
+            tiltX += (snapX - tiltX) * 0.08;
+            tiltZ += (snapZ - tiltZ) * 0.08;
+
+            // add spin from remaining velocity
+            mesh.rotation.y += velX * 0.02;
+          }
+
+          mesh.rotation.x = tiltX;
+          mesh.rotation.z = tiltZ;
+        }
+
+        return { tick };
       }
 
-      return { tick };
+      const papers = [
+        makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3, textureUrl: 'assets/mach-1.jpg' }),
+        makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp' }),
+        makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png' }),
+        makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85 }),
+      ];
+
+      const clock = new THREE.Clock();
+      function animate() {
+        requestAnimationFrame(animate);
+        const dt = clock.getDelta();
+        papers.forEach(p => p.tick(dt));
+        controls.update();
+        renderer.render(scene, camera);
+      }
+      animate();
+
+      // ── Resize ───────────────────────────────────────────────────────────
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
     }
 
-    const papers = [
-      makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3, textureUrl: 'assets/mach-1.jpg' }),
-      makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp' }),
-      makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png' }),
-      makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85 }),
-    ];
-
-    const clock = new THREE.Clock();
-    function animate() {
-      requestAnimationFrame(animate);
-      const dt = clock.getDelta();
-      papers.forEach(p => p.tick(dt));
-      controls.update();
-      renderer.render(scene, camera);
+    if (webglAvailable()) {
+      try {
+        startScene();
+        document.body.classList.add('scene-on');
+      } catch (e) {
+        console.warn('The 3D desk could not start; showing project cards instead.', e);
+      }
     }
-    animate();
-
-    // ── Resize ───────────────────────────────────────────────────────────
-    window.addEventListener('resize', () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    });
   </script>
 
   <script src="assets/gideon-answers.js"></script>
   <script>
+    // If the 3D desk didn't start by the time the page has loaded (no WebGL, or the 3D library
+    // couldn't be fetched), show the project cards instead of an empty page.
+    window.addEventListener('load', () => {
+      if (!document.body.classList.contains('scene-on')) document.body.classList.add('no-scene');
+    });
+
     // ── Gideon drawer ────────────────────────────────────────────────────
     const gDrawer  = document.getElementById('gDrawer');
     const gOpenBtn = document.getElementById('openGideon');
