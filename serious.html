@@ -1113,6 +1113,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 }
 
 .form-submit:hover { background: #2b2b2b; }
+.form-submit:disabled { opacity: 0.55; cursor: default; }
 
 .status-msg {
   font-size: 13px;
@@ -1673,10 +1674,37 @@ videoPlayer.addEventListener('error', () => {
 
 const contactForm = document.getElementById('contact-form');
 const statusMsg = document.getElementById('status-msg');
-if (contactForm) {
-  contactForm.addEventListener('submit', function () {
-    statusMsg.textContent = 'Sending…';
-    statusMsg.classList.add('show');
+// Send the message without leaving the page, and say plainly whether it went.
+// Without JavaScript the form still posts to Formspree the ordinary way.
+function showFormStatus(text, kind) {
+  statusMsg.textContent = text;
+  statusMsg.className = 'status-msg show' + (kind ? ' ' + kind : '');
+}
+if (contactForm && window.fetch && window.FormData) {
+  const submitBtn = contactForm.querySelector('.form-submit');
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    showFormStatus('Sending…');
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        body: new FormData(contactForm),
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        contactForm.reset();
+        showFormStatus('Thank you. Your message is on its way, and Taylor will reply by email.', 'success');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        const why = (data.errors || []).map((x) => x.message).filter(Boolean).join(' ');
+        showFormStatus('That didn’t send' + (why ? ' (' + why + ')' : '') + '. Please try again, or email taylor.olsen@outlook.com.', 'error');
+      }
+    } catch (err) {
+      showFormStatus('That didn’t send; check your connection and try again, or email taylor.olsen@outlook.com.', 'error');
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 }
 // ---- Project panels: each tile opens a page-in-a-panel with its picture, story and links ----
