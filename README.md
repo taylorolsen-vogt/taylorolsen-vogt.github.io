@@ -7,6 +7,7 @@ Taylor Olsen-Vogt's public portfolio, served by GitHub Pages at https://taylorol
 - `serious.html` – currently an exact copy of `index.html`. If you edit one, copy the change to the other (or `cp index.html serious.html`).
 - `network.html` – the Network page.
 - `gideon-confirmation.html` – the page people land on after confirming their email; it opens the Gideon app, with a fallback.
+- `assets/gideon-answers.js` – what Speak to Gideon says on every page. Edit answers here, not in the pages.
 - `assets/` – images, icons and the commercial video. `og-image.jpg` is the link-preview picture.
 - `sitemap.xml`, `robots.txt` – search-engine files.
 

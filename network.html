@@ -243,6 +243,15 @@
     }
     .g-msg { font-size: 12px; line-height: 1.6; color: rgba(255,255,255,0.82); }
     .g-msg.user { color: rgba(255,255,255,0.55); text-align: right; }
+    .g-action {
+      display: block; width: fit-content; margin-top: 0.45rem;
+      border: 1px solid rgba(255,255,255,0.28);
+      background: transparent; color: var(--white); text-decoration: none;
+      font-family: 'DM Sans', sans-serif; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 0.4rem 0.7rem; cursor: pointer;
+    }
+    .g-action:hover, .g-action:focus-visible { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.45); }
 
     .g-prompt-row { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.2rem; }
     .g-prompt {
@@ -619,6 +628,7 @@
     });
   </script>
 
+  <script src="assets/gideon-answers.js"></script>
   <script>
     // ── Gideon drawer ────────────────────────────────────────────────────
     const gDrawer  = document.getElementById('gDrawer');
@@ -632,12 +642,30 @@
     function openGideon()  { gDrawer.classList.add('open'); requestAnimationFrame(() => gInput.focus()); }
     function closeGideon() { gDrawer.classList.remove('open'); }
 
-    function addGideonMessage(text, isUser = false) {
+    function addGideonMessage(text, isUser = false, action = null) {
       const m = document.createElement('div');
       m.className = `g-msg${isUser ? ' user' : ''}`;
       m.textContent = text;
+      if (action) {
+        const a = document.createElement('a');
+        a.className = 'g-action';
+        a.textContent = action.label;
+        a.href = action.href;
+        m.appendChild(a);
+      }
       gMsgs.appendChild(m);
       gMsgs.scrollTop = gMsgs.scrollHeight;
+    }
+
+    // The answers' next steps live on the landing page, so here each one is a link there:
+    // index.html#<project> opens that project's panel; #grid, #contact and #main scroll to that part.
+    function gideonLink(hit) {
+      if (hit.open) return { label: 'Open on the main page', href: 'index.html#' + hit.open };
+      if (hit.video) return { label: 'Watch the commercial', href: 'index.html#resilife' };
+      if (hit.filter) return { label: 'See the ' + hit.filter + ' work', href: 'index.html#grid' };
+      if (hit.go === 'contact') return { label: 'Go to the contact form', href: 'index.html#contact' };
+      if (hit.go) return { label: 'Go to Taylor\u2019s bio', href: 'index.html#' + hit.go };
+      return null;
     }
 
     function sendToGideon() {
@@ -652,7 +680,8 @@
       gMsgs.scrollTop = gMsgs.scrollHeight;
       setTimeout(() => {
         typing.remove();
-        addGideonMessage('Start with The Archive: public scientific data about Earth, the Solar System and the stars, side by side for cross-referencing. Then Mach 1, and me: Gideon, an agent and task manager on iPhone and Mac.');
+        const hit = gideonAnswers.find((x) => x.re.test(text)) || gideonStart;
+        addGideonMessage(hit.a, false, gideonLink(hit));
       }, 420);
     }
 
