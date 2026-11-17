@@ -1639,6 +1639,9 @@ videoClose.addEventListener('click', closeVideo);
 videoOverlay.addEventListener('click', (e) => {
   if (e.target === videoOverlay) closeVideo();
 });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && videoOverlay.classList.contains('open')) closeVideo();
+});
 
 videoPlayer.addEventListener('error', () => {
   videoPlayer.style.display = 'none';
@@ -1838,9 +1841,26 @@ document.querySelectorAll('.tile[data-project]').forEach((tile) => {
 document.getElementById('pClose').addEventListener('click', closeProject);
 pOverlay.addEventListener('click', closeProject);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProject(); });
-// A link such as /#mach1 opens straight onto that project
-const startKey = location.hash.slice(1);
-if (projects[startKey]) openProject(startKey, document.querySelector('[data-project="' + startKey + '"]'));
+// A link such as /#mach1 opens straight onto that project, and /#commercial goes to the
+// commercial. This works on arrival and when the address changes while the page is already
+// open (for example a link pasted into a tab that is showing the site).
+function openFromHash(onArrival) {
+  const key = location.hash.slice(1);
+  if (projects[key]) { openProject(key, document.querySelector('[data-project="' + key + '"]')); return; }
+  if (key !== 'commercial') return;
+  history.replaceState(null, '', location.pathname + location.search); // so the same link works again
+  closeProject();
+  const tile = document.querySelector('.tile-video');
+  if (onArrival) {
+    // Browsers won't start a video with sound before the visitor has clicked, so show the tile instead.
+    tile.scrollIntoView({ block: 'center' });
+    tile.focus({ preventScroll: true });
+  } else {
+    openVideo();
+  }
+}
+openFromHash(true);
+window.addEventListener('hashchange', () => openFromHash(false));
 </script>
 
 </body>
