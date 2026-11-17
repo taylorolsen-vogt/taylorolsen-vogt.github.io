@@ -538,11 +538,6 @@ nav {
   background-color: #efefec;
 }
 
-.tile-mach2 {
-  grid-column: 3 / span 3;
-  grid-row: 4;
-}
-
 .tile-archive {
   grid-column: 1 / span 2;
   grid-row: 1;
@@ -602,10 +597,10 @@ nav {
   color: var(--ink);
 }
 
-.tile-commercial { grid-column: 1 / span 2; grid-row: 5; }
+.tile-commercial { grid-column: 3 / span 2; grid-row: 4; }
 .tile-quote { grid-column: 5; grid-row: 2; }
 .tile-redstone { grid-column: 1; grid-row: 4; }
-.tile-pb { grid-column: 3 / span 3; grid-row: 5; }
+.tile-pb { grid-column: 5; grid-row: 4; }
 
 .tile-quote {
   cursor: default;
@@ -666,8 +661,7 @@ nav {
   background-repeat: no-repeat;
   background-position: top center;
 }
-.grid.filter-hardware .tile-mach2 { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
-.grid.filter-hardware .tile-pb { grid-column: 4 / span 2 !important; grid-row: 2 / span 2 !important; }
+.grid.filter-hardware .tile-pb { grid-column: 4 / span 2 !important; grid-row: 1 / span 3 !important; }
 
 .grid.filter-software .tile-forge { grid-column: 1 / span 3 !important; grid-row: 1 / span 3 !important; }
 .grid.filter-software .tile-archive { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
@@ -713,16 +707,13 @@ nav {
 .tile-gideon .tile-overlay,
 .tile-gideon .tile-bg { display: none; }
 
-.tile-mach2 .tile-kicker,
-.tile-mach2 .tile-name,
 .tile-pb .tile-kicker,
 .tile-pb .tile-name {
   color: #b5b5b5;
 }
 
 /* Tiles without a photo yet: a quiet status line so they read as intentional */
-.tile-pb .tile-name::after,
-.tile-mach2 .tile-name::after {
+.tile-pb .tile-name::after {
   display: block;
   margin-top: 0.55rem;
   font-family: 'DM Sans', sans-serif;
@@ -732,8 +723,6 @@ nav {
   color: var(--mid);
 }
 .tile-pb .tile-name::after { content: 'In research'; }
-.tile-mach2 .tile-name::after { content: 'In design'; }
-.tile-mach2 .tile-name::after,
 .tile-pb .tile-name::after { color: #8a8a8a; }
 
 .tile-video {
@@ -863,7 +852,6 @@ nav {
   }
   .t2x1,
   .t1x1,
-  .tile-mach2,
   .tile-archive,
   .tile-lidi,
   .tile-gideon,
@@ -875,6 +863,8 @@ nav {
     grid-column: span 2;
     grid-row: auto;
   }
+  /* The commercial runs full width, so the tiles around it still pair up */
+  .grid > .tile-commercial { grid-column: span 4; }
 
   .grid.filter-marketing .tile-commercial {
     grid-column: 1 / span 4 !important;
@@ -889,7 +879,6 @@ nav {
     grid-row: auto !important;
   }
   .grid.filter-hardware > .tile-mach1,
-  .grid.filter-hardware > .tile-mach2,
   .grid.filter-hardware > .tile-pb,
   .grid.filter-software > .tile-forge {
     grid-column: span 4 !important;
@@ -1147,14 +1136,13 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 .tile-resilife:hover .tile-name em { color: var(--white); }
 
 /* Tiles with no photo yet: a soft wash of the site's lilac instead of flat grey */
-.tile-mach2 .tile-bg, .tile-pb .tile-bg, .tile-redstone .tile-bg, .tile-quote .tile-bg {
+.tile-pb .tile-bg, .tile-redstone .tile-bg, .tile-quote .tile-bg {
   background-color: #f7f6f8;
   background-image: radial-gradient(120% 90% at 100% 0%, rgba(173, 176, 204, 0.32) 0%, rgba(221, 212, 220, 0.18) 45%, rgba(255, 255, 255, 0) 75%);
 }
-.tile-mach2 .tile-kicker, .tile-mach2 .tile-name,
 .tile-pb .tile-kicker, .tile-pb .tile-name { color: var(--ink); }
-.tile-mach2 .tile-kicker, .tile-pb .tile-kicker { color: var(--mid); }
-.tile-mach2 .tile-name::after, .tile-pb .tile-name::after { color: var(--mid); }
+.tile-pb .tile-kicker { color: var(--mid); }
+.tile-pb .tile-name::after { color: var(--mid); }
 
 .gideon-tile-icon {
   position: absolute; top: 50%; left: 50%;
@@ -1376,14 +1364,6 @@ body.p-lock { overflow: hidden; }
     </div>
   </div>
 
-  <div class="tile t2x1 tile-mach2" data-cat="hardware" data-project="mach2">
-    <div class="tile-bg"></div>
-    <div class="tile-label">
-      <div class="tile-kicker">Hardware · In Design</div>
-      <div class="tile-name">Mach 2</div>
-    </div>
-  </div>
-
   <div class="tile t1x1 tile-quote" data-cat="software" data-project="quotes">
     <div class="tile-bg"></div>
     <div class="tile-label">
@@ -1473,7 +1453,7 @@ body.p-lock { overflow: hidden; }
     <div class="g-msg">Hi. I'm Gideon. Ask me about projects, systems, or what to click next.</div>
     <div class="g-prompt-row" id="gPrompts">
       <button class="g-prompt" type="button" data-q="What should I click first?">Start Here</button>
-      <button class="g-prompt" type="button" data-q="Tell me about Mach 1 and Mach 2.">Robotics</button>
+      <button class="g-prompt" type="button" data-q="Tell me about Taylor’s robotics.">Robotics</button>
       <button class="g-prompt" type="button" data-q="Show me software highlights.">Software</button>
     </div>
   </div>
@@ -1693,7 +1673,7 @@ const projects = {
            'To look around it raises its arm and swings it from side to side, scanning the floor with the camera on its wrist, then turns its body once to face what it found. Its head camera measures depth, and from that it keeps a 3D picture of what is around it. Every arm move is checked against that picture first, and the arm folds in before the wheels move.',
            'A sock it can\u2019t get is not a reason to stop: it tries another one, and if that fails too it turns or backs up and looks again.',
            'Next comes a stop that cuts power to the wheels directly, without going through the software, before it drives on its own again. Then it learns to remember where the basket is between runs, to check that each sock landed in it, and to pause less. After that, a small AI model on the robot itself decides how to handle each situation, and before it leaves the practice area it learns to share the floor with a small dog.'],
-    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head depth camera and wrist camera'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next up', 'A hardware stop for the wheels'], ['Then', 'An AI model on board, then Mach 2']],
+    facts: [['Type', 'Mobile manipulator'], ['Senses', 'Head depth camera and wrist camera'], ['Latest', 'First socks in the basket, Nov 2026'], ['Next up', 'A hardware stop for the wheels'], ['Then', 'An AI model on board']],
   },
   archive: {
     kicker: 'Science · Live', title: 'The <em>Archive</em>', status: 'Live',
@@ -1736,11 +1716,6 @@ const projects = {
            'The commercial that launched it is on this page too.'],
     facts: [['Platform', 'iPhone'], ['Built with', 'Swift and SwiftUI'], ['For', 'Residents and the people who run their building'], ['Status', 'Live on the App Store']],
     links: [['See it on the App Store', 'https://apps.apple.com/us/app/resilife/id6753708491', true], ['Watch the commercial', '#commercial']],
-  },
-  mach2: {
-    kicker: 'Hardware · Robotics', title: 'Mach <em>2</em>', status: 'In design',
-    text: ['Mach 2 is the next robot, taking what Mach 1 has learned into a new design.'],
-    facts: [['Follows', 'Mach 1']],
   },
   quotes: {
     kicker: 'Software', title: 'Quote <em>Calculators</em>', status: 'Live',

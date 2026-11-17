@@ -15,7 +15,7 @@ Taylor Olsen-Vogt's public portfolio, served by GitHub Pages at https://taylorol
 It is plain HTML, CSS and JavaScript with no build step. To preview, run `python3 -m http.server 8000` in this folder and open http://localhost:8000.
 
 ## Known gaps
-- Power Beaming, Mach 2 and Redstone have no picture yet.
-- Only finished projects go on the site (Taylor, Nov 2026). Black Book, the Drone and AirRemote were taken off until they are; their tiles and write-ups are in the git history.
+- Power Beaming and Redstone have no picture yet.
+- Only finished projects go on the site (Taylor, Nov 2026); planned ones stay in Gideon until they're ready. Black Book, the Drone, AirRemote and Mach 2 were taken off until they are; their tiles and write-ups are in the git history.
 - Company names to show: Redstone Laboratories and LIDI.
 - Not used by any page right now (kept in case they're wanted): `commercial1_thumbnail.png`, `commercial25.mov`, `IMG_5114.jpg`, `LIDI.png`, `pfp.png`, `resilife-commercial.mp4`.
