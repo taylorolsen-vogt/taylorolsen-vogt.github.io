@@ -1531,7 +1531,7 @@ function gideonAction(hit) {
   if (hit.video) return { label: 'Watch the commercial', run: () => { closeGideon(); openVideo(); } };
   if (hit.filter) {
     const btn = document.querySelector('.filt[data-f="' + hit.filter + '"]');
-    return btn && { label: 'Show ' + hit.filter, run: () => { closeGideon(); btn.click(); document.getElementById('grid').scrollIntoView({ behavior: 'smooth' }); } };
+    return btn && { label: hit.filter === 'all' ? 'Show all projects' : 'Show ' + hit.filter, run: () => { closeGideon(); btn.click(); document.getElementById('grid').scrollIntoView({ behavior: 'smooth' }); } };
   }
   if (hit.go) {
     const el = document.getElementById(hit.go);
