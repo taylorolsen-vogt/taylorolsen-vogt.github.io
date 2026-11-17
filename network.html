@@ -64,6 +64,18 @@
       pointer-events: none;
       white-space: nowrap;
     }
+    #hintOpen {
+      pointer-events: auto;
+      margin-left: 0.6em;
+      color: rgba(0, 0, 0, 0.75);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+    #hintOpen[hidden] { display: none; }
+    @media (max-width: 600px) {
+      #hint { white-space: normal; width: calc(100% - 2.5rem); text-align: center; line-height: 1.8; }
+    }
+    #hintOpen:focus-visible { outline: 2px solid #000; outline-offset: 3px; }
 
     /* ─── When the 3D desk can't be shown (no WebGL, or the 3D library didn't load) ─── */
     #fallback { display: none; }
@@ -361,7 +373,7 @@
 <body>
 
   <canvas id="c"></canvas>
-  <div id="hint">Click to grab · Click to drop · Orbit with right-click or two fingers</div>
+  <div id="hint"><span id="hintText">Click to grab · Click to drop · Orbit with right-click or two fingers</span><a id="hintOpen" href="index.html#grid" hidden>Open</a></div>
 
   <!-- Shown instead of the 3D desk when this browser can't draw it -->
   <main id="fallback" aria-label="Projects">
@@ -370,6 +382,7 @@
       <a class="fb-card" href="index.html#mach1"><img src="assets/mach-1.jpg" alt="" loading="lazy"><span>Mach 1</span></a>
       <a class="fb-card" href="index.html#forge"><img src="assets/FORGE_example.webp" alt="" loading="lazy"><span>FORGE</span></a>
       <a class="fb-card" href="index.html#resilife"><img src="assets/AppIcon_ResiLife.png" alt="" loading="lazy"><span>ResiLife</span></a>
+      <a class="fb-card" href="index.html#archive"><img src="assets/archive.jpg" alt="" loading="lazy"><span>The Archive</span></a>
     </div>
     <a class="fb-all" href="index.html#grid">See every project</a>
   </main>
@@ -523,6 +536,7 @@
           seed = 3.7,
           px = 0, py = 0.01, pz = 0,
           rotY = 0,
+          project = null,
         } = opts;
 
         const geo = new THREE.PlaneGeometry(size, size, segments, segments);
@@ -604,6 +618,7 @@
           }
           if (!hitsMe(e)) return;
           e.stopPropagation();
+          showProject(project);
           grabbed = true;
           controls.enabled = false;
           velX = 0; velZ = 0;
@@ -636,11 +651,16 @@
             hovered = rc.intersectObject(mesh).length > 0;
             if (hovered !== wasH) {
               renderer.domElement.style.cursor = hovered ? 'grab' : '';
+              if (hovered) showProject(project);
             }
           }
         }
 
         renderer.domElement.addEventListener('click', onClick, true);
+        // Double-click a paper to open its project on the main page.
+        renderer.domElement.addEventListener('dblclick', (e) => {
+          if (project && hitsMe(e)) window.location.href = 'index.html#' + project.key;
+        });
         window.addEventListener('pointermove', onMove, true);
 
         function tick(dt) {
@@ -684,11 +704,24 @@
         return { tick };
       }
 
+      // Each paper is a project. Touching or pointing at one names it in the hint,
+      // with a link to open it; double-clicking it opens it straight away.
+      const hintText = document.getElementById('hintText');
+      const hintOpen = document.getElementById('hintOpen');
+      function showProject(project) {
+        if (!project) return;
+        hintText.textContent = project.name + ' ·';
+        hintOpen.textContent = 'Open it';
+        hintOpen.href = 'index.html#' + project.key;
+        hintOpen.setAttribute('aria-label', 'Open ' + project.name);
+        hintOpen.hidden = false;
+      }
+
       const papers = [
-        makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3, textureUrl: 'assets/mach-1.jpg' }),
-        makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp' }),
-        makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png' }),
-        makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85 }),
+        makePaper({ size: 1.4, segments: 56, crumple: 0.16, seed: 3.7, px: 0, py: 0.05, pz: 0, rotY: 0.3, textureUrl: 'assets/mach-1.jpg', project: { key: 'mach1', name: 'Mach 1' } }),
+        makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp', project: { key: 'forge', name: 'FORGE' } }),
+        makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png', project: { key: 'resilife', name: 'ResiLife' } }),
+        makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85, textureUrl: 'assets/archive.jpg', project: { key: 'archive', name: 'The Archive' } }),
       ];
 
       const clock = new THREE.Clock();
