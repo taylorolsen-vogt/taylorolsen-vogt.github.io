@@ -1818,12 +1818,21 @@ document.querySelectorAll('.tile[data-project]').forEach((tile) => {
 document.getElementById('pClose').addEventListener('click', closeProject);
 pOverlay.addEventListener('click', closeProject);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProject(); });
-// A link such as /#mach1 opens straight onto that project, and /#commercial goes to the
-// commercial. This works on arrival and when the address changes while the page is already
+// A link such as /#mach1 opens straight onto that project, /#hardware (or software, marketing,
+// venture) shows the tiles with that filter on, and /#commercial goes to the commercial.
+// This works on arrival and when the address changes while the page is already
 // open (for example a link pasted into a tab that is showing the site).
 function openFromHash(onArrival) {
   const key = location.hash.slice(1);
   if (projects[key]) { openProject(key, document.querySelector('[data-project="' + key + '"]')); return; }
+  const filterBtn = key && document.querySelector('.filt[data-f="' + key + '"]');
+  if (filterBtn) {
+    history.replaceState(null, '', location.pathname + location.search); // so the same link works again
+    closeProject();
+    filterBtn.click();
+    gridEl.scrollIntoView({ behavior: onArrival ? 'auto' : 'smooth' });
+    return;
+  }
   if (key !== 'commercial') return;
   history.replaceState(null, '', location.pathname + location.search); // so the same link works again
   closeProject();
