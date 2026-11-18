@@ -294,8 +294,10 @@
       var link = document.getElementById('open-gideon');
       if (!link) return;
 
-      var isLikelyMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (!isLikelyMobile) {
+      // Gideon runs on the iPhone and the Mac, and both apps open from gideon1://.
+      // (iPads also report 'Macintosh'.) Elsewhere the button just goes back to the portfolio.
+      var canOpenApp = /iPhone|iPad|iPod|Android|Macintosh/i.test(navigator.userAgent);
+      if (!canOpenApp) {
         link.href = 'index.html';
         link.textContent = 'Open Portfolio';
       }
@@ -312,7 +314,7 @@
       window.addEventListener('blur', markOpened);
 
       link.addEventListener('click', function (event) {
-        if (!isLikelyMobile) return;
+        if (!canOpenApp) return;
         event.preventDefault();
         opened = false;
         window.location.href = 'gideon1://';

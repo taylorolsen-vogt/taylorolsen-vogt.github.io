@@ -6,7 +6,7 @@ Taylor Olsen-Vogt's public portfolio, served by GitHub Pages at https://taylorol
 - `index.html` – the landing page: bio, contact, and the filterable project-tile grid, with the Serious/Unserious toggle and the Speak to Gideon drawer. Each tile opens a project panel (picture, summary, facts, links); the write-ups live in the `projects` object near the end of the page's script, and `/#<key>` (for example `/#mach1`) opens a panel directly, even in a tab already showing the site; `/#hardware`, `/#software`, `/#marketing` and `/#venture` show the tiles with that filter on; `/#commercial` goes to the commercial.
 - `serious.html` – currently an exact copy of `index.html`. If you edit one, copy the change to the other (or `cp index.html serious.html`).
 - `network.html` – the Network page.
-- `gideon-confirmation.html` – the page people land on after confirming their email; it opens the Gideon app, with a fallback.
+- `gideon-confirmation.html` – the page people land on after confirming their email; on an iPhone, iPad or Mac it opens the Gideon app (`gideon1://`), and goes back to the portfolio if the app does not open.
 - `assets/gideon-answers.js` – what Speak to Gideon says on every page. Edit answers here, not in the pages.
 - `assets/` – images, icons and the commercial video. `og-image.jpg` is the link-preview picture.
 - `sitemap.xml`, `robots.txt` – search-engine files.
