@@ -50,7 +50,7 @@ const gideonAnswers = [
   { re: /^\s*(how\s+(are|r)\s+(you|u)|how'?s\s+it\s+going|how\s+is\s+it\s+going|what'?s\s+up|sup)\b/i, a: 'Doing well, thanks. Ask me about any project on this page, about Taylor, or how to get in touch.' },
   // Short replies such as 'ok', 'yes', 'lol' or 'what?' get the list of things to ask.
   { re: /^\s*(help|menu|options|\?+|ok(ay)?|k|yes|yeah|yep|no|nope|nah|lol|haha|cool|nice|great|wow|sure|hmm+|huh|what)\s*[.!?]*\s*$|what\s+(can|should|do)\s+i\s+ask|what\s+do\s+you\s+know\b/i, a: 'Ask me about any project on this page: Mach 1, The Archive, me (Gideon), FORGE, ResiLife, the Quote Calculators, Power Beaming, Redstone Laboratories or LIDI. Or ask about Taylor, what’s new, where to start, or how to get in touch.' },
-  { re: /^\s*(bye|goodbye|good\s*bye|see\s+(you|ya)|later|cheers|ciao)\b/i, a: 'Goodbye, and thanks for visiting. If you’d like to stay in touch, email taylor.olsen@outlook.com.' },
+  { re: /^\s*(bye|goodbye|good\s*bye|see\s+(you|ya)|later|cheers|ciao|no\s+thanks|no\s+thank\s+you|that'?s\s+(all|it)|nothing\s+(else|more))\b/i, a: 'Goodbye, and thanks for visiting. If you’d like to stay in touch, email taylor.olsen@outlook.com.' },
   { re: /thank/i, a: 'You’re welcome. Ask me anything else about the projects.' },
 ];
 
