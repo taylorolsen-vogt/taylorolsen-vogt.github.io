@@ -123,6 +123,8 @@
       aspect-ratio: 1;
       object-fit: cover;
     }
+    /* trims an app icon's dark corners, like the desk paper does */
+    .fb-card img.trim { clip-path: inset(7%); transform: scale(1.163); }
     .fb-card span {
       display: block;
       padding: 0.6rem 0.5rem;
@@ -383,6 +385,7 @@
       <a class="fb-card" href="index.html#forge"><img src="assets/FORGE_example.webp" alt="" loading="lazy"><span>FORGE</span></a>
       <a class="fb-card" href="index.html#resilife"><img src="assets/AppIcon_ResiLife.png" alt="" loading="lazy"><span>ResiLife</span></a>
       <a class="fb-card" href="index.html#archive"><img src="assets/archive.jpg" alt="" loading="lazy"><span>The Archive</span></a>
+      <a class="fb-card" href="index.html#gideon"><img class="trim" src="assets/gideon-icon-light.webp" alt="" loading="lazy"><span>Gideon</span></a>
     </div>
     <a class="fb-all" href="index.html#grid">See every project</a>
   </main>
@@ -570,6 +573,8 @@
         if (opts.textureUrl) {
           const tex = texLoader.load(opts.textureUrl);
           tex.colorSpace = THREE.SRGBColorSpace;
+          // inset trims a picture's edges, such as an app icon's dark corners
+          if (opts.inset) { tex.repeat.set(1 - 2 * opts.inset, 1 - 2 * opts.inset); tex.offset.set(opts.inset, opts.inset); }
           mat.map = tex;
           mat.needsUpdate = true;
         }
@@ -722,6 +727,7 @@
         makePaper({ size: 1.1, segments: 48, crumple: 0.14, seed: 8.2, px: -2.3, py: 0.04, pz: 1.1, rotY: -0.6, textureUrl: 'assets/FORGE_example.webp', project: { key: 'forge', name: 'FORGE' } }),
         makePaper({ size: 1.25, segments: 50, crumple: 0.18, seed: 14.5, px: 1.8, py: 0.04, pz: -0.7, rotY: 1.9, textureUrl: 'assets/AppIcon_ResiLife.png', project: { key: 'resilife', name: 'ResiLife' } }),
         makePaper({ size: 0.95, segments: 44, crumple: 0.12, seed: 21.1, px: -0.6, py: 0.04, pz: -2.0, rotY: 0.85, textureUrl: 'assets/archive.jpg', project: { key: 'archive', name: 'The Archive' } }),
+        makePaper({ size: 1.0, segments: 44, crumple: 0.13, seed: 27.4, px: 0.5, py: 0.04, pz: 1.9, rotY: -0.35, textureUrl: 'assets/gideon-icon-light.webp', inset: 0.07, project: { key: 'gideon', name: 'Gideon' } }),
       ];
 
       const clock = new THREE.Clock();
