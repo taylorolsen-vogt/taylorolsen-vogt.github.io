@@ -1,0 +1,15 @@
+# Fails if the site would show a project that isn't finished
+# (see .github/check-site.mjs for the rule and the list of finished projects).
+name: Only finished projects
+on:
+  push:
+  pull_request:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: node .github/check-site.mjs

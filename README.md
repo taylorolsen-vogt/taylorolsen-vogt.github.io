@@ -14,6 +14,8 @@ Taylor Olsen-Vogt's public portfolio, served by GitHub Pages at https://taylorol
 ## Working on it
 It is plain HTML, CSS and JavaScript with no build step. To preview, run `python3 -m http.server 8000` in this folder and open http://localhost:8000.
 
+Only finished projects go on the site. `npm test` (or `node .github/check-site.mjs`) fails if a tile, panel, Network-desk paper, link or chat answer points at a project that isn't on the finished list in `.github/check-site.mjs`, if a tile is labelled as unfinished ("In design", "Early concept", "Coming soon" ...), or if `serious.html` has drifted from `index.html`. It runs on GitHub for every push and pull request. To have it stop a commit or push on this computer too, run `git config core.hooksPath .github/hooks` once. When a project is finished and Taylor wants it shown, add its key to that list in the same change that adds its tile.
+
 ## Known gaps
 - Power Beaming and Redstone have no picture yet.
 - Only finished projects go on the site (Taylor, Nov 2026); planned ones stay in Gideon until they're ready. Black Book, the Drone, AirRemote and Mach 2 were taken off until they are; their tiles and write-ups are in the git history.
