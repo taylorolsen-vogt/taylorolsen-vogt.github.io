@@ -1587,6 +1587,7 @@ const videoClose = document.getElementById('videoClose');
 const videoFallback = document.getElementById('videoFallback');
 
 function openVideo() {
+  closeGideon(); // the chat sits above the video; it keeps its messages for when it is opened again
   videoOverlay.classList.add('open');
   videoFallback.style.display = 'none';
   videoPlayer.style.display = 'block';
@@ -1749,6 +1750,7 @@ let pReturnFocus = null;
 function openProject(key, fromEl) {
   const p = projects[key];
   if (!p) return;
+  closeGideon(); // the chat sits above the panel and would cover its buttons; it keeps its messages
   const media = document.getElementById('pMedia');
   media.className = 'p-media' + (p.dark ? ' dark' : '') + (p.icon ? ' icon' : '') + (!p.img && !p.icon ? ' wash' : '');
   media.innerHTML = '';
