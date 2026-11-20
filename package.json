@@ -1,0 +1,8 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "description": "Taylor's portfolio site. Plain HTML; no build step. `npm test` checks that only finished projects are on it.",
+  "scripts": {
+    "test": "node .github/check-site.mjs"
+  }
+}
