@@ -275,7 +275,9 @@ nav {
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   transform: translateY(102%);
-  transition: transform 0.32s ease;
+  /* Hidden once it has slid away, so a closed chat isn't in the Tab order */
+  visibility: hidden;
+  transition: transform 0.32s ease, visibility 0s linear 0.32s;
   z-index: 650;
   display: flex;
   flex-direction: column;
@@ -284,6 +286,8 @@ nav {
 /* The shadow only while open, so a closed drawer doesn't leave a grey smudge at the bottom of the page */
 .g-drawer.open {
   transform: translateY(0);
+  visibility: visible;
+  transition: transform 0.32s ease, visibility 0s;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.36);
 }
 
@@ -848,7 +852,9 @@ nav {
   z-index: 610;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.2s;
+  /* Hidden once it has faded, so the closed video's buttons aren't in the Tab order */
+  visibility: hidden;
+  transition: opacity 0.2s, visibility 0s linear 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -858,6 +864,8 @@ nav {
 .video-overlay.open {
   opacity: 1;
   pointer-events: all;
+  visibility: visible;
+  transition: opacity 0.2s, visibility 0s;
 }
 
 .video-modal {
@@ -1179,7 +1187,7 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
   overflow-y: auto; overscroll-behavior: contain;
   display: flex; flex-direction: column;
 }
-.p-panel.open { transform: none; visibility: visible; box-shadow: -20px 0 60px rgba(14, 14, 14, 0.18); }
+.p-panel.open { transform: none; visibility: visible; box-shadow: -20px 0 60px rgba(14, 14, 14, 0.18); transition: transform 0.34s cubic-bezier(.2, .7, .2, 1), visibility 0s; }
 .p-close {
   position: sticky; top: 0; align-self: flex-end; z-index: 2;
   margin: 0.8rem 0.8rem -3rem 0;
@@ -1501,7 +1509,10 @@ function openGideon() {
 }
 
 function closeGideon() {
+  if (!gDrawer.classList.contains('open')) return;
+  const hadFocus = gDrawer.contains(document.activeElement);
   gDrawer.classList.remove('open');
+  if (hadFocus) gOpenBtn.focus({ preventScroll: true }); // not left on the hidden chat
 }
 
 function addGideonMessage(text, isUser = false, action = null) {
@@ -1586,9 +1597,12 @@ const videoPlayer = document.getElementById('videoPlayer');
 const videoClose = document.getElementById('videoClose');
 const videoFallback = document.getElementById('videoFallback');
 
+let videoReturnFocus = null;
 function openVideo() {
   closeGideon(); // the chat sits above the video; it keeps its messages for when it is opened again
+  if (!videoOverlay.classList.contains('open')) videoReturnFocus = document.activeElement;
   videoOverlay.classList.add('open');
+  videoClose.focus();
   videoFallback.style.display = 'none';
   videoPlayer.style.display = 'block';
   const playPromise = videoPlayer.play();
@@ -1601,9 +1615,12 @@ function openVideo() {
 }
 
 function closeVideo() {
+  if (!videoOverlay.classList.contains('open')) return;
   videoOverlay.classList.remove('open');
   videoPlayer.pause();
   videoPlayer.currentTime = 0;
+  if (videoReturnFocus && videoReturnFocus.isConnected && videoReturnFocus !== document.body) videoReturnFocus.focus({ preventScroll: true });
+  videoReturnFocus = null;
 }
 
 document.querySelectorAll('.tile-video').forEach((tile) => {
@@ -1791,7 +1808,7 @@ function openProject(key, fromEl) {
   pPanel.classList.add('open'); pOverlay.classList.add('open');
   pPanel.setAttribute('aria-hidden', 'false');
   document.body.classList.add('p-lock');
-  requestAnimationFrame(() => document.getElementById('pClose').focus());
+  document.getElementById('pClose').focus({ preventScroll: true });
 }
 
 function closeProject() {
@@ -1818,6 +1835,19 @@ document.querySelectorAll('.tile[data-project]').forEach((tile) => {
   });
 });
 document.getElementById('pClose').addEventListener('click', closeProject);
+// While a project or the commercial is open, Tab and Shift+Tab go round its own buttons and links,
+// not the page hidden behind it.
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Tab') return;
+  const box = videoOverlay.classList.contains('open') ? videoOverlay : pPanel.classList.contains('open') ? pPanel : null;
+  if (!box) return;
+  const items = [...box.querySelectorAll('a[href], button, video[controls]')].filter((el) => el.offsetParent !== null || el === document.activeElement);
+  if (!items.length) return;
+  const first = items[0], last = items[items.length - 1];
+  if (!box.contains(document.activeElement)) { e.preventDefault(); (e.shiftKey ? last : first).focus(); }
+  else if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
 pOverlay.addEventListener('click', closeProject);
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProject(); });
 // A link such as /#mach1 opens straight onto that project, /#hardware (or software, marketing,
