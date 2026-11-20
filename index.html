@@ -431,14 +431,6 @@ nav {
   color: var(--white);
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-auto-flow: dense;
-  gap: 1px;
-  background: var(--rule);
-}
-
 .tile {
   background: var(--white);
   position: relative;
@@ -520,183 +512,247 @@ nav {
   color: var(--white);
 }
 
-.t1x1 { grid-column: span 1; min-height: 190px; }
-.t2x1 { grid-column: span 2; min-height: 190px; }
+/* ---- The project grid ----
+   One exact grid. Every cell is a square: the row height is computed from the
+   column width, so a tile spanning C columns and R rows is always the same shape.
+   Each photo sits in a tile cut to (nearly) its own proportions and is cropped
+   to fill, never stretched:
+     Mach 1   2 x 3  (photo 3:4)      The Archive  2 x 1  (photo 16:9)
+     FORGE    2 x 2  (photo 4:3)      Commercial   2 x 1  (photo 2:1)
+     LIDI     1 x 1  (logo 1:1)
+   Every layout below fills its rows edge to edge: 5 columns on laptops and wider,
+   4 on tablets, 2 on phones. Tiles are placed by name, so nothing reflows into
+   a gap and no row is left part-filled. */
+.grid-frame { container-type: inline-size; }
+.grid {
+  --cols: 5;
+  --gap: 1px;
+  display: grid;
+  grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
+  grid-auto-rows: calc((100vw - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  grid-auto-rows: calc((100cqw - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  gap: var(--gap);
+  background: var(--rule);
+  grid-template-areas:
+    "arch  arch  mach mach resi"
+    "forge forge mach mach quote"
+    "forge forge mach mach gid"
+    "red   lidi  ad   ad   pb";
+}
+.tile-mach1      { grid-area: mach; }
+.tile-archive    { grid-area: arch; }
+.tile-forge      { grid-area: forge; }
+.tile-resilife   { grid-area: resi; }
+.tile-quote      { grid-area: quote; }
+.tile-gideon     { grid-area: gid; }
+.tile-redstone   { grid-area: red; }
+.tile-lidi       { grid-area: lidi; }
+.tile-commercial { grid-area: ad; }
+.tile-pb         { grid-area: pb; }
 
-.tile-mach1 {
-  grid-column: 3 / span 2;
-  grid-row: 1 / span 3;
-  min-height: 0;
-  aspect-ratio: auto;
+.grid.filter-hardware {
+  grid-template-areas:
+    "mach mach pb pb pb"
+    "mach mach pb pb pb"
+    "mach mach pb pb pb";
+}
+.grid.filter-software {
+  grid-template-areas:
+    "forge forge forge arch  arch"
+    "forge forge forge gid   resi"
+    "forge forge forge quote quote";
+}
+/* Ventures: the two companies side by side, the lab first */
+.grid.filter-venture {
+  grid-template-areas:
+    "red red red lidi lidi"
+    "red red red lidi lidi";
+}
+/* Marketing: the commercial alone, centred across the middle three columns,
+   at the exact shape of its picture */
+.grid.filter-marketing {
+  grid-template-areas: ". ad ad ad .";
+  grid-auto-rows: auto;
+  background: transparent;
+  padding: 14px 0 20px;
+}
+.grid.filter-marketing .tile-commercial {
+  aspect-ratio: 1600 / 778;
+  border: 1px solid var(--rule);
+}
+.grid.filter-marketing .tile-commercial .tile-label { padding: 1.15rem 1.2rem; }
+.grid.filter-marketing .tile-commercial .tile-kicker { color: rgba(255, 255, 255, 0.56); }
+.grid.filter-marketing .tile-commercial .tile-name { font-size: clamp(1.4rem, 2.2vw, 2rem); }
+
+@media (max-width: 900px) {
+  .grid {
+    --cols: 4;
+    grid-template-areas:
+      "mach mach arch  arch"
+      "mach mach forge forge"
+      "mach mach forge forge"
+      "resi quote gid  lidi"
+      "red  pb    ad   ad";
+  }
+  .grid.filter-hardware {
+    grid-template-areas:
+      "mach mach pb pb"
+      "mach mach pb pb"
+      "mach mach pb pb";
+  }
+  .grid.filter-software {
+    grid-template-areas:
+      "forge forge gid   resi"
+      "forge forge quote quote"
+      "arch  arch  arch  arch"
+      "arch  arch  arch  arch";
+  }
+  .grid.filter-venture {
+    grid-template-areas:
+      "red red lidi lidi"
+      "red red lidi lidi";
+  }
+  .grid.filter-marketing { grid-template-areas: "ad ad ad ad"; }
 }
 
+@media (max-width: 620px) {
+  .grid {
+    --cols: 2;
+    grid-template-areas:
+      "mach  mach"
+      "mach  mach"
+      "mach  mach"
+      "arch  arch"
+      "resi  gid"
+      "forge forge"
+      "forge forge"
+      "lidi  quote"
+      "ad    ad"
+      "red   pb";
+  }
+  .grid.filter-hardware {
+    grid-template-areas:
+      "mach mach"
+      "mach mach"
+      "mach mach"
+      "pb   pb";
+  }
+  .grid.filter-software {
+    grid-template-areas:
+      "forge forge"
+      "forge forge"
+      "arch  arch"
+      "gid   resi"
+      "quote quote";
+  }
+  .grid.filter-venture {
+    grid-template-areas:
+      "red  red"
+      "lidi lidi"
+      "lidi lidi";
+  }
+  .grid.filter-marketing { grid-template-areas: "ad ad"; }
+}
+
+/* Pictures: each one covers its tile, cropped (never squeezed) with the subject kept in view */
 .tile-mach1 .tile-bg {
   background-image: url('assets/mach-1.jpg');
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: top center;
-  background-color: #efefec;
+  background-position: center 40%;
+  background-color: #e9e9e8;
 }
-
-.tile-archive {
-  grid-column: 1 / span 2;
-  grid-row: 1;
-  background: #000;
-}
+.tile-archive { background: #000; }
 .tile-archive .tile-bg {
   background-image: url('assets/archive.jpg');
-  background-size: cover;
-  background-position: center;
   background-color: #000;
 }
-
-.tile-lidi { grid-column: 2; grid-row: 4; }
 .tile-lidi .tile-bg {
   background-image: url('assets/LIDI.jpg');
-  background-size: cover;
-  background-position: center;
+  background-color: #a9bde9;
 }
-.tile-gideon { grid-column: 5; grid-row: 3; }
-.tile-forge { grid-column: 1 / span 2; grid-row: 2 / span 2; }
 .tile-forge .tile-bg {
   background-image: url('assets/FORGE_example.webp');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center top;
+  background-position: left center; /* keeps the FORGE name, the tools and the model in view */
   background-color: #0a0a0c;
 }
-.tile-resilife { grid-column: 5; grid-row: 1; }
-.tile-resilife .tile-bg {
-  /* Fade the logo out behind the label so "ResiLife" stays readable */
-  background-image:
-    linear-gradient(to top, #ece8dc 0%, #ece8dc 26%, rgba(236, 232, 220, 0) 52%),
-    url('assets/AppIcon_ResiLife.png');
-  background-size: 100% 100%, 124%;
-  background-repeat: no-repeat;
-  background-position: 0 0, 62% 42%;
-  background-color: #ece8dc;
+
+/* Tiles without a photo get a drawn mark, centred in the space above the label.
+   The mark scales to whatever room the tile has, so it never crowds the text. */
+.tile-art {
+  position: relative;
+  z-index: 2;
+  flex: 1 1 0;
+  min-height: 0;
+  container-type: size;
+  display: grid;
+  place-items: center;
+  margin: 1rem 1rem 0;
+  pointer-events: none;
+}
+.tile-icon,
+.tile-glyph {
+  display: block;
+  width: min(68cqh, 42cqw, 112px);
+  height: auto;
+  aspect-ratio: 1;
+}
+.tile-icon {
+  border-radius: 22.5%;
+  object-fit: cover;
+}
+.tile-glyph {
+  color: rgba(14, 14, 14, 0.62);
+  background-color: currentColor;
+  -webkit-mask: var(--glyph) center / contain no-repeat;
+  mask: var(--glyph) center / contain no-repeat;
+  transition: color 0.15s;
+}
+.tile:hover .tile-glyph { color: rgba(255, 255, 255, 0.8); }
+/* When a tile is too small to give a mark real room, the mark steps aside for the text */
+@container (max-height: 44px) { .tile-art > * { visibility: hidden; } }
+/* In the big filtered tiles the mark grows with the tile */
+@container (min-width: 480px) and (min-height: 300px) { .tile-art > * { width: min(56cqh, 180px); } }
+
+.glyph-beam {
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='1' stroke-linecap='round'%3E%3Ccircle cx='9' cy='24' r='2.5' fill='%23000'/%3E%3Cpath d='M16.7 17.6a10 10 0 0 1 0 12.8M22.8 12.4a18 18 0 0 1 0 23.2M28.9 7.3a26 26 0 0 1 0 33.4'/%3E%3Crect x='38' y='15' width='4' height='18' rx='1'/%3E%3C/svg%3E");
+}
+.glyph-lab {
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='1' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 8v12L10.5 37.5a2 2 0 0 0 1.8 2.5h23.4a2 2 0 0 0 1.8-2.5L28 20V8M17 8h14M13.8 31h20.4'/%3E%3Ccircle cx='21.5' cy='26' r='1'/%3E%3Ccircle cx='26' cy='23' r='0.8'/%3E%3C/svg%3E");
+}
+.glyph-quote {
+  --glyph: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' fill='none' stroke='%23000' stroke-width='1'%3E%3Crect x='12' y='6' width='24' height='36' rx='3'/%3E%3Crect x='16' y='10' width='16' height='7' rx='1'/%3E%3Cg fill='%23000' stroke='none'%3E%3Ccircle cx='18' cy='24' r='1.5'/%3E%3Ccircle cx='24' cy='24' r='1.5'/%3E%3Ccircle cx='30' cy='24' r='1.5'/%3E%3Ccircle cx='18' cy='30' r='1.5'/%3E%3Ccircle cx='24' cy='30' r='1.5'/%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3Ccircle cx='18' cy='36' r='1.5'/%3E%3Ccircle cx='24' cy='36' r='1.5'/%3E%3Ccircle cx='30' cy='36' r='1.5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* ResiLife: its app icon, like Gideon's, in grey until hovered */
+.tile-resilife .tile-icon {
   filter: grayscale(1);
-  opacity: 1;
-  transition: transform 0.45s ease, opacity 0.25s ease, filter 0.25s ease;
+  box-shadow: 0 0 0 1px rgba(14, 14, 14, 0.08), 0 10px 30px rgba(14, 14, 14, 0.1);
+  transition: filter 0.25s ease;
+}
+.tile-resilife:hover .tile-icon { filter: none; }
+.tile-gideon .tile-icon {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 40px rgba(173, 176, 204, 0.35);
 }
 
-.tile-resilife.has-img .tile-kicker,
-.tile-resilife.has-img .tile-name,
-.tile-resilife.has-img .tile-name em {
-  color: var(--ink);
-}
-
-.tile-resilife.has-img:hover .tile-bg {
-  opacity: 1;
-  filter: grayscale(0);
-}
-
-.tile-resilife:hover .tile-kicker,
-.tile-resilife:hover .tile-name,
-.tile-resilife:hover .tile-name em {
-  color: var(--ink);
-}
-
-.tile-commercial { grid-column: 3 / span 2; grid-row: 4; }
-.tile-quote { grid-column: 5; grid-row: 2; }
-.tile-redstone { grid-column: 1; grid-row: 4; }
-.tile-pb { grid-column: 5; grid-row: 4; }
-
-.tile-quote {
-  cursor: default;
-}
-
-.tile-quote .tile-label {
-  margin-top: 0;
-  padding: 0.95rem 1rem 0;
-}
-
+/* Quote Calculators: the two calculators as links under the name */
 .quote-links {
-  position: absolute;
-  left: 1rem;
-  right: 1rem;
-  bottom: 0.95rem;
-  z-index: 3;
   display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  opacity: 1;
-  pointer-events: auto;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  margin-top: 0.7rem;
 }
-
 .quote-link {
   font-size: 10px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--ink);
   text-decoration: none;
-  width: fit-content;
   border-bottom: 1px solid rgba(14, 14, 14, 0.28);
   padding-bottom: 2px;
+  white-space: nowrap;
 }
-
-.tile-quote .quote-link:hover {
-  color: var(--mid);
-  border-bottom-color: rgba(136, 136, 136, 0.45);
-}
-
-.tile-quote:hover .quote-link,
-.tile-quote:hover .quote-link {
-  color: var(--white);
-  border-bottom-color: rgba(255, 255, 255, 0.4);
-}
-
-/* Filter-specific layouts (All remains untouched) */
-.grid.filter-hardware .tile,
-.grid.filter-software .tile,
-.grid.filter-marketing .tile,
-.grid.filter-venture .tile {
-  grid-column: auto !important;
-  grid-row: auto !important;
-}
-
-.grid.filter-hardware .tile-mach1 { grid-column: 1 / span 3 !important; grid-row: 1 / span 3 !important; }
-.grid.filter-hardware .tile-mach1 .tile-bg {
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: top center;
-}
-.grid.filter-hardware .tile-pb { grid-column: 4 / span 2 !important; grid-row: 1 / span 3 !important; }
-
-.grid.filter-software .tile-forge { grid-column: 1 / span 3 !important; grid-row: 1 / span 3 !important; }
-.grid.filter-software .tile-archive { grid-column: 4 / span 2 !important; grid-row: 1 !important; }
-.grid.filter-software .tile-gideon { grid-column: 4 !important; grid-row: 2 !important; }
-.grid.filter-software .tile-resilife { grid-column: 5 !important; grid-row: 2 !important; }
-.grid.filter-software .tile-quote { grid-column: 4 / span 2 !important; grid-row: 3 !important; }
-
-/* Ventures: the two companies side by side, the lab first */
-.grid.filter-venture .tile-redstone { grid-column: 1 / span 3 !important; grid-row: 1 !important; min-height: 280px; }
-.grid.filter-venture .tile-lidi { grid-column: 4 / span 2 !important; grid-row: 1 !important; min-height: 280px; }
-
-.grid.filter-marketing {
-  background: transparent;
-  padding: 14px 0 20px;
-}
-
-.grid.filter-marketing .tile-commercial {
-  grid-column: 2 / span 3 !important;
-  grid-row: 1 !important;
-  min-height: 360px;
-  aspect-ratio: 16 / 9;
-  border: 1px solid var(--rule);
-}
-
-.grid.filter-marketing .tile-commercial .tile-label {
-  padding: 1.15rem 1.2rem;
-}
-
-.grid.filter-marketing .tile-commercial .tile-kicker {
-  color: rgba(255, 255, 255, 0.56);
-}
-
-.grid.filter-marketing .tile-commercial .tile-name {
-  font-size: clamp(1.4rem, 2.2vw, 2rem);
-}
+.tile-quote .quote-link:hover { color: var(--mid); border-bottom-color: rgba(136, 136, 136, 0.45); }
+.tile-quote:hover .quote-link { color: var(--white); border-bottom-color: rgba(255, 255, 255, 0.4); }
+.tile-quote:hover .quote-link:hover { color: rgba(255, 255, 255, 0.7); }
 
 .tile-gideon {
   background: var(--ink);
@@ -841,60 +897,11 @@ nav {
   display: none;
 }
 
-@media (max-width: 900px) {
-  .grid { grid-template-columns: repeat(4, 1fr); }
-  .tile-mach1 {
-    grid-column: span 4;
-    grid-row: auto;
-    min-height: 0;
-    aspect-ratio: auto;
-    height: min(100vw, 560px);
-  }
-  .t2x1,
-  .t1x1,
-  .tile-archive,
-  .tile-lidi,
-  .tile-gideon,
-  .tile-forge,
-  .tile-resilife,
-  .tile-commercial,
-  .tile-quote,
-  .tile-pb {
-    grid-column: span 2;
-    grid-row: auto;
-  }
-  /* The commercial runs full width, so the tiles around it still pair up */
-  .grid > .tile-commercial { grid-column: span 4; }
-
-  .grid.filter-marketing .tile-commercial {
-    grid-column: 1 / span 4 !important;
-    min-height: 250px;
-  }
-
-  /* Filtered views drop the 5-column desktop placement and flow in pairs */
-  .grid.filter-hardware > .tile,
-  .grid.filter-software > .tile,
-  .grid.filter-venture > .tile {
-    grid-column: span 2 !important;
-    grid-row: auto !important;
-  }
-  .grid.filter-hardware > .tile-mach1,
-  .grid.filter-hardware > .tile-pb,
-  .grid.filter-software > .tile-forge {
-    grid-column: span 4 !important;
-  }
-}
-
 @media (max-width: 620px) {
   .nav-center { display: none; }
   .filt { font-size: 10px; letter-spacing: 0.1em; padding: 10px 8px; } /* all five filters fit across a phone */
   .mode-btn { padding: 7px 12px; letter-spacing: 0.14em; }
   .nav-name .nav-contact { display: none; }
-  .grid > .tile,
-  .grid.filter-hardware > .tile,
-  .grid.filter-software > .tile,
-  .grid.filter-marketing > .tile,
-  .grid.filter-venture > .tile { grid-column: span 4 !important; grid-row: auto !important; }
   .about {
     min-height: auto;
     padding: clamp(28px, 6vw, 48px) clamp(18px, 4vw, 32px);
@@ -1114,58 +1121,43 @@ textarea { resize: vertical; min-height: 140px; font-weight: 300; }
 
 .status-msg.error { color: #8b2e2e; }
 
-/* ---- Tile polish: whole pictures, tidy placeholders, an "open" hint ---- */
-.tile { min-height: 190px; }
-.tile-mach1 .tile-bg, .tile-archive .tile-bg, .tile-lidi .tile-bg, .tile-forge .tile-bg { background-repeat: no-repeat; }
-.tile-mach1 .tile-bg { background-size: contain; background-position: center; background-color: #e9e9e8; }
-.tile-archive .tile-bg { background-size: contain; background-position: center; }
-.tile-lidi .tile-bg { background-size: contain; background-color: #a9bde9; }
-.tile-resilife .tile-bg {
-  background-image: url('assets/AppIcon_ResiLife.png');
-  background-size: auto 62%;
-  background-position: center 38%;
-  background-color: #ece8dc;
-}
-.tile-forge .tile-bg { background-size: contain; background-position: center; }
+/* ---- Tile polish: tidy placeholders and a clear "open" hint ---- */
 /* Hovering a photo tile dims the picture gently instead of hiding it */
 .tile.has-img:hover .tile-bg,
 .tile-lidi:hover .tile-bg { opacity: 0.35; }
-.tile-resilife.has-img:hover .tile-bg { opacity: 0.35; filter: grayscale(0); }
-.tile-resilife:hover .tile-kicker,
-.tile-resilife:hover .tile-name,
-.tile-resilife:hover .tile-name em { color: var(--white); }
 
-/* Tiles with no photo yet: a soft wash of the site's lilac instead of flat grey */
-.tile-pb .tile-bg, .tile-redstone .tile-bg, .tile-quote .tile-bg {
+/* Tiles with no photo: a soft wash of the site's lilac instead of flat grey */
+.tile-pb .tile-bg, .tile-redstone .tile-bg, .tile-quote .tile-bg, .tile-resilife .tile-bg {
   background-color: #f7f6f8;
   background-image: radial-gradient(120% 90% at 100% 0%, rgba(173, 176, 204, 0.32) 0%, rgba(221, 212, 220, 0.18) 45%, rgba(255, 255, 255, 0) 75%);
 }
 .tile-pb .tile-kicker, .tile-pb .tile-name { color: var(--ink); }
 .tile-pb .tile-kicker { color: var(--mid); }
 .tile-pb .tile-name::after { color: var(--mid); }
+.tile-pb:hover .tile-name::after { color: rgba(255, 255, 255, 0.6); }
 
-.gideon-tile-icon {
-  position: absolute; top: 50%; left: 50%;
-  width: 64px; height: 64px; border-radius: 15px;
-  transform: translate(-50%, -70%);
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 0 40px rgba(173, 176, 204, 0.35);
-}
-
+/* Tiles that open a project panel say so in words: "Details" with an arrow */
 .tile[data-project] { cursor: pointer; }
 .tile[data-project]::after {
-  content: '';
+  content: 'Details \2192';
   position: absolute; top: 0.9rem; right: 0.9rem; z-index: 3;
-  width: 26px; height: 26px; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.86) no-repeat center / 12px 12px
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M6 1v10M1 6h10' stroke='%230e0e0e' stroke-width='1.2'/%3E%3C/svg%3E");
+  padding: 6px 10px 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
   box-shadow: 0 0 0 1px rgba(14, 14, 14, 0.1);
-  opacity: 0; transform: scale(0.85);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 10px; line-height: 1;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0; transform: translateY(-3px);
   transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
 }
 .tile[data-project]:hover::after,
 .tile[data-project]:focus-visible::after { opacity: 1; transform: none; }
 .tile-gideon .gideon-dot { right: auto; left: 1rem; }
-@media (hover: none) { .tile[data-project]::after { opacity: 0.9; transform: none; } }
+/* Touch screens have no hover: tapping a tile opens it, so no hint is drawn there */
+@media (hover: none) { .tile[data-project]::after { display: none; } }
 
 /* ---- Project panel ---- */
 .p-overlay {
@@ -1298,6 +1290,7 @@ body.p-lock { overflow: hidden; }
   <button class="filt" data-f="venture">Ventures</button>
 </div>
 
+<div class="grid-frame">
 <div class="grid" id="grid">
   <div class="tile tile-mach1 has-img" data-cat="hardware" data-project="mach1">
     <div class="tile-bg"></div>
@@ -1308,7 +1301,7 @@ body.p-lock { overflow: hidden; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-archive has-img" data-cat="software" data-project="archive">
+  <div class="tile tile-archive has-img" data-cat="software" data-project="archive">
     <div class="tile-bg"></div>
     <div class="tile-overlay"></div>
     <div class="tile-label">
@@ -1317,7 +1310,7 @@ body.p-lock { overflow: hidden; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-lidi" data-cat="venture" data-project="lidi">
+  <div class="tile tile-lidi" data-cat="venture" data-project="lidi">
     <div class="tile-bg"></div>
     <div class="tile-label">
       <div class="tile-kicker">Venture</div>
@@ -1325,32 +1318,34 @@ body.p-lock { overflow: hidden; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-gideon" id="gideonTile" data-cat="software" data-project="gideon">
-    <img class="gideon-tile-icon" src="assets/gideon-icon-dark.webp" alt="" width="256" height="256" loading="lazy">
+  <div class="tile tile-gideon" id="gideonTile" data-cat="software" data-project="gideon">
     <div class="gideon-dot"></div>
+    <div class="tile-art"><img class="tile-icon" src="assets/gideon-icon-dark.webp" alt="" width="256" height="256" loading="lazy"></div>
     <div class="tile-label">
       <div class="tile-kicker">AI Agent · iPhone &amp; Mac</div>
       <div class="tile-name">Gideon</div>
     </div>
   </div>
 
-  <div class="tile t1x1 tile-forge has-img" data-cat="software" data-project="forge">
+  <div class="tile tile-forge has-img" data-cat="software" data-project="forge">
     <div class="tile-bg"></div>
+    <div class="tile-overlay"></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
       <div class="tile-name">FORGE</div>
     </div>
   </div>
 
-  <div class="tile t1x1 tile-resilife has-img" data-cat="software" data-project="resilife">
+  <div class="tile tile-resilife" data-cat="software" data-project="resilife">
     <div class="tile-bg"></div>
+    <div class="tile-art"><img class="tile-icon" src="assets/AppIcon_ResiLife.png" alt="" width="1024" height="1024" loading="lazy"></div>
     <div class="tile-label">
       <div class="tile-kicker">App</div>
       <div class="tile-name">ResiLife</div>
     </div>
   </div>
 
-  <div class="tile t2x1 tile-commercial tile-video" role="button" tabindex="0" aria-label="Play the ResiLife commercial" data-cat="marketing" data-video="assets/commercial25.mp4">
+  <div class="tile tile-commercial tile-video" role="button" tabindex="0" aria-label="Play the ResiLife commercial" data-cat="marketing" data-video="assets/commercial25.mp4">
     <div class="tile-bg" style="background-image:url('assets/commercial1_thumbnail.jpg');background-size:cover;background-position:center"></div>
     <div class="tile-overlay"></div>
     <div class="play-icon" aria-hidden="true">
@@ -1364,35 +1359,37 @@ body.p-lock { overflow: hidden; }
     </div>
   </div>
 
-  <div class="tile t1x1 tile-quote" data-cat="software" data-project="quotes">
+  <div class="tile tile-quote" data-cat="software" data-project="quotes">
     <div class="tile-bg"></div>
+    <div class="tile-art"><span class="tile-glyph glyph-quote"></span></div>
     <div class="tile-label">
       <div class="tile-kicker">Software</div>
       <div class="tile-name">Quote <em>Calculators</em></div>
-    </div>
-    <div class="quote-links" aria-label="Quote calculator links">
-      <a class="quote-link" href="https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/" target="_blank" rel="noopener noreferrer">Commercial Quote Calculator</a>
-      <a class="quote-link" href="https://taylorolsen-vogt.github.io/retainer-quote-calculator-/" target="_blank" rel="noopener noreferrer">Retainer Quote Calculator</a>
+      <div class="quote-links" aria-label="Quote calculator links">
+        <a class="quote-link" href="https://taylorolsen-vogt.github.io/Commercial-Cost-Calculator-/" target="_blank" rel="noopener noreferrer" aria-label="Commercial Quote Calculator (opens in a new tab)">Commercial &#8599;</a>
+        <a class="quote-link" href="https://taylorolsen-vogt.github.io/retainer-quote-calculator-/" target="_blank" rel="noopener noreferrer" aria-label="Retainer Quote Calculator (opens in a new tab)">Retainer &#8599;</a>
+      </div>
     </div>
   </div>
 
-  <div class="tile t1x1 tile-pb" data-cat="hardware" data-project="pb">
+  <div class="tile tile-pb" data-cat="hardware" data-project="pb">
     <div class="tile-bg"></div>
+    <div class="tile-art"><span class="tile-glyph glyph-beam"></span></div>
     <div class="tile-label">
       <div class="tile-kicker">Research · EE</div>
       <div class="tile-name">Power <em>Beaming</em></div>
     </div>
   </div>
 
-
-  <div class="tile t1x1 tile-redstone" data-cat="venture" data-project="redstone">
+  <div class="tile tile-redstone" data-cat="venture" data-project="redstone">
     <div class="tile-bg"></div>
+    <div class="tile-art"><span class="tile-glyph glyph-lab"></span></div>
     <div class="tile-label">
       <div class="tile-kicker">Venture</div>
       <div class="tile-name">Redstone <em>Laboratories</em></div>
     </div>
   </div>
-
+</div>
 </div>
 
 <section class="content" id="contact" aria-label="Contact Taylor Olsen-Vogt">
