@@ -798,7 +798,7 @@
     function gideonLink(hit) {
       if (hit.open) return { label: 'Open on the main page', href: 'index.html#' + hit.open };
       if (hit.video) return { label: 'Watch the commercial', href: 'index.html#commercial' };
-      if (hit.filter) return { label: hit.filter === 'all' ? 'See all the projects' : 'See the ' + hit.filter + ' work', href: 'index.html#' + (hit.filter === 'all' ? 'grid' : hit.filter) };
+      if (hit.filter) return { label: hit.filter === 'all' ? 'See all the projects' : hit.filter === 'venture' ? 'See the ventures' : 'See the ' + hit.filter + ' work', href: 'index.html#' + (hit.filter === 'all' ? 'grid' : hit.filter) };
       if (hit.go === 'contact') return { label: 'Go to the contact form', href: 'index.html#contact' };
       if (hit.go) return { label: 'Go to Taylor\u2019s bio', href: 'index.html#' + hit.go };
       return null;
