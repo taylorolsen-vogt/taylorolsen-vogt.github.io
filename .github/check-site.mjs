@@ -26,7 +26,7 @@ const FINISHED = new Set([
 const UNFINISHED_LABELS = /\b(in design|early concept|concept stage|coming soon|in development|under construction|work in progress|planned|not started)\b/i;
 
 // Tile class names that are parts of a tile, not a project.
-const TILE_PARTS = new Set(['bg', 'kicker', 'label', 'name', 'overlay', 'video', 'icon', 'img']);
+const TILE_PARTS = new Set(['bg', 'kicker', 'label', 'name', 'overlay', 'video', 'icon', 'img', 'art', 'glyph']);
 // Tile class names for tiles that aren't a project panel. 'quote' is the
 // quote-calculators tile (its panel key is 'quotes').
 const TILE_ALIASES = { quote: 'quotes', commercial: null };
